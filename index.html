@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula da Gimba - Matemática</title>
+<script>
+MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+  startup: { typeset: true }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+:root {
+  --bg: #f8f9fa; --surface: #ffffff; --primary: #6c5ce7; --primary-light: #a29bfe;
+  --primary-dark: #5a4bd1; --accent: #00cec9; --text: #2d3436; --text-secondary: #636e72;
+  --border: #dfe6e9; --success: #00b894; --error: #d63031; --warning: #fdcb6e;
+  --radius: 12px; --shadow: 0 2px 12px rgba(0,0,0,0.08); --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --frente-a: #6c5ce7; --frente-b: #e17055;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+header { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:white; padding:1.2rem 2rem 0.8rem; position:sticky; top:0; z-index:100; box-shadow:var(--shadow-lg); }
+header h1 { font-size:1.5rem; font-weight:700; }
+header .subtitle { font-size:0.85rem; opacity:0.85; margin-bottom:0.6rem; }
+.progress-bar { background:rgba(255,255,255,0.2); border-radius:20px; height:5px; overflow:hidden; }
+.progress-fill { background:var(--accent); height:100%; border-radius:20px; transition:width 0.5s; width:0%; }
+nav { display:flex; overflow-x:auto; background:var(--surface); border-bottom:2px solid var(--border); }
+nav button { flex-shrink:0; padding:0.7rem 1.1rem; border:none; background:transparent; cursor:pointer; font-size:0.8rem; font-weight:600; color:var(--text-secondary); border-bottom:3px solid transparent; transition:all 0.2s; white-space:nowrap; }
+nav button:hover { background:rgba(108,92,231,0.05); color:var(--text); }
+nav button.active { color:var(--primary); border-bottom-color:var(--primary); background:rgba(108,92,231,0.06); }
+nav button.frente-b.active { color:var(--frente-b); border-bottom-color:var(--frente-b); background:rgba(225,112,85,0.06); }
+nav button .badge { display:inline-block; font-size:0.6rem; padding:1px 5px; border-radius:10px; margin-left:3px; font-weight:700; }
+nav button .badge-a { background:rgba(108,92,231,0.15); color:var(--frente-a); }
+nav button .badge-b { background:rgba(225,112,85,0.15); color:var(--frente-b); }
+nav button .check { color:var(--success); margin-left:3px; font-size:0.85rem; }
+main { max-width:960px; margin:0 auto; padding:1.5rem; }
+.tab-content { display:none; } .tab-content.active { display:block; }
+.module-header { padding:1.3rem; border-radius:var(--radius); margin-bottom:1.2rem; color:white; }
+.module-header.frente-a { background:linear-gradient(135deg,var(--frente-a),#a29bfe); }
+.module-header.frente-b { background:linear-gradient(135deg,var(--frente-b),#fab1a0); }
+.module-header h2 { font-size:1.3rem; margin-bottom:0.2rem; } .module-header p { opacity:0.9; font-size:0.9rem; }
+.section-tabs { display:flex; gap:0.4rem; margin-bottom:1.2rem; flex-wrap:wrap; }
+.section-tab { padding:0.5rem 1rem; border:2px solid var(--border); border-radius:25px; background:var(--surface); cursor:pointer; font-size:0.82rem; font-weight:600; color:var(--text-secondary); transition:all 0.2s; }
+.section-tab:hover { border-color:var(--primary-light); color:var(--primary); }
+.section-tab.active { background:var(--primary); color:white; border-color:var(--primary); }
+.section-tab.lab-tab { border-color:#00cec9; color:#00897b; }
+.section-tab.lab-tab.active { background:linear-gradient(135deg,#00b894,#00cec9); border-color:#00b894; color:white; }
+.section-panel { display:none; } .section-panel.active { display:block; }
+.card { background:var(--surface); border-radius:var(--radius); padding:1.3rem; margin-bottom:1rem; box-shadow:var(--shadow); border:1px solid var(--border); }
+.card h3 { color:var(--primary); font-size:1.1rem; margin-bottom:0.8rem; padding-bottom:0.4rem; border-bottom:2px solid var(--border); }
+.card.frente-b h3 { color:var(--frente-b); }
+.formula-box { background:linear-gradient(135deg,#f8f7ff,#f0eeff); border:2px solid var(--primary-light); border-radius:var(--radius); padding:0.8rem 1.2rem; margin:0.8rem 0; text-align:center; font-size:1.05rem; }
+.formula-box.accent { background:linear-gradient(135deg,#fff5f5,#ffe8e5); border-color:var(--frente-b); }
+.example { background:#f0fff4; border-left:4px solid var(--success); padding:0.8rem 1rem; margin:0.8rem 0; border-radius:0 var(--radius) var(--radius) 0; }
+.example strong { color:var(--success); }
+.note { background:#fffbeb; border-left:4px solid var(--warning); padding:0.8rem 1rem; margin:0.8rem 0; border-radius:0 var(--radius) var(--radius) 0; }
+.note strong { color:#e17055; }
+.accordion { border:1px solid var(--border); border-radius:var(--radius); margin-bottom:0.6rem; overflow:hidden; }
+.accordion-header { padding:0.8rem 1rem; background:var(--surface); cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:600; font-size:0.9rem; transition:background 0.2s; }
+.accordion-header:hover { background:#f8f9fa; }
+.accordion-header::after { content:'▸'; transition:transform 0.3s; color:var(--text-secondary); }
+.accordion.open .accordion-header::after { transform:rotate(90deg); }
+.accordion-body { max-height:0; overflow:hidden; transition:max-height 0.4s ease,padding 0.3s; padding:0 1rem; background:#fafbfc; }
+.accordion.open .accordion-body { max-height:3000px; padding:0.8rem 1rem; border-top:1px solid var(--border); }
+.quiz-option { display:block; width:100%; text-align:left; padding:0.7rem 1rem; margin:0.3rem 0; border:2px solid var(--border); border-radius:var(--radius); background:var(--surface); cursor:pointer; font-size:0.9rem; transition:all 0.2s; }
+.quiz-option:hover { border-color:var(--primary-light); background:#f8f7ff; }
+.quiz-option.correct { border-color:var(--success); background:#f0fff4; color:var(--success); font-weight:600; }
+.quiz-option.wrong { border-color:var(--error); background:#fff5f5; color:var(--error); }
+.quiz-option.disabled { pointer-events:none; opacity:0.7; }
+.quiz-input-group { display:flex; gap:0.5rem; align-items:center; margin:0.6rem 0; }
+.quiz-input-group input { padding:0.5rem 0.8rem; border:2px solid var(--border); border-radius:var(--radius); font-size:1rem; width:140px; outline:none; }
+.quiz-input-group input:focus { border-color:var(--primary); }
+.quiz-input-group button,.btn { padding:0.5rem 1rem; background:var(--primary); color:white; border:none; border-radius:var(--radius); cursor:pointer; font-weight:600; font-size:0.85rem; }
+.feedback { margin-top:0.4rem; padding:0.5rem 0.8rem; border-radius:var(--radius); font-weight:600; font-size:0.85rem; display:none; }
+.feedback.show { display:block; } .feedback.correct { background:#f0fff4; color:var(--success); } .feedback.wrong { background:#fff5f5; color:var(--error); }
+ul,ol { padding-left:1.5rem; margin:0.4rem 0; } li { margin-bottom:0.2rem; } p { margin-bottom:0.6rem; }
+.pascal-triangle { text-align:center; font-family:monospace; font-size:1rem; line-height:1.8; margin:0.8rem 0; }
+.table-wrapper { overflow-x:auto; margin:0.8rem 0; }
+table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+th,td { padding:0.5rem 0.8rem; border:1px solid var(--border); text-align:center; }
+th { background:#f8f7ff; font-weight:700; color:var(--primary); }
+
+/* LAB STYLES */
+.lab-canvas { display:block; margin:0.8rem auto; border:1px solid var(--border); border-radius:var(--radius); background:#fafbfc; max-width:100%; cursor:crosshair; }
+.lab-controls { display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; margin-bottom:0.8rem; padding:0.8rem; background:#f0f7ff; border-radius:var(--radius); border:1px solid #d0e0f0; }
+.lab-row { display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; }
+.lab-row label { font-size:0.85rem; font-weight:600; color:var(--text-secondary); white-space:nowrap; }
+.lab-row input[type="number"] { width:65px; padding:0.4rem; border:2px solid var(--border); border-radius:8px; font-size:0.95rem; text-align:center; outline:none; font-weight:600; }
+.lab-row input[type="number"]:focus { border-color:var(--primary); }
+.lab-row input[type="range"] { width:160px; accent-color:var(--primary); cursor:pointer; }
+.lab-row strong { color:var(--primary); min-width:35px; display:inline-block; text-align:center; font-size:0.95rem; }
+.lab-row .frb { color:var(--frente-b); }
+.metric-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:0.6rem; margin-top:0.8rem; }
+.metric-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0.7rem; text-align:center; }
+.metric-card .metric-label { display:block; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary); font-weight:700; }
+.metric-card .metric-value { display:block; font-size:1.2rem; font-weight:800; color:var(--primary); margin:0.2rem 0; }
+.metric-card .metric-value.frb { color:var(--frente-b); }
+.metric-card .metric-detail { display:block; font-size:0.75rem; color:var(--text-secondary); font-family:monospace; }
+.expansion-box { background:#fff5f5; border:2px solid var(--frente-b); border-radius:var(--radius); padding:1rem; margin:0.8rem 0; font-size:1rem; line-height:2; text-align:center; overflow-x:auto; }
+.pa-info { display:flex; flex-wrap:wrap; gap:0.8rem; margin-top:0.6rem; }
+.pa-badge { padding:0.4rem 0.8rem; border-radius:20px; font-weight:700; font-size:0.85rem; }
+.pa-badge.crescente { background:#f0fff4; color:var(--success); border:1px solid var(--success); }
+.pa-badge.decrescente { background:#fff5f5; color:var(--error); border:1px solid var(--error); }
+.pa-badge.constante { background:#fffbeb; color:#e17055; border:1px solid #e17055; }
+@media(max-width:768px) {
+  header { padding:0.8rem; } header h1 { font-size:1.1rem; } main { padding:0.8rem; }
+  nav button { padding:0.5rem 0.7rem; font-size:0.72rem; } .card { padding:0.8rem; }
+  .metric-grid { grid-template-columns:1fr 1fr; } .lab-row input[type="range"] { width:120px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Aula da Gimba - Matematica</h1>
+  <p class="subtitle">Frente A (Geometria Analitica) + Frente B (Combinatoria e Sequencias)</p>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</header>
+<nav id="mainNav">
+  <button class="tab-btn active" data-tab="a33">A33 <span class="badge badge-a">A</span><span class="check" style="display:none">&#10003;</span></button>
+  <button class="tab-btn" data-tab="a34">A34 <span class="badge badge-a">A</span><span class="check" style="display:none">&#10003;</span></button>
+  <button class="tab-btn" data-tab="a35">A35 <span class="badge badge-a">A</span><span class="check" style="display:none">&#10003;</span></button>
+  <button class="tab-btn" data-tab="a36">A36 <span class="badge badge-a">A</span><span class="check" style="display:none">&#10003;</span></button>
+  <button class="tab-btn frente-b" data-tab="b33">B33 <span class="badge badge-b">B</span><span class="check" style="display:none">&#10003;</span></button>
+  <button class="tab-btn frente-b" data-tab="b34">B34 <span class="badge badge-b">B</span><span class="check" style="display:none">&#10003;</span></button>
+  <button class="tab-btn frente-b" data-tab="b35">B35 <span class="badge badge-b">B</span><span class="check" style="display:none">&#10003;</span></button>
+</nav>
+<main>
+
+<!-- ===================== A33 ===================== -->
+<div class="tab-content active" id="tab-a33">
+  <div class="module-header frente-a"><h2>A33 -- Sistema Cartesiano e Distancia entre Dois Pontos</h2><p>Plano cartesiano, quadrantes, bissetrizes e formula da distancia</p></div>
+  <div class="section-tabs">
+    <button class="section-tab lab-tab active" onclick="showSection('a33','lab',this)">Laboratorio</button>
+    <button class="section-tab" onclick="showSection('a33','teoria',this)">Teoria</button>
+    <button class="section-tab" onclick="showSection('a33','fixacao',this)">Fixacao</button>
+    <button class="section-tab" onclick="showSection('a33','livro',this)">Livro</button>
+  </div>
+  <div class="section-panel active" id="a33-lab">
+    <div class="card"><h3>Plano Cartesiano Interativo</h3>
+      <p>Mude as coordenadas dos pontos A e B e veja tudo se atualizar em tempo real:</p>
+      <div class="lab-controls">
+        <div class="lab-row"><label>A: (</label><input type="number" id="a33ax" value="2" oninput="updateLabA33()">,<input type="number" id="a33ay" value="5" oninput="updateLabA33()"><label>)</label></div>
+        <div class="lab-row"><label>B: (</label><input type="number" id="a33bx" value="-3" oninput="updateLabA33()">,<input type="number" id="a33by" value="-2" oninput="updateLabA33()"><label>)</label></div>
+      </div>
+      <canvas id="labA33" class="lab-canvas" width="520" height="520"></canvas>
+      <div id="metricsA33"></div>
+    </div>
+  </div>
+  <div class="section-panel" id="a33-teoria">
+    <div class="card"><h3>Sistema Cartesiano Ortogonal</h3>
+      <p>Criado por Rene Descartes, o <strong>sistema cartesiano ortogonal</strong> e constituido por dois eixos perpendiculares que se interceptam na <strong>origem O</strong>, dividindo o plano em 4 <strong>quadrantes</strong>.</p>
+      <ul><li>Eixo horizontal \(\overrightarrow{Ox}\): <strong>eixo das abscissas</strong></li><li>Eixo vertical \(\overrightarrow{Oy}\): <strong>eixo das ordenadas</strong></li></ul>
+      <p>Cada ponto P tem coordenadas \(P(x_P, y_P)\):</p>
+      <ul><li>\(x>0, y>0\) → 1Q | \(x<0, y>0\) → 2Q | \(x<0, y<0\) → 3Q | \(x>0, y<0\) → 4Q</li></ul>
+    </div>
+    <div class="card"><h3>Bissetrizes dos Quadrantes</h3>
+      <div class="formula-box">\[b_{\text{impares}}: y = x \qquad b_{\text{pares}}: y = -x\]</div>
+    </div>
+    <div class="card"><h3>Distancia entre Dois Pontos</h3>
+      <div class="formula-box">\[d_{AB} = \sqrt{(x_B - x_A)^2 + (y_B - y_A)^2}\]</div>
+      <div class="example"><strong>Exemplo:</strong> \(A(1,3)\) e \(B(4,7)\): \(d = \sqrt{9+16} = 5\)</div>
+    </div>
+  </div>
+  <div class="section-panel" id="a33-fixacao">
+    <div class="card"><h3>Quiz 1 -- Quadrante</h3><p>\(P(-3, 5)\) pertence a qual quadrante?</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'wrong')">1Q</button><button class="quiz-option" onclick="checkQuiz(this,'correct')">2Q</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">3Q</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">4Q</button>
+      <div class="feedback correct">Correto! \(x<0\) e \(y>0\) → 2Q.</div><div class="feedback wrong">Incorreto. \(x=-3<0\), \(y=5>0\) → 2Q.</div></div>
+    <div class="card"><h3>Quiz 2 -- Bissetriz</h3><p>\(Q(4,-4)\) pertence a qual bissetriz?</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'wrong')">y = x</button><button class="quiz-option" onclick="checkQuiz(this,'correct')">y = -x</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">Nenhuma</button>
+      <div class="feedback correct">Correto! \(-4 = -(4)\), pertence a \(y=-x\).</div><div class="feedback wrong">Incorreto. \(y=-x\) pois \(-4=-4\).</div></div>
+    <div class="card"><h3>Quiz 3 -- Distancia</h3><p>Distancia entre \(A(2,-1)\) e \(B(5,3)\):</p>
+      <div class="quiz-input-group"><input type="text" id="a33q3" placeholder="Valor"><button onclick="checkInput('a33q3','5',this)">Verificar</button></div>
+      <div class="feedback correct">Correto! \(\sqrt{9+16}=5\)</div><div class="feedback wrong">Incorreto. \(\sqrt{(5-2)^2+(3+1)^2}=\sqrt{25}=5\)</div></div>
+  </div>
+  <div class="section-panel" id="a33-livro">
+    <div class="card"><h3>Exercicios Propostos -- p.738</h3>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">01. Represente A(1,3), B(-2,1), C(-3,-2), D(3,-4), E(4,0), F(0,-1).</div><div class="accordion-body"><p>A→1Q, B→2Q, C→3Q, D→4Q, E→eixo x, F→eixo y.</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">02. Valores de m para P(2m+10, m-3) no 2Q?</div><div class="accordion-body"><p>\(2m+10<0 \Rightarrow m<-5\) e \(m-3>0 \Rightarrow m>3\). Impossivel simultaneamente. <strong>Nao existe.</strong></p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">03. Simetricos de A(4,6) em relacao aos eixos.</div><div class="accordion-body"><p>Eixo Oy: B(-4,6) | Eixo Ox: C(4,-6) | Origem: D(-4,-6)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">04. Distancia: a) A(-1,4) e B(6,-5) | b) C(3,1) e D(0,-2)</div><div class="accordion-body"><p><strong>a)</strong> \(\sqrt{49+81}=\sqrt{130}\) <strong>b)</strong> \(\sqrt{9+9}=3\sqrt{2}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">05. Perimetro do triangulo A(0,0), B(3,7), C(5,-1).</div><div class="accordion-body"><p>\(d_{AB}=\sqrt{58}\), \(d_{BC}=\sqrt{68}=2\sqrt{17}\), \(d_{AC}=\sqrt{26}\). \(P \approx 20{,}97\)</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== A34 ===================== -->
+<div class="tab-content" id="tab-a34">
+  <div class="module-header frente-a"><h2>A34 -- Ponto Medio, Baricentro e Alinhamento</h2><p>Ponto medio, baricentro, condicao de alinhamento e area</p></div>
+  <div class="section-tabs">
+    <button class="section-tab lab-tab active" onclick="showSection('a34','lab',this)">Laboratorio</button>
+    <button class="section-tab" onclick="showSection('a34','teoria',this)">Teoria</button>
+    <button class="section-tab" onclick="showSection('a34','fixacao',this)">Fixacao</button>
+    <button class="section-tab" onclick="showSection('a34','livro',this)">Livro</button>
+  </div>
+  <div class="section-panel active" id="a34-lab">
+    <div class="card"><h3>Triangulo Interativo</h3>
+      <p>Mude os vertices e veja ponto medio, medianas, baricentro e area:</p>
+      <div class="lab-controls">
+        <div class="lab-row"><label>A: (</label><input type="number" id="a34ax" value="1" oninput="updateLabA34()">,<input type="number" id="a34ay" value="1" oninput="updateLabA34()"><label>)</label></div>
+        <div class="lab-row"><label>B: (</label><input type="number" id="a34bx" value="7" oninput="updateLabA34()">,<input type="number" id="a34by" value="1" oninput="updateLabA34()"><label>)</label></div>
+        <div class="lab-row"><label>C: (</label><input type="number" id="a34cx" value="3" oninput="updateLabA34()">,<input type="number" id="a34cy" value="6" oninput="updateLabA34()"><label>)</label></div>
+      </div>
+      <canvas id="labA34" class="lab-canvas" width="520" height="520"></canvas>
+      <div id="metricsA34"></div>
+    </div>
+  </div>
+  <div class="section-panel" id="a34-teoria">
+    <div class="card"><h3>Ponto Medio (demonstracao via Tales)</h3>
+      <p>M divide \(\overline{AB}\) ao meio. Pelo T. de Tales: \(\frac{x_M - x_A}{x_B - x_M}=1 \Rightarrow 2x_M = x_A+x_B\)</p>
+      <div class="formula-box">\[M\left(\frac{x_A+x_B}{2},\;\frac{y_A+y_B}{2}\right)\]</div></div>
+    <div class="card"><h3>Baricentro</h3>
+      <p>Encontro das 3 medianas. O baricentro divide cada mediana na razao 2:1 a partir do vertice.</p>
+      <div class="formula-box">\[G\left(\frac{x_A+x_B+x_C}{3},\;\frac{y_A+y_B+y_C}{3}\right)\]</div></div>
+    <div class="card"><h3>Alinhamento de 3 Pontos</h3>
+      <div class="formula-box">\[D = \begin{vmatrix}x_A&y_A&1\\x_B&y_B&1\\x_C&y_C&1\end{vmatrix} = 0 \;\text{(alinhados)}\]</div></div>
+    <div class="card"><h3>Area do Triangulo</h3>
+      <div class="formula-box">\[S = \frac{|D|}{2}\]</div><div class="note"><strong>Obs:</strong> Se \(D=0\), pontos colineares.</div></div>
+  </div>
+  <div class="section-panel" id="a34-fixacao">
+    <div class="card"><h3>Quiz 1 -- Ponto Medio</h3><p>Ponto medio de A(4,8) e B(10,2)?</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'correct')">(7, 5)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">(14, 10)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">(5, 7)</button>
+      <div class="feedback correct">Correto! \((\frac{14}{2},\frac{10}{2})=(7,5)\)</div><div class="feedback wrong">Incorreto. M = (7, 5).</div></div>
+    <div class="card"><h3>Quiz 2 -- Baricentro</h3><p>Abscissa do baricentro de A(1,2), B(4,5), C(7,2):</p>
+      <div class="quiz-input-group"><input type="text" id="a34q2" placeholder="x_G"><button onclick="checkInput('a34q2','4',this)">Verificar</button></div>
+      <div class="feedback correct">Correto! \(\frac{1+4+7}{3}=4\)</div><div class="feedback wrong">Incorreto. \(x_G=\frac{12}{3}=4\)</div></div>
+    <div class="card"><h3>Quiz 3 -- Area</h3><p>Area do triangulo A(0,0), B(4,0), C(0,6):</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'wrong')">24</button><button class="quiz-option" onclick="checkQuiz(this,'correct')">12</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">6</button>
+      <div class="feedback correct">Correto! \(S=\frac{|24|}{2}=12\)</div><div class="feedback wrong">Incorreto. S=12.</div></div>
+  </div>
+  <div class="section-panel" id="a34-livro">
+    <div class="card"><h3>Exercicios Propostos -- p.743</h3>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">01. Triangulo A(2,2), B(-4,2), C(0,8): ponto medio, mediana, baricentro.</div><div class="accordion-body"><p><strong>a)</strong> M de BC = (-2, 5)</p><p><strong>b)</strong> Mediana AM = \(\sqrt{16+9}=5\)</p><p><strong>c)</strong> G = (-2/3, 4)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">02. M(2,3) medio de A(x,7) e B(3,y). Achar x e y.</div><div class="accordion-body"><p>\(\frac{x+3}{2}=2 \Rightarrow x=1\). \(\frac{7+y}{2}=3 \Rightarrow y=-1\).</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">03. A(1,-2), B(4,-11), C(-2,7) colineares? (Sarrus)</div><div class="accordion-body"><p>Diag. principais: \((-11)+4+28=21\). Diag. secundarias: \(22+7-8=21\). \(D=21-21=0\). <strong>Sim, colineares.</strong></p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">04. Area do triangulo A(1,2), B(2,4), C(0,7).</div><div class="accordion-body"><p>\(D=-3-4+14=7\). \(S=|7|/2=\boxed{3{,}5}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">05. m para A(-2,7), B(m,-11), C(1,-2) alinhados.</div><div class="accordion-body"><p>\(18-7m+7-2m+11=0 \Rightarrow -9m+36=0 \Rightarrow \boxed{m=4}\)</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== A35 ===================== -->
+<div class="tab-content" id="tab-a35">
+  <div class="module-header frente-a"><h2>A35 -- Equacao Geral e Reduzida da Reta</h2><p>Equacao geral, inclinacao, declividade, equacao reduzida</p></div>
+  <div class="section-tabs">
+    <button class="section-tab lab-tab active" onclick="showSection('a35','lab',this)">Laboratorio</button>
+    <button class="section-tab" onclick="showSection('a35','teoria',this)">Teoria</button>
+    <button class="section-tab" onclick="showSection('a35','fixacao',this)">Fixacao</button>
+    <button class="section-tab" onclick="showSection('a35','livro',this)">Livro</button>
+  </div>
+  <div class="section-panel active" id="a35-lab">
+    <div class="card"><h3>Reta Interativa: y = mx + n</h3>
+      <p>Arraste os sliders e observe a reta, a inclinacao e os interceptos mudando:</p>
+      <div class="lab-controls">
+        <div class="lab-row"><label>m (coef. angular):</label><input type="range" id="a35m" min="-5" max="5" step="0.1" value="1" oninput="updateLabA35()"><strong id="a35mV">1.0</strong></div>
+        <div class="lab-row"><label>n (coef. linear):</label><input type="range" id="a35n" min="-8" max="8" step="0.5" value="0" oninput="updateLabA35()"><strong id="a35nV">0.0</strong></div>
+      </div>
+      <canvas id="labA35" class="lab-canvas" width="520" height="520"></canvas>
+      <div id="metricsA35"></div>
+    </div>
+  </div>
+  <div class="section-panel" id="a35-teoria">
+    <div class="card"><h3>Equacao Geral</h3>
+      <p>Via condicao de alinhamento de P(x,y) com A e B:</p>
+      <div class="formula-box">\[ax + by + c = 0\]</div></div>
+    <div class="card"><h3>Casos Especiais</h3>
+      <ul><li><strong>Horizontal:</strong> \(a=0 \Rightarrow y=-c/b\)</li><li><strong>Vertical:</strong> \(b=0 \Rightarrow x=-c/a\)</li><li><strong>Pela origem:</strong> \(c=0\)</li></ul></div>
+    <div class="card"><h3>Inclinacao e Declividade</h3>
+      <div class="formula-box">\[m = \text{tg}\;\alpha = \frac{\Delta y}{\Delta x}\]</div>
+      <ul><li>\(\alpha=0°\): horizontal, \(m=0\)</li><li>\(0°<\alpha<90°\): \(m>0\)</li><li>\(\alpha=90°\): vertical</li><li>\(90°<\alpha<180°\): \(m<0\)</li></ul></div>
+    <div class="card"><h3>Equacao Reduzida</h3>
+      <div class="formula-box">\[y = mx + n\]</div>
+      <p>\(m\) = coef. angular, \(n\) = coef. linear (onde corta eixo y). Da geral: \(m=-a/b\), \(n=-c/b\).</p></div>
+  </div>
+  <div class="section-panel" id="a35-fixacao">
+    <div class="card"><h3>Quiz 1 -- Coef. Angular</h3><p>m da reta por A(1,2) e B(4,8)?</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'correct')">2</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">3</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">6</button>
+      <div class="feedback correct">Correto! \(m=6/3=2\)</div><div class="feedback wrong">Incorreto. \(m=(8-2)/(4-1)=2\)</div></div>
+    <div class="card"><h3>Quiz 2 -- Eq. Reduzida</h3><p>\(4x-2y+6=0\) na forma reduzida:</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'correct')">\(y=2x+3\)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">\(y=-2x+3\)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">\(y=2x-3\)</button>
+      <div class="feedback correct">Correto! \(-2y=-4x-6 \Rightarrow y=2x+3\)</div><div class="feedback wrong">Incorreto. Isolando: \(y=2x+3\).</div></div>
+    <div class="card"><h3>Quiz 3 -- Inclinacao</h3><p>Reta com \(m=1\) tem inclinacao de:</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'correct')">45°</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">30°</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">60°</button>
+      <div class="feedback correct">Correto! \(\text{tg}\;45°=1\)</div><div class="feedback wrong">Incorreto. \(\alpha=45°\).</div></div>
+  </div>
+  <div class="section-panel" id="a35-livro">
+    <div class="card"><h3>Exercicios -- p.748</h3>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">01. Eq. geral por A(-2,3) e B(4,6).</div><div class="accordion-body"><p>Determinante → \(-3x+6y-24=0\) → \(\boxed{x-2y+8=0}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">02. Reta 2x-3y+18=0: a) A(9,12) pertence? b) Intersec. eixo x c) Intersec. eixo y</div><div class="accordion-body"><p><strong>a)</strong> \(18-36+18=0\). Sim. <strong>b)</strong> B(-9,0). <strong>c)</strong> C(0,6).</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">03. Interseccao de r:2x-y-1=0 e s:4x+3y-17=0.</div><div class="accordion-body"><p>\(y=2x-1 \Rightarrow 10x=20 \Rightarrow x=2, y=3\). Ponto: \(\boxed{(2,3)}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">04. Eq. reduzida por A(0,-5) e B(2,7).</div><div class="accordion-body"><p>\(m=12/2=6\), \(n=-5\). \(\boxed{y=6x-5}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">05. Eq. reduzida: inclinacao 45°, intercepta y em (0,-8).</div><div class="accordion-body"><p>\(m=\text{tg}\;45°=1\), \(n=-8\). \(\boxed{y=x-8}\)</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== A36 ===================== -->
+<div class="tab-content" id="tab-a36">
+  <div class="module-header frente-a"><h2>A36 -- Equacao Fundamental, Segmentaria e Parametrica</h2><p>Outras formas de representar a reta</p></div>
+  <div class="section-tabs">
+    <button class="section-tab lab-tab active" onclick="showSection('a36','lab',this)">Laboratorio</button>
+    <button class="section-tab" onclick="showSection('a36','teoria',this)">Teoria</button>
+    <button class="section-tab" onclick="showSection('a36','fixacao',this)">Fixacao</button>
+    <button class="section-tab" onclick="showSection('a36','livro',this)">Livro</button>
+  </div>
+  <div class="section-panel active" id="a36-lab">
+    <div class="card"><h3>Conversor de Equacoes da Reta</h3>
+      <p>Insira um ponto e a declividade. Todas as formas da equacao se atualizam:</p>
+      <div class="lab-controls">
+        <div class="lab-row"><label>Ponto: (</label><input type="number" id="a36px" value="3" step="0.5" oninput="updateLabA36()">,<input type="number" id="a36py" value="2" step="0.5" oninput="updateLabA36()"><label>)</label></div>
+        <div class="lab-row"><label>m =</label><input type="number" id="a36m" value="1.5" step="0.1" oninput="updateLabA36()"></div>
+      </div>
+      <canvas id="labA36" class="lab-canvas" width="520" height="420"></canvas>
+      <div id="metricsA36"></div>
+    </div>
+  </div>
+  <div class="section-panel" id="a36-teoria">
+    <div class="card"><h3>Equacao Fundamental</h3><div class="formula-box">\[y - y_0 = m(x - x_0)\]</div><div class="example"><strong>Ex:</strong> \(m=3\), \(P(2,5)\): \(y-5=3(x-2) \Rightarrow y=3x-1\)</div></div>
+    <div class="card"><h3>Equacao Segmentaria</h3><p>Reta intercepta eixo x em \(A(p,0)\) e eixo y em \(B(0,q)\):</p><div class="formula-box">\[\frac{x}{p}+\frac{y}{q}=1\]</div></div>
+    <div class="card"><h3>Formas de Obter m</h3><ul><li>Da eq. geral: \(m=-a/b\)</li><li>De dois pontos: \(m=\Delta y/\Delta x\)</li><li>Da inclinacao: \(m=\text{tg}\;\alpha\)</li></ul></div>
+  </div>
+  <div class="section-panel" id="a36-fixacao">
+    <div class="card"><h3>Quiz 1 -- Eq. Fundamental</h3><p>Reta com \(m=-2\) por \(P(1,4)\)?</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'correct')">\(y=-2x+6\)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">\(y=-2x+4\)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">\(y=2x+6\)</button>
+      <div class="feedback correct">Correto! \(y-4=-2(x-1) \Rightarrow y=-2x+6\)</div><div class="feedback wrong">Incorreto. \(y=-2x+6\).</div></div>
+    <div class="card"><h3>Quiz 2 -- Eq. Segmentaria</h3><p>\(2x+3y-6=0\) na forma segmentaria:</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'correct')">\(x/3+y/2=1\)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">\(x/2+y/3=1\)</button>
+      <div class="feedback correct">Correto! \(\frac{2x}{6}+\frac{3y}{6}=1\)</div><div class="feedback wrong">Incorreto. Divide tudo por 6.</div></div>
+  </div>
+  <div class="section-panel" id="a36-livro">
+    <div class="card"><h3>Exercicios -- p.755</h3>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">13. (Uncisal) Reta s intercepta eixo y em (0,-a) com angulo θ.</div><div class="accordion-body"><p>\(m=\text{tg}\;\theta\), \(n=-a\). \(\boxed{y=(\text{tg}\;\theta)x-a}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">14. (Unioeste) y=ax e y=bx+c em (3,2), b=-3a.</div><div class="accordion-body"><p>\(a=2/3\), \(b=-2\), \(c=8\). Retas: \(y=\frac{2}{3}x\) e \(y=-2x+8\).</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== B33 ===================== -->
+<div class="tab-content" id="tab-b33">
+  <div class="module-header frente-b"><h2>B33 -- Numeros Binomiais e Triangulo de Pascal</h2><p>Definicao, propriedades, Stiffel e o Triangulo</p></div>
+  <div class="section-tabs">
+    <button class="section-tab lab-tab active" onclick="showSection('b33','lab',this)">Laboratorio</button>
+    <button class="section-tab" onclick="showSection('b33','teoria',this)">Teoria</button>
+    <button class="section-tab" onclick="showSection('b33','fixacao',this)">Fixacao</button>
+    <button class="section-tab" onclick="showSection('b33','livro',this)">Livro</button>
+  </div>
+  <div class="section-panel active" id="b33-lab">
+    <div class="card frente-b"><h3>Calculadora de Binomiais + Pascal Interativo</h3>
+      <p>Mude n e p e veja o calculo passo a passo e a posicao no Triangulo de Pascal:</p>
+      <div class="lab-controls">
+        <div class="lab-row"><label>n =</label><input type="number" id="b33n" value="7" min="0" max="14" oninput="updateLabB33()"></div>
+        <div class="lab-row"><label>p =</label><input type="number" id="b33p" value="3" min="0" max="14" oninput="updateLabB33()"></div>
+      </div>
+      <div id="metricsB33"></div>
+      <canvas id="labB33" class="lab-canvas" width="600" height="360"></canvas>
+    </div>
+  </div>
+  <div class="section-panel" id="b33-teoria">
+    <div class="card frente-b"><h3>Definicao</h3><div class="formula-box accent">\[\binom{n}{p}=\frac{n!}{p!(n-p)!}\]</div>
+      <p>Casos: \(\binom{n}{0}=1\), \(\binom{n}{1}=n\), \(\binom{n}{n}=1\).</p></div>
+    <div class="card frente-b"><h3>Complementares e Igualdade</h3><div class="formula-box accent">\[\binom{n}{p}=\binom{n}{n-p}\]</div><div class="formula-box accent">\[\binom{n}{p}=\binom{n}{q} \iff p=q \text{ ou } p+q=n\]</div></div>
+    <div class="card frente-b"><h3>Relacao de Stiffel</h3><div class="formula-box accent">\[\binom{n}{p}+\binom{n}{p+1}=\binom{n+1}{p+1}\]</div></div>
+    <div class="card frente-b"><h3>Triangulo de Pascal -- 6 Propriedades</h3>
+      <ol><li>1° e ultimo de cada linha = 1</li><li>Simetria (complementares)</li><li>Stiffel: cada numero = soma dos dois acima</li><li>Soma da linha n = \(2^n\)</li><li>Soma de coluna p: soma dos n primeiros = termo na linha n+1, coluna p+1</li><li>Soma de diagonal</li></ol></div>
+  </div>
+  <div class="section-panel" id="b33-fixacao">
+    <div class="card frente-b"><h3>Quiz 1 -- Calcular</h3><p>\(\binom{6}{2}=\) ?</p>
+      <div class="quiz-input-group"><input type="text" id="b33q1" placeholder="Valor"><button onclick="checkInput('b33q1','15',this)">Verificar</button></div>
+      <div class="feedback correct">Correto! \(\frac{6\cdot5}{2}=15\)</div><div class="feedback wrong">Incorreto. \(\binom{6}{2}=15\).</div></div>
+    <div class="card frente-b"><h3>Quiz 2 -- Stiffel</h3><p>\(\binom{5}{2}+\binom{5}{3}=\) ?</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'correct')">\(\binom{6}{3}=20\)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">\(\binom{5}{5}=1\)</button>
+      <div class="feedback correct">Correto! Stiffel: \(\binom{6}{3}=20\)</div><div class="feedback wrong">Incorreto. = \(\binom{6}{3}=20\).</div></div>
+    <div class="card frente-b"><h3>Quiz 3 -- Soma da Linha</h3><p>Soma da linha 5 do Pascal?</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'wrong')">16</button><button class="quiz-option" onclick="checkQuiz(this,'correct')">32</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">64</button>
+      <div class="feedback correct">Correto! \(2^5=32\)</div><div class="feedback wrong">Incorreto. \(2^5=32\).</div></div>
+  </div>
+  <div class="section-panel" id="b33-livro">
+    <div class="card frente-b"><h3>Exercicios -- p.766</h3>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">01. S = C(5,2)+C(7,7)+C(4,0)+C(9,1).</div><div class="accordion-body"><p>\(10+1+1+9=\boxed{21}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">02. C(14,x+8)=C(14,5x). Achar x.</div><div class="accordion-body"><p>Caso 1: \(x+8=5x \Rightarrow x=2\). Caso 2: \(6x+8=14 \Rightarrow x=1\). \(\boxed{x=1 \text{ ou } 2}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">03. C(x-1,1)+C(x-1,2)=6. Achar x.</div><div class="accordion-body"><p>Stiffel: \(\binom{x}{2}=6 \Rightarrow x(x-1)=12 \Rightarrow x=4\).</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== B34 ===================== -->
+<div class="tab-content" id="tab-b34">
+  <div class="module-header frente-b"><h2>B34 -- Binomio de Newton</h2><p>Somatorio, desenvolvimento (a+b)^n e termo geral</p></div>
+  <div class="section-tabs">
+    <button class="section-tab lab-tab active" onclick="showSection('b34','lab',this)">Laboratorio</button>
+    <button class="section-tab" onclick="showSection('b34','teoria',this)">Teoria</button>
+    <button class="section-tab" onclick="showSection('b34','fixacao',this)">Fixacao</button>
+    <button class="section-tab" onclick="showSection('b34','livro',this)">Livro</button>
+  </div>
+  <div class="section-panel active" id="b34-lab">
+    <div class="card frente-b"><h3>Expansor de Binomio de Newton</h3>
+      <p>Escolha os valores e veja o desenvolvimento completo de \((a\cdot x + b)^n\):</p>
+      <div class="lab-controls">
+        <div class="lab-row"><label>a =</label><input type="number" id="b34a" value="1" step="1" oninput="updateLabB34()"></div>
+        <div class="lab-row"><label>b =</label><input type="number" id="b34b" value="2" step="1" oninput="updateLabB34()"></div>
+        <div class="lab-row"><label>n =</label><input type="number" id="b34n" value="4" min="0" max="10" oninput="updateLabB34()"></div>
+      </div>
+      <div id="metricsB34"></div>
+    </div>
+  </div>
+  <div class="section-panel" id="b34-teoria">
+    <div class="card frente-b"><h3>Desenvolvimento</h3>
+      <div class="formula-box accent">\[(a+b)^n=\sum_{p=0}^{n}\binom{n}{p}a^{n-p}b^p\]</div>
+      <ul><li>\(n+1\) termos</li><li>Potencias de a decrescem, de b crescem</li><li>Soma dos expoentes = n</li><li>Coeficientes = linha n do Pascal</li></ul></div>
+    <div class="card frente-b"><h3>Termo Geral</h3><div class="formula-box accent">\[T_{p+1}=\binom{n}{p}\cdot a^{n-p}\cdot b^p\]</div>
+      <div class="example"><strong>Ex:</strong> 3° termo de \((x+2)^5\): \(T_3=\binom{5}{2}x^3 \cdot 4=40x^3\)</div></div>
+  </div>
+  <div class="section-panel" id="b34-fixacao">
+    <div class="card frente-b"><h3>Quiz 1 -- N° de Termos</h3><p>\((a+b)^7\) tem quantos termos?</p>
+      <button class="quiz-option" onclick="checkQuiz(this,'wrong')">7</button><button class="quiz-option" onclick="checkQuiz(this,'correct')">8</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">14</button>
+      <div class="feedback correct">Correto! \(n+1=8\)</div><div class="feedback wrong">Incorreto. Sempre \(n+1\) termos.</div></div>
+    <div class="card frente-b"><h3>Quiz 2 -- Coeficiente</h3><p>Coeficiente de \(a^3b^2\) em \((a+b)^5\)?</p>
+      <div class="quiz-input-group"><input type="text" id="b34q2" placeholder=""><button onclick="checkInput('b34q2','10',this)">Verificar</button></div>
+      <div class="feedback correct">Correto! \(\binom{5}{2}=10\)</div><div class="feedback wrong">Incorreto. \(\binom{5}{2}=10\).</div></div>
+    <div class="card frente-b"><h3>Quiz 3 -- 4° termo de (x+1)^6</h3>
+      <button class="quiz-option" onclick="checkQuiz(this,'correct')">\(20x^3\)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">\(15x^4\)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">\(6x^5\)</button>
+      <div class="feedback correct">Correto! \(T_4=\binom{6}{3}x^3=20x^3\)</div><div class="feedback wrong">Incorreto. \(T_4=20x^3\).</div></div>
+  </div>
+  <div class="section-panel" id="b34-livro">
+    <div class="card frente-b"><h3>Exercicios -- p.771-772</h3>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">02. (a+b)^5=1024, calcule (a+b)^3.</div><div class="accordion-body"><p>\(1024=4^5 \Rightarrow a+b=4 \Rightarrow (a+b)^3=\boxed{64}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">03. Somatorio: a) (x+2y)^5 b) (x²-5)^6</div><div class="accordion-body"><p><strong>a)</strong> \(\sum_{p=0}^{5}\binom{5}{p}x^{5-p}(2y)^p\) <strong>b)</strong> \(\sum_{p=0}^{6}\binom{6}{p}(x^2)^{6-p}(-5)^p\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">04. 6° termo de (x²+2)^8.</div><div class="accordion-body"><p>\(T_6=\binom{8}{5}\cdot x^6\cdot 32=56\cdot 32\cdot x^6=\boxed{1792x^6}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">05. (FEI) Soma coef. (14x-13y)^20.</div><div class="accordion-body"><p>\(x=y=1: (14-13)^{20}=\boxed{1}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">06. (FEI) S=C(20,0)+C(20,1)·2+...+C(20,20)·2^20</div><div class="accordion-body"><p>\(=(1+2)^{20}=\boxed{3^{20}}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">11. (UFPA) Termo medio de (2x+3y)^8.</div><div class="accordion-body"><p>\(T_5=\binom{8}{4}(2x)^4(3y)^4=70\cdot16\cdot81\cdot x^4y^4=\boxed{90720x^4y^4}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">12. (Mackenzie) C(n,0)+...+C(n,n)=1024. Calcule C(n+2,0)+...+C(n+2,n+1).</div><div class="accordion-body"><p>\(2^n=1024 \Rightarrow n=10\). Soma: \(2^{12}-1=\boxed{4095}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">13. (Unifenas) Soma coef. (2x+3y)^10.</div><div class="accordion-body"><p>\((2+3)^{10}=\boxed{5^{10}}\)</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== B35 ===================== -->
+<div class="tab-content" id="tab-b35">
+  <div class="module-header frente-b"><h2>B35 -- Progressao Aritmetica (PA)</h2><p>Definicao, classificacao e termo geral</p></div>
+  <div class="section-tabs">
+    <button class="section-tab lab-tab active" onclick="showSection('b35','lab',this)">Laboratorio</button>
+    <button class="section-tab" onclick="showSection('b35','teoria',this)">Teoria</button>
+    <button class="section-tab" onclick="showSection('b35','fixacao',this)">Fixacao</button>
+    <button class="section-tab" onclick="showSection('b35','livro',this)">Livro</button>
+  </div>
+  <div class="section-panel active" id="b35-lab">
+    <div class="card frente-b"><h3>Visualizador de PA</h3>
+      <p>Ajuste o primeiro termo e a razao e veja a PA se formar:</p>
+      <div class="lab-controls">
+        <div class="lab-row"><label>a₁ =</label><input type="range" id="b35a1" min="-10" max="20" step="1" value="3" oninput="updateLabB35()"><strong class="frb" id="b35a1V">3</strong></div>
+        <div class="lab-row"><label>r =</label><input type="range" id="b35r" min="-5" max="5" step="0.5" value="4" oninput="updateLabB35()"><strong class="frb" id="b35rV">4</strong></div>
+        <div class="lab-row"><label>Termos:</label><input type="range" id="b35num" min="3" max="20" step="1" value="10" oninput="updateLabB35()"><strong class="frb" id="b35numV">10</strong></div>
+      </div>
+      <canvas id="labB35" class="lab-canvas" width="600" height="300"></canvas>
+      <div id="metricsB35"></div>
+    </div>
+  </div>
+  <div class="section-panel" id="b35-teoria">
+    <div class="card frente-b"><h3>Definicao</h3><p>PA: cada termo = anterior + constante r (razao).</p>
+      <div class="formula-box accent">\[a_2-a_1=a_3-a_2=\cdots=r\]</div></div>
+    <div class="card frente-b"><h3>Classificacao</h3>
+      <ul><li><strong>Crescente:</strong> \(r>0\)</li><li><strong>Decrescente:</strong> \(r<0\)</li><li><strong>Constante:</strong> \(r=0\)</li></ul></div>
+    <div class="card frente-b"><h3>Termo Geral</h3><div class="formula-box accent">\[a_n=a_1+(n-1)\cdot r\]</div>
+      <div class="example"><strong>Ex:</strong> PA (3,7,11,...): \(a_{20}=3+19\cdot4=79\)</div></div>
+  </div>
+  <div class="section-panel" id="b35-fixacao">
+    <div class="card frente-b"><h3>Quiz 1 -- Identificar PA</h3>
+      <button class="quiz-option" onclick="checkQuiz(this,'wrong')">(1,2,4,8,...)</button><button class="quiz-option" onclick="checkQuiz(this,'correct')">(3,7,11,15,...)</button><button class="quiz-option" onclick="checkQuiz(this,'wrong')">(1,1,2,3,5,...)</button>
+      <div class="feedback correct">Correto! Diferenca constante = 4.</div><div class="feedback wrong">Incorreto. So (3,7,11,15,...) tem r=4.</div></div>
+    <div class="card frente-b"><h3>Quiz 2 -- Razao</h3><p>r da PA (20,15,10,5,...)?</p>
+      <div class="quiz-input-group"><input type="text" id="b35q2" placeholder="r"><button onclick="checkInput('b35q2','-5',this)">Verificar</button></div>
+      <div class="feedback correct">Correto! \(15-20=-5\)</div><div class="feedback wrong">Incorreto. \(r=-5\).</div></div>
+    <div class="card frente-b"><h3>Quiz 3 -- Termo Geral</h3><p>10° termo da PA (2,5,8,11,...)?</p>
+      <div class="quiz-input-group"><input type="text" id="b35q3" placeholder="a₁₀"><button onclick="checkInput('b35q3','29',this)">Verificar</button></div>
+      <div class="feedback correct">Correto! \(2+9\cdot3=29\)</div><div class="feedback wrong">Incorreto. \(a_{10}=29\).</div></div>
+  </div>
+  <div class="section-panel" id="b35-livro">
+    <div class="card frente-b"><h3>Exercicios -- p.774</h3>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">01. 5 primeiros termos: a) a₁=-2, r=3 | b) a₂=13, r=-6</div><div class="accordion-body"><p><strong>a)</strong> (-2, 1, 4, 7, 10). <strong>b)</strong> a₁=19: (19, 13, 7, 1, -5).</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">02. PA (x+1, 3x+1, x+13). Achar x e r.</div><div class="accordion-body"><p>\(2x=-2x+12 \Rightarrow x=3\). PA (4,10,16), \(r=6\).</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">03. PA (10,17,24,...,143): a) 10° termo b) n° termos</div><div class="accordion-body"><p><strong>a)</strong> \(a_{10}=10+63=73\). <strong>b)</strong> \(143=10+7(n-1) \Rightarrow n=20\).</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">04. PA com a₈=43 e a₁₅=85.</div><div class="accordion-body"><p>\(7r=42 \Rightarrow r=6\). \(a_1=1\). PA: (1, 7, 13, 19, ...).</p></div></div>
+    </div>
+    <div class="card frente-b"><h3>Complementares -- p.775</h3>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">07. (FGV) 15ª prest.=3690, 81ª=2700. Valor da 1ª?</div><div class="accordion-body"><p>\(66r=-990 \Rightarrow r=-15\). \(a_1=3690+210=\boxed{R\$\;3.900}\)</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">08. Palitos de fosforo: 150 quadrados em linha.</div><div class="accordion-body"><p>PA: (4,7,10,...). Para n quadrados: \(3n+1\). \(3(150)+1=\boxed{451}\) palitos.</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">09. PA (x+3, 2x-4, 39-2x). Achar x e r.</div><div class="accordion-body"><p>\(x-7=43-4x \Rightarrow 5x=50 \Rightarrow x=10\). PA (13,16,19), \(r=3\).</p></div></div>
+      <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">10. a) 21° termo (3,9,15,...) | b) Termos da PA (1,5,9,...,97)</div><div class="accordion-body"><p><strong>a)</strong> \(a_{21}=3+120=\boxed{123}\). <strong>b)</strong> \(96=4(n-1) \Rightarrow \boxed{n=25}\).</p></div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+<script>
+const tabBtns=document.querySelectorAll('.tab-btn'),tabContents=document.querySelectorAll('.tab-content'),visited=new Set(['a33']);
+tabBtns.forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.tab;tabBtns.forEach(x=>x.classList.remove('active'));b.classList.add('active');tabContents.forEach(x=>x.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');visited.add(t);updateProgress();if(typeof MathJax!=='undefined'&&MathJax.typeset)MathJax.typeset();initLab(t);}));
+function updateProgress(){const p=(visited.size/7)*100;document.getElementById('progressFill').style.width=p+'%';tabBtns.forEach(b=>{if(visited.has(b.dataset.tab))b.querySelector('.check').style.display='inline';});}
+function showSection(m,s,btn){const p=btn.parentElement;p.querySelectorAll('.section-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');const c=document.getElementById('tab-'+m);c.querySelectorAll('.section-panel').forEach(x=>x.classList.remove('active'));document.getElementById(m+'-'+s).classList.add('active');if(typeof MathJax!=='undefined'&&MathJax.typeset)MathJax.typeset();if(s==='lab')initLab(m);}
+function checkQuiz(btn,r){const c=btn.closest('.card'),o=c.querySelectorAll('.quiz-option');o.forEach(x=>{x.classList.add('disabled');x.classList.remove('correct','wrong');});if(r==='correct'){btn.classList.add('correct');c.querySelector('.feedback.correct').classList.add('show');}else{btn.classList.add('wrong');o.forEach(x=>{if(x.getAttribute('onclick').includes("'correct'"))x.classList.add('correct');});c.querySelector('.feedback.wrong').classList.add('show');}if(typeof MathJax!=='undefined'&&MathJax.typeset)MathJax.typeset();}
+function checkInput(id,ans,btn){const inp=document.getElementById(id),c=btn.closest('.card'),v=inp.value.trim().replace(',','.').replace(/\s/g,'');if(ans.split('|').includes(v)){c.querySelector('.feedback.correct').classList.add('show');inp.style.borderColor='var(--success)';}else{c.querySelector('.feedback.wrong').classList.add('show');inp.style.borderColor='var(--error)';}btn.disabled=true;if(typeof MathJax!=='undefined'&&MathJax.typeset)MathJax.typeset();}
+function toggleAccordion(h){h.parentElement.classList.toggle('open');if(typeof MathJax!=='undefined'&&MathJax.typeset)setTimeout(()=>MathJax.typeset(),100);}
+
+function initLab(t){
+  const fns={a33:updateLabA33,a34:updateLabA34,a35:updateLabA35,a36:updateLabA36,b33:updateLabB33,b34:updateLabB34,b35:updateLabB35};
+  if(fns[t])fns[t]();
+}
+
+function drawGrid(ctx,w,h,scale,color){
+  const cx=w/2,cy=h/2;
+  ctx.fillStyle='#fafbfc';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#e8e8e8';ctx.lineWidth=0.5;
+  for(let x=cx%scale;x<w;x+=scale){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=cy%scale;y<h;y+=scale){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  ctx.strokeStyle='#aaa';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+  ctx.fillStyle='#888';ctx.font='11px sans-serif';
+  const r=Math.floor(cx/scale);
+  for(let i=-r;i<=r;i++){if(i===0)continue;ctx.fillText(i,cx+i*scale-4,cy+14);ctx.fillText(i,cx+6,cy-i*scale+4);}
+  ctx.fillText('O',cx-14,cy+14);ctx.fillText('x',w-12,cy-6);ctx.fillText('y',cx+6,12);
+}
+function dot(ctx,x,y,col,r){ctx.beginPath();ctx.arc(x,y,r||5,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();}
+function label(ctx,x,y,txt,col){ctx.fillStyle=col||'#333';ctx.font='bold 12px sans-serif';ctx.fillText(txt,x+8,y-8);}
+
+function updateLabA33(){
+  const ax=+document.getElementById('a33ax').value,ay=+document.getElementById('a33ay').value;
+  const bx=+document.getElementById('a33bx').value,by=+document.getElementById('a33by').value;
+  const c=document.getElementById('labA33'),ctx=c.getContext('2d'),w=c.width,h=c.height,s=40,cx=w/2,cy=h/2;
+  const px=x=>cx+x*s,py=y=>cy-y*s;
+  drawGrid(ctx,w,h,s);
+  ctx.setLineDash([5,4]);ctx.strokeStyle='#6c5ce7';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px(ax),py(ay));ctx.lineTo(px(bx),py(by));ctx.stroke();ctx.setLineDash([]);
+  const mx=(ax+bx)/2,my=(ay+by)/2;
+  dot(ctx,px(mx),py(my),'#6c5ce7',4);label(ctx,px(mx),py(my),'M','#6c5ce7');
+  dot(ctx,px(ax),py(ay),'#e17055',6);label(ctx,px(ax),py(ay),'A('+ax+','+ay+')','#e17055');
+  dot(ctx,px(bx),py(by),'#00b894',6);label(ctx,px(bx),py(by),'B('+bx+','+by+')','#00b894');
+  const d=Math.sqrt((bx-ax)**2+(by-ay)**2);
+  const qA=getQ(ax,ay),qB=getQ(bx,by);
+  document.getElementById('metricsA33').innerHTML=`<div class="metric-grid">
+    <div class="metric-card"><span class="metric-label">Distancia AB</span><span class="metric-value">${d.toFixed(3)}</span><span class="metric-detail">√(${(bx-ax)}² + ${(by-ay)}²) = √${((bx-ax)**2+(by-ay)**2)}</span></div>
+    <div class="metric-card"><span class="metric-label">Ponto A</span><span class="metric-value">${qA}</span></div>
+    <div class="metric-card"><span class="metric-label">Ponto B</span><span class="metric-value">${qB}</span></div>
+    <div class="metric-card"><span class="metric-label">Ponto Medio M</span><span class="metric-value">(${mx}, ${my})</span></div>
+  </div>`;
+}
+function getQ(x,y){if(x>0&&y>0)return'1° Q';if(x<0&&y>0)return'2° Q';if(x<0&&y<0)return'3° Q';if(x>0&&y<0)return'4° Q';if(!x&&!y)return'Origem';if(!x)return'Eixo Y';return'Eixo X';}
+
+function updateLabA34(){
+  const ax=+document.getElementById('a34ax').value,ay=+document.getElementById('a34ay').value;
+  const bx=+document.getElementById('a34bx').value,by=+document.getElementById('a34by').value;
+  const ccx=+document.getElementById('a34cx').value,ccy=+document.getElementById('a34cy').value;
+  const c=document.getElementById('labA34'),ctx=c.getContext('2d'),w=c.width,h=c.height,s=40,cx=w/2,cy=h/2;
+  const px=x=>cx+x*s,py=y=>cy-y*s;
+  drawGrid(ctx,w,h,s);
+  ctx.fillStyle='rgba(108,92,231,0.08)';ctx.beginPath();ctx.moveTo(px(ax),py(ay));ctx.lineTo(px(bx),py(by));ctx.lineTo(px(ccx),py(ccy));ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#6c5ce7';ctx.lineWidth=2;ctx.stroke();
+  const mABx=(ax+bx)/2,mABy=(ay+by)/2,mBCx=(bx+ccx)/2,mBCy=(by+ccy)/2,mACx=(ax+ccx)/2,mACy=(ay+ccy)/2;
+  ctx.strokeStyle='rgba(0,184,148,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(px(ax),py(ay));ctx.lineTo(px(mBCx),py(mBCy));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px(bx),py(by));ctx.lineTo(px(mACx),py(mACy));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px(ccx),py(ccy));ctx.lineTo(px(mABx),py(mABy));ctx.stroke();
+  ctx.setLineDash([]);
+  const gx=(ax+bx+ccx)/3,gy=(ay+by+ccy)/3;
+  dot(ctx,px(gx),py(gy),'#d63031',7);label(ctx,px(gx),py(gy),'G','#d63031');
+  [[mABx,mABy,'Mab'],[mBCx,mBCy,'Mbc'],[mACx,mACy,'Mac']].forEach(p=>{dot(ctx,px(p[0]),py(p[1]),'#00b894',4);label(ctx,px(p[0]),py(p[1]),p[2],'#00b894');});
+  dot(ctx,px(ax),py(ay),'#e17055',6);label(ctx,px(ax),py(ay),'A','#e17055');
+  dot(ctx,px(bx),py(by),'#0984e3',6);label(ctx,px(bx),py(by),'B','#0984e3');
+  dot(ctx,px(ccx),py(ccy),'#6c5ce7',6);label(ctx,px(ccx),py(ccy),'C','#6c5ce7');
+  const det=ax*(by-ccy)-ay*(bx-ccx)+(bx*ccy-ccx*by);const area=Math.abs(det)/2;
+  document.getElementById('metricsA34').innerHTML=`<div class="metric-grid">
+    <div class="metric-card"><span class="metric-label">Baricentro G</span><span class="metric-value">(${(gx).toFixed(2)}, ${(gy).toFixed(2)})</span></div>
+    <div class="metric-card"><span class="metric-label">Area</span><span class="metric-value">${area.toFixed(2)}</span><span class="metric-detail">|D|/2 = |${det}|/2</span></div>
+    <div class="metric-card"><span class="metric-label">Determinante D</span><span class="metric-value">${det.toFixed(1)}</span><span class="metric-detail">${det===0?'COLINEARES!':''}</span></div>
+    <div class="metric-card"><span class="metric-label">Medio AB</span><span class="metric-value">(${mABx}, ${mABy})</span></div>
+  </div>`;
+}
+
+function updateLabA35(){
+  const m=+document.getElementById('a35m').value,n=+document.getElementById('a35n').value;
+  document.getElementById('a35mV').textContent=m.toFixed(1);document.getElementById('a35nV').textContent=n.toFixed(1);
+  const c=document.getElementById('labA35'),ctx=c.getContext('2d'),w=c.width,h=c.height,s=40,cx=w/2,cy=h/2;
+  const px=x=>cx+x*s,py=y=>cy-y*s;
+  drawGrid(ctx,w,h,s);
+  const xMin=-cx/s,xMax=cx/s;
+  ctx.strokeStyle='#e17055';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(px(xMin),py(m*xMin+n));ctx.lineTo(px(xMax),py(m*xMax+n));ctx.stroke();
+  dot(ctx,px(0),py(n),'#e17055',6);label(ctx,px(0),py(n),'(0,'+n+')','#e17055');
+  if(m!==0){const xi=-n/m;dot(ctx,px(xi),py(0),'#6c5ce7',6);label(ctx,px(xi),py(0),'('+xi.toFixed(1)+',0)','#6c5ce7');}
+  const alpha=Math.atan(m)*180/Math.PI;const alphaAdj=alpha<0?alpha+180:alpha;
+  const a=m!==0?(-m).toFixed(1):'0',b='1',cc=(-n).toFixed(1);
+  document.getElementById('metricsA35').innerHTML=`<div class="metric-grid">
+    <div class="metric-card"><span class="metric-label">Eq. Reduzida</span><span class="metric-value">y = ${m}x ${n>=0?'+ '+n:'- '+(-n)}</span></div>
+    <div class="metric-card"><span class="metric-label">Eq. Geral</span><span class="metric-value">${a}x + y + ${cc} = 0</span></div>
+    <div class="metric-card"><span class="metric-label">Inclinacao α</span><span class="metric-value">${alphaAdj.toFixed(1)}°</span></div>
+    <div class="metric-card"><span class="metric-label">Coef. Angular m</span><span class="metric-value">${m}</span></div>
+    <div class="metric-card"><span class="metric-label">Intercepto Y</span><span class="metric-value">(0, ${n})</span></div>
+    <div class="metric-card"><span class="metric-label">Intercepto X</span><span class="metric-value">${m!==0?'('+(-n/m).toFixed(2)+', 0)':'Nao existe'}</span></div>
+  </div>`;
+}
+
+function updateLabA36(){
+  const x0=+document.getElementById('a36px').value,y0=+document.getElementById('a36py').value,m=+document.getElementById('a36m').value;
+  const n=y0-m*x0;
+  const c=document.getElementById('labA36'),ctx=c.getContext('2d'),w=c.width,h=c.height,s=40,cx=w/2,cy=h/2;
+  const px=x=>cx+x*s,py=y=>cy-y*s;
+  drawGrid(ctx,w,h,s);
+  const xMin=-cx/s,xMax=cx/s;
+  ctx.strokeStyle='#6c5ce7';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(px(xMin),py(m*xMin+n));ctx.lineTo(px(xMax),py(m*xMax+n));ctx.stroke();
+  dot(ctx,px(x0),py(y0),'#e17055',7);label(ctx,px(x0),py(y0),'P('+x0+','+y0+')','#e17055');
+  if(n!==0)dot(ctx,px(0),py(n),'#00b894',5);
+  if(m!==0){const xi=-n/m;dot(ctx,px(xi),py(0),'#0984e3',5);}
+  const pVal=m!==0?(-n/m):null,qVal=n;
+  document.getElementById('metricsA36').innerHTML=`<div class="metric-grid">
+    <div class="metric-card"><span class="metric-label">Eq. Fundamental</span><span class="metric-value">y - ${y0} = ${m}(x - ${x0})</span></div>
+    <div class="metric-card"><span class="metric-label">Eq. Reduzida</span><span class="metric-value">y = ${m}x ${n>=0?'+ '+n.toFixed(1):'- '+(-n).toFixed(1)}</span></div>
+    <div class="metric-card"><span class="metric-label">Eq. Geral</span><span class="metric-value">${(-m).toFixed(1)}x + y ${(-n)>=0?'+ '+(-n).toFixed(1):'- '+(n).toFixed(1)} = 0</span></div>
+    <div class="metric-card"><span class="metric-label">Eq. Segmentaria</span><span class="metric-value">${pVal&&qVal?'x/'+pVal.toFixed(1)+' + y/'+qVal.toFixed(1)+' = 1':'N/A (passa pela origem)'}</span></div>
+  </div>`;
+}
+
+function comb(n,p){if(p<0||p>n)return 0;if(p===0||p===n)return 1;let r=1;for(let i=0;i<p;i++)r=r*(n-i)/(i+1);return Math.round(r);}
+function fact(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+
+function updateLabB33(){
+  const n=+document.getElementById('b33n').value,p=+document.getElementById('b33p').value;
+  const val=comb(n,p);
+  const steps=`${n}! / (${p}! · ${n-p}!) = ${fact(n)} / (${fact(p)} · ${fact(Math.max(0,n-p))})`;
+  const comp=comb(n,n-p);
+  document.getElementById('metricsB33').innerHTML=`<div class="metric-grid">
+    <div class="metric-card"><span class="metric-label">C(${n}, ${p})</span><span class="metric-value frb">${val}</span><span class="metric-detail">${steps}</span></div>
+    <div class="metric-card"><span class="metric-label">Complementar C(${n}, ${n-p})</span><span class="metric-value frb">${comp}</span></div>
+    <div class="metric-card"><span class="metric-label">Soma linha ${n}</span><span class="metric-value frb">${Math.pow(2,n)}</span><span class="metric-detail">2^${n}</span></div>
+    ${p+1<=n?`<div class="metric-card"><span class="metric-label">Stiffel: C(${n},${p})+C(${n},${p+1})</span><span class="metric-value frb">${comb(n,p)+comb(n,p+1)} = C(${n+1},${p+1})</span></div>`:''}
+  </div>`;
+  const c=document.getElementById('labB33'),ctx=c.getContext('2d'),w=c.width,h=c.height;
+  ctx.fillStyle='#fafbfc';ctx.fillRect(0,0,w,h);
+  const rows=Math.min(n+1,11);const cellW=42,cellH=32;
+  for(let r=0;r<rows;r++){const startX=(w-cellW*(r+1))/2;
+    for(let k=0;k<=r;k++){const x=startX+k*cellW,y=10+r*cellH;
+      const isHL=(r===n&&k===p);
+      ctx.fillStyle=isHL?'#e17055':'#fff';ctx.strokeStyle=isHL?'#e17055':'#ddd';ctx.lineWidth=isHL?2:1;
+      ctx.beginPath();ctx.roundRect(x,y,cellW-4,cellH-4,4);ctx.fill();ctx.stroke();
+      ctx.fillStyle=isHL?'#fff':'#333';ctx.font=(isHL?'bold ':'')+' 11px sans-serif';ctx.textAlign='center';
+      ctx.fillText(comb(r,k),x+(cellW-4)/2,y+(cellH-4)/2+4);
+    }
+  }
+  ctx.textAlign='left';
+}
+
+function updateLabB34(){
+  const a=+document.getElementById('b34a').value,b=+document.getElementById('b34b').value,n=+document.getElementById('b34n').value;
+  let terms=[],coeffs=[],total=0;
+  for(let p=0;p<=n;p++){
+    const c=comb(n,p);const aPow=Math.pow(a,n-p);const bPow=Math.pow(b,p);const val=c*aPow*bPow;
+    coeffs.push(c);total+=val;
+    const sign=val>=0?(p>0?'+ ':''):'- ';
+    const absVal=Math.abs(val);
+    let termStr='';
+    if(n-p>0)termStr+=`C(${n},${p})·${a!==1?a:''}x<sup>${n-p>1?n-p:''}</sup>`;
+    else termStr+=`C(${n},${p})`;
+    if(b!==0&&p>0)termStr+=`·${b}<sup>${p>1?p:''}</sup>`;
+    terms.push({coeff:c,aPow:n-p,bPow:p,val,sign:val>=0?'+':'-',absVal});
+  }
+  let expansion='';
+  for(let i=0;i<=n;i++){
+    const t=terms[i];const sgn=i===0?(t.val<0?'-':''):(t.val>=0?' + ':' - ');
+    expansion+=sgn+Math.abs(t.val)+(t.aPow>0?'x'+(t.aPow>1?'<sup>'+t.aPow+'</sup>':''):'');
+  }
+  let detail='';
+  for(let p=0;p<=n;p++){
+    const c=comb(n,p);detail+=`<div class="metric-card"><span class="metric-label">T<sub>${p+1}</sub> (p=${p})</span><span class="metric-value frb">${terms[p].val}</span><span class="metric-detail">C(${n},${p})=${c} · ${a}^${n-p} · ${b}^${p}</span></div>`;
+  }
+  document.getElementById('metricsB34').innerHTML=`
+    <div class="expansion-box">(${a}x + ${b})<sup>${n}</sup> = ${expansion}</div>
+    <div class="metric-grid"><div class="metric-card"><span class="metric-label">Soma coef. (x=1)</span><span class="metric-value frb">${Math.pow(a+b,n)}</span><span class="metric-detail">(${a}+${b})^${n}</span></div>
+    <div class="metric-card"><span class="metric-label">N° termos</span><span class="metric-value frb">${n+1}</span></div>
+    <div class="metric-card"><span class="metric-label">Coef. Pascal</span><span class="metric-value frb">${coeffs.join(', ')}</span></div></div>
+    <p style="margin-top:0.8rem;font-weight:600;font-size:0.9rem;">Detalhamento termo a termo:</p>
+    <div class="metric-grid">${detail}</div>`;
+  if(typeof MathJax!=='undefined'&&MathJax.typeset)MathJax.typeset();
+}
+
+function updateLabB35(){
+  const a1=+document.getElementById('b35a1').value,r=+document.getElementById('b35r').value,num=+document.getElementById('b35num').value;
+  document.getElementById('b35a1V').textContent=a1;document.getElementById('b35rV').textContent=r;document.getElementById('b35numV').textContent=num;
+  const terms=[];for(let i=0;i<num;i++)terms.push(a1+i*r);
+  const c=document.getElementById('labB35'),ctx=c.getContext('2d'),w=c.width,h=c.height;
+  ctx.fillStyle='#fafbfc';ctx.fillRect(0,0,w,h);
+  const maxAbs=Math.max(...terms.map(Math.abs),1);const barW=Math.min(40,(w-60)/num-4);const baseY=h-30;const scaleY=(h-70)/maxAbs;
+  const zeroY=terms.some(t=>t<0)?h/2:baseY;
+  ctx.strokeStyle='#ccc';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(30,zeroY);ctx.lineTo(w-10,zeroY);ctx.stroke();
+  ctx.fillStyle='#aaa';ctx.font='10px sans-serif';ctx.textAlign='right';
+  const zeroScale=(h-70)/maxAbs;
+  for(let i=0;i<num;i++){
+    const x=40+i*(barW+4);const val=terms[i];
+    const barH=Math.abs(val)*zeroScale*0.45;
+    const y=val>=0?zeroY-barH:zeroY;
+    const grad=ctx.createLinearGradient(x,y,x,y+barH);
+    if(val>=0){grad.addColorStop(0,'#e17055');grad.addColorStop(1,'#fab1a0');}
+    else{grad.addColorStop(0,'#fab1a0');grad.addColorStop(1,'#e17055');}
+    ctx.fillStyle=grad;ctx.beginPath();ctx.roundRect(x,y,barW,barH,3);ctx.fill();
+    ctx.fillStyle='#333';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+    ctx.fillText(val.toFixed(r%1?1:0),x+barW/2,val>=0?y-4:y+barH+12);
+    ctx.fillStyle='#888';ctx.font='9px sans-serif';
+    ctx.fillText('a'+(i+1),x+barW/2,h-5);
+  }
+  ctx.textAlign='left';
+  const classif=r>0?'crescente':r<0?'decrescente':'constante';
+  const last=terms[terms.length-1];
+  document.getElementById('metricsB35').innerHTML=`
+    <div class="pa-info"><span class="pa-badge ${classif}">PA ${classif.toUpperCase()} (r=${r})</span></div>
+    <div class="metric-grid">
+    <div class="metric-card"><span class="metric-label">Termo Geral</span><span class="metric-value frb">a<sub>n</sub> = ${a1} + (n-1)·${r}</span></div>
+    <div class="metric-card"><span class="metric-label">a<sub>${num}</sub></span><span class="metric-value frb">${last}</span><span class="metric-detail">${a1} + ${num-1}·${r} = ${last}</span></div>
+    <div class="metric-card"><span class="metric-label">PA</span><span class="metric-value frb" style="font-size:0.85rem">(${terms.slice(0,6).join(', ')}${num>6?', ...':''})</span></div>
+    <div class="metric-card"><span class="metric-label">Soma ${num} termos</span><span class="metric-value frb">${terms.reduce((a,b)=>a+b,0).toFixed(1)}</span><span class="metric-detail">(a₁+a<sub>n</sub>)·n/2</span></div>
+  </div>`;
+}
+
+updateLabA33();updateProgress();
+</script>
+</body>
+</html>
