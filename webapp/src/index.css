@@ -1,0 +1,37 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+:root {
+  --sidebar-w: 290px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.7;
+}
+
+.katex { font-size: 1.15em; }
+.katex-display { font-size: 1.3em; margin: 1em 0; }
+
+/* Smooth scrolling */
+html { scroll-behavior: smooth; }
+
+/* Better focus styles */
+button:focus-visible, input:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* Print-friendly */
+@media print {
+  aside { display: none !important; }
+  header { display: none !important; }
+}
