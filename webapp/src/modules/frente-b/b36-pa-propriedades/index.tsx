@@ -326,7 +326,7 @@ function Simulador() {
 
 function Exercicios() {
   return (
-    <Quiz total={5}>
+    <Quiz total={6}>
       <QuizCard
         id={1}
         statement={
@@ -417,6 +417,26 @@ function Exercicios() {
             <M tex="S_{11} = 11^2 - 11 = 121 - 11 = 110" display />
             <M tex="S_{10} = 10^2 - 10 = 100 - 10 = 90" display />
             <M tex="a_{11} = S_{11} - S_{10} = 110 - 90 = 20" display />
+          </div>
+        }
+      />
+      <QuizCard
+        id={6}
+        statement={
+          <span>
+            <span className="text-xs font-semibold text-indigo-500 block mb-1">Enem MEC — 06</span>
+            Postes são colocados a 80 m, 100 m, 120 m da praça (PA de razão 20 m), até o último a
+            1 380 m. Se cada poste custa no máximo R$ 8 000,00, qual o maior valor total com a
+            colocação de todos os postes?
+          </span>
+        }
+        solution={
+          <div className="space-y-2">
+            <M tex="a_1 = 80,\; r = 20,\; a_n = 1380" display />
+            <M tex="1380 = 80 + (n-1) \cdot 20 \implies 1300 = 20(n-1) \implies n = 66" display />
+            <p>São <strong>66 postes</strong>.</p>
+            <M tex="66 \times 8\,000 = 528\,000" display />
+            <p><strong>Resposta: R$ 528 000,00 (alternativa c).</strong></p>
           </div>
         }
       />
