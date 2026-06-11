@@ -60,8 +60,99 @@ function Teoria() {
           <strong>colineares</strong> se, e somente se:
         </p>
         <M tex="\begin{vmatrix} x_A & y_A & 1 \\ x_B & y_B & 1 \\ x_C & y_C & 1 \end{vmatrix} = 0" display />
-        <p className="text-gray-700">Expandindo o determinante (regra de Sarrus):</p>
-        <M tex="D = x_A(y_B - y_C) + x_B(y_C - y_A) + x_C(y_A - y_B)" display />
+      </div>
+
+      <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-5 space-y-4">
+        <h4 className="text-lg font-bold text-indigo-900">Regra de Sarrus — determinante 3×3</h4>
+        <p className="text-gray-700 leading-relaxed">
+          Para calcular o determinante de uma matriz 3×3, <strong>repita as duas primeiras colunas</strong>{' '}
+          à direita da matriz e aplique a regra:
+        </p>
+        <p className="text-gray-800 font-medium">
+          soma das <span className="text-green-700">diagonais principais</span> (↘) − soma das{' '}
+          <span className="text-red-700">diagonais secundárias</span> (↙)
+        </p>
+
+        <div className="bg-white rounded-lg border border-indigo-100 p-4 overflow-x-auto">
+          <M
+            tex={`\\det \\begin{pmatrix} a & b & c \\\\ d & e & f \\\\ g & h & i \\end{pmatrix}
+= \\underbrace{aei + bfg + cdh}_{\\text{diagonais principais}}
+- \\underbrace{ceg + afh + bdi}_{\\text{diagonais secundárias}}`}
+            display
+          />
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-3 text-sm">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+            <p className="font-semibold text-green-800 mb-2">Diagonais principais (↘) — somar</p>
+            <ul className="text-gray-700 space-y-1 list-disc list-inside">
+              <li><M tex="a \cdot e \cdot i" /> (canto superior esquerdo → inferior direito)</li>
+              <li><M tex="b \cdot f \cdot g" /></li>
+              <li><M tex="c \cdot d \cdot h" /></li>
+            </ul>
+          </div>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <p className="font-semibold text-red-800 mb-2">Diagonais secundárias (↙) — subtrair</p>
+            <ul className="text-gray-700 space-y-1 list-disc list-inside">
+              <li><M tex="c \cdot e \cdot g" /> (canto superior direito → inferior esquerdo)</li>
+              <li><M tex="a \cdot f \cdot h" /></li>
+              <li><M tex="b \cdot d \cdot i" /></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-indigo-100 p-4">
+          <p className="font-semibold text-gray-800 mb-2">Esquema visual (repita as 2 primeiras colunas)</p>
+          <div className="font-mono text-sm text-center leading-loose text-gray-700">
+            <div className="inline-grid grid-cols-5 gap-x-3 gap-y-1">
+              {[
+                ['a', 'b', 'c', 'a', 'b'],
+                ['d', 'e', 'f', 'd', 'e'],
+                ['g', 'h', 'i', 'g', 'h'],
+              ].map((row, ri) =>
+                row.map((cell, ci) => (
+                  <span
+                    key={`${ri}-${ci}`}
+                    className={`px-2 py-1 rounded ${
+                      ci >= 3 ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-50'
+                    }`}
+                  >
+                    {cell}
+                  </span>
+                ))
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-3">
+              As colunas 4 e 5 (destacadas) são cópias das colunas 1 e 2 — só para visualizar as diagonais.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <p className="font-semibold text-yellow-900 mb-2">Exemplo — alinhamento de A(1, −2), B(4, −11), C(−2, 7)</p>
+          <M
+            tex={`D = \\begin{vmatrix} 1 & -2 & 1 \\\\ 4 & -11 & 1 \\\\ -2 & 7 & 1 \\end{vmatrix}`}
+            display
+          />
+          <p className="text-gray-700 text-sm mb-2">Principais: <M tex="1 \cdot (-11) \cdot 1 + (-2) \cdot 1 \cdot (-2) + 1 \cdot 4 \cdot 7 = -11 + 4 + 28 = 21" /></p>
+          <p className="text-gray-700 text-sm mb-2">Secundárias: <M tex="(-2) \cdot (-11) \cdot 1 + 7 \cdot 1 \cdot 1 + 1 \cdot 4 \cdot (-2) = 22 + 7 - 8 = 21" /></p>
+          <M tex="D = 21 - 21 = 0" display />
+          <p className="text-green-700 font-semibold mt-2">Como <M tex="D = 0" />, os três pontos são colineares.</p>
+        </div>
+
+        <div className="bg-white rounded-lg border border-indigo-100 p-4">
+          <p className="font-semibold text-gray-800 mb-2">Fórmula simplificada (caso dos pontos A, B, C)</p>
+          <p className="text-gray-700 text-sm mb-2">
+            Expandindo o determinante de alinhamento pela Sarrus, obtemos:
+          </p>
+          <M tex="D = x_A(y_B - y_C) + x_B(y_C - y_A) + x_C(y_A - y_B)" display />
+          <p className="text-gray-600 text-sm mt-2">
+            Use Sarrus quando quiser ver o passo a passo; use a fórmula compacta para resolver mais rápido.
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-2">
         <p className="text-gray-700">
           Se <M tex="D = 0" />, os pontos são colineares. Se <M tex="D \neq 0" />, formam um triângulo.
         </p>
