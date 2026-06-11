@@ -154,7 +154,7 @@ function Simulador() {
 
 function Exercicios() {
   return (
-    <Quiz total={4}>
+    <Quiz total={7}>
       <QuizCard
         id={1}
         statement={<span>Calcule a soma dos 6 primeiros termos da PG <M tex="(3,\; 6,\; 12,\; \ldots)" />.</span>}
@@ -197,6 +197,57 @@ function Exercicios() {
           <div className="space-y-2">
             <M tex="S_5 = a_1 \cdot \frac{2^5 - 1}{2 - 1} = 31 \cdot a_1 = 62" display />
             <M tex="a_1 = 2" display />
+          </div>
+        }
+      />
+      <QuizCard
+        id={5}
+        statement={
+          <span>
+            <span className="text-xs font-semibold text-indigo-500 block mb-1">Exercícios Propostos — 01</span>
+            Obtenha três termos em PG crescente cuja soma é 26 e o produto é 216.
+          </span>
+        }
+        solution={
+          <div className="space-y-2">
+            <p>Escreva os termos como <M tex="\left(\frac{x}{q},\; x,\; xq\right)" />:</p>
+            <M tex="x^3 = 216 \implies x = 6" display />
+            <M tex="\frac{6}{q} + 6 + 6q = 26 \implies 6q^2 - 20q + 6 = 0 \implies q = 3 \text{ ou } q = \frac{1}{3}" display />
+            <p>PG crescente com <M tex="q = 3" />:</p>
+            <M tex="(2,\; 6,\; 18)" display />
+          </div>
+        }
+      />
+      <QuizCard
+        id={6}
+        statement={
+          <span>
+            <span className="text-xs font-semibold text-indigo-500 block mb-1">Exercícios Propostos — 02</span>
+            Inserir 2 meios geométricos entre 3 e −24.
+          </span>
+        }
+        solution={
+          <div className="space-y-2">
+            <M tex="a_1 = 3,\; a_4 = -24 \implies 3q^3 = -24 \implies q = -2" display />
+            <M tex="PG\ (3,\; -6,\; 12,\; -24)" display />
+            <p>Meios geométricos: <strong>−6</strong> e <strong>12</strong> (PG alternada, <M tex="q < 0" />).</p>
+          </div>
+        }
+      />
+      <QuizCard
+        id={7}
+        statement={
+          <span>
+            <span className="text-xs font-semibold text-indigo-500 block mb-1">Exercícios Propostos — 04</span>
+            Escreva a PG em que <M tex="a_3 = 16" /> e <M tex="a_6 = 1024" />.
+          </span>
+        }
+        solution={
+          <div className="space-y-2">
+            <M tex="a_6 = a_3 \cdot q^{6-3} \implies 1024 = 16 \cdot q^3 \implies q^3 = 64 \implies q = 4" display />
+            <M tex="a_1 = \frac{a_3}{q^2} = \frac{16}{16} = 1" display />
+            <M tex="a_n = 4^{n-1}" display />
+            <p>PG: <M tex="(1,\; 4,\; 16,\; 64,\; 256,\; 1024,\; \ldots)" /></p>
           </div>
         }
       />

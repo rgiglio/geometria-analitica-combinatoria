@@ -497,7 +497,7 @@ function Simulador() {
 
 function Exercicios() {
   return (
-    <Quiz total={5}>
+    <Quiz total={6}>
       <QuizCard
         id={1}
         statement={
@@ -601,6 +601,25 @@ function Exercicios() {
             <p>(Todos os primos com maiores expoentes)</p>
             <p className="mt-2"><strong>c)</strong> Divisores inteiros positivos de <M tex="b = 2^9 \cdot 5^3 \cdot 7^{16}" />:</p>
             <M tex="d(b) = (9+1)(3+1)(16+1) = 10 \cdot 4 \cdot 17 = 680" display />
+          </div>
+        }
+      />
+      <QuizCard
+        id={6}
+        statement={
+          <span>
+            <span className="text-xs font-semibold text-indigo-500 block mb-1">Enem MEC — 10</span>
+            Em uma plantação de eucaliptos, um fazendeiro aplicará fertilizante a cada 40 dias, inseticida
+            a cada 32 dias e pesticida a cada 28 dias, iniciando os três no mesmo dia. Depois de quantos
+            dias os três serão aplicados novamente juntos?
+          </span>
+        }
+        solution={
+          <div className="space-y-2">
+            <p>Precisamos do MMC dos ciclos:</p>
+            <M tex="40 = 2^3 \cdot 5,\quad 32 = 2^5,\quad 28 = 2^2 \cdot 7" display />
+            <M tex="\text{MMC}(40, 32, 28) = 2^5 \cdot 5 \cdot 7 = 1120 \text{ dias}" display />
+            <p><strong>Resposta: 1 120 dias (alternativa d).</strong></p>
           </div>
         }
       />

@@ -240,6 +240,22 @@ function Gabarito() {
       >
         3 torneiras enchem um reservatório em 12 horas. Em quanto tempo 9 torneiras iguais enchem o reservatório?
       </ExerciseCard>
+
+      <ExerciseCard
+        number={5}
+        source="UFRJ — 01"
+        solution={
+          <div className="space-y-3">
+            <p>Taxa de enchimento (fração do tanque por minuto):</p>
+            <M tex="A: \frac{1}{10} \quad;\quad B: \frac{1}{20} \quad;\quad A+B: \frac{1}{10} + \frac{1}{20} = \frac{3}{20}" display />
+            <M tex="t = \frac{1}{\frac{3}{20}} = \frac{20}{3} \text{ min} \approx 6 \text{ min e } 40 \text{ s}" display />
+            <p className="text-sm text-gray-600">Fórmula rápida: <M tex="\frac{1}{t} = \frac{1}{t_A} + \frac{1}{t_B}" /></p>
+          </div>
+        }
+      >
+        Um tanque de volume <M tex="V" /> é abastecido por duas torneiras A e B. A sozinha enche em 10 minutos
+        e B, em 20 minutos. Calcule o tempo para encher o tanque com A e B juntas.
+      </ExerciseCard>
     </div>
   )
 }

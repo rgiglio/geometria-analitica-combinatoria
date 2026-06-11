@@ -244,6 +244,31 @@ function Gabarito() {
       >
         Verifique a propriedade da soma e diferença para <M tex="12 : 18 = 2 : 3" />.
       </ExerciseCard>
+
+      <ExerciseCard
+        number={5}
+        source="UEG GO — 14"
+        solution={
+          <div className="space-y-3">
+            <p><strong>a)</strong> Concentração de álcool:</p>
+            <M tex="C_A = \frac{4}{4+7} = \frac{4}{11} \approx 0{,}36 \quad;\quad C_B = \frac{3}{3+2} = \frac{3}{5} = 0{,}60" display />
+            <p>O combustível <strong>B</strong> possui maior concentração de álcool.</p>
+            <p><strong>b)</strong> Em 1 L de A: álcool <M tex="\frac{4}{11}" /> L, gasolina <M tex="\frac{7}{11}" /> L.</p>
+            <p>Em 1 L de B: álcool <M tex="\frac{3}{5}" /> L, gasolina <M tex="\frac{2}{5}" /> L.</p>
+            <M tex="\text{álcool total} = \frac{4}{11} + \frac{3}{5} = \frac{53}{55} \text{ L}" display />
+            <M tex="\text{gasolina total} = \frac{7}{11} + \frac{2}{5} = \frac{57}{55} \text{ L}" display />
+            <M tex="\text{razão} = \frac{53}{55} : \frac{57}{55} = 53 : 57" display />
+            <p className="text-sm text-gray-600">Não se somam as razões <M tex="\frac{4}{7} + \frac{3}{2}" /> — somam-se os volumes de álcool e gasolina separadamente.</p>
+          </div>
+        }
+      >
+        <p>
+          Dois combustíveis são obtidos por mistura de álcool e gasolina. O combustível A contém 4 partes
+          de álcool para cada 7 de gasolina; o B contém 3 partes de álcool para cada 2 de gasolina.
+        </p>
+        <p><strong>a)</strong> Qual possui maior concentração de álcool?</p>
+        <p><strong>b)</strong> Qual a razão álcool : gasolina de uma mistura de 1 L de A com 1 L de B?</p>
+      </ExerciseCard>
     </div>
   )
 }

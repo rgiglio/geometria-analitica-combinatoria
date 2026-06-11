@@ -261,7 +261,7 @@ function Simulador() {
 
 function Exercicios() {
   return (
-    <Quiz total={5}>
+    <Quiz total={6}>
       <QuizCard
         id={1}
         statement={
@@ -341,6 +341,25 @@ function Exercicios() {
             <p>Como as retas são paralelas (mesmos coeficientes <M tex="a" /> e <M tex="b" />), usamos:</p>
             <M tex="d = \frac{|c_1 - c_2|}{\sqrt{a^2 + b^2}}" display />
             <M tex="d = \frac{|-3 - 7|}{\sqrt{2^2 + 1^2}} = \frac{|-10|}{\sqrt{5}} = \frac{10}{\sqrt{5}} = \frac{10\sqrt{5}}{5} = 2\sqrt{5}" display />
+          </div>
+        }
+      />
+      <QuizCard
+        id={6}
+        statement={
+          <span>
+            <span className="text-xs font-semibold text-indigo-500 block mb-1">Exercícios Propostos — 03</span>
+            Obtenha o ponto de intersecção entre as retas <M tex="r: 2x - y - 1 = 0" /> e{' '}
+            <M tex="s: 4x + 3y - 17 = 0" />.
+          </span>
+        }
+        solution={
+          <div className="space-y-2">
+            <p>Da reta <M tex="r" />: <M tex="y = 2x - 1" />. Substituindo em <M tex="s" />:</p>
+            <M tex="4x + 3(2x - 1) - 17 = 0" display />
+            <M tex="10x = 20 \implies x = 2" display />
+            <M tex="y = 2(2) - 1 = 3" display />
+            <p><strong>Ponto de intersecção:</strong> <M tex="P(2,\; 3)" /></p>
           </div>
         }
       />

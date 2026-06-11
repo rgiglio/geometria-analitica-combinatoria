@@ -274,9 +274,10 @@ function Exercicios() {
       <QuizCard
         id={1}
         statement={
-          <p>
+          <span>
+            <span className="text-xs font-semibold text-indigo-500 block mb-1">Exercícios Propostos — 01</span>
             Obtenha a equação geral da reta que passa pelos pontos <M tex="A(-2, 3)" /> e <M tex="B(4, 6)" />.
-          </p>
+          </span>
         }
         solution={
           <div className="space-y-2">
