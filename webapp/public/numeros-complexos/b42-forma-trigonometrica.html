@@ -157,7 +157,39 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 .play-anim-row { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 0.55rem; }
 .play-caption { text-align: center; color: var(--accent3); font-size: 0.85rem; margin-top: 0.4rem; font-weight: 600; }
 
+
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ans .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+.hl .katex, .hl2 .katex, .hl3 .katex, .hl4 .katex { color: inherit; }
+
 </style>
+
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+
 </head>
 <body class="treino-ativo">
 <nav>
@@ -189,9 +221,9 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
         <p class="note" style="text-align:center;margin-top:0.5rem">Azul = z &nbsp;|&nbsp; Verde = resultado da operação &nbsp;|&nbsp; Ângulo em destaque no arco</p>
       </div>
       <div class="controls">
-        <label>ρ (módulo) = <span id="rhoLabel" class="hl2">2</span></label>
+        <label>\(\rho\) (módulo) = <span id="rhoLabel" class="hl2">2</span></label>
         <input type="range" id="slRho" min="0.5" max="6" step="0.1" value="2">
-        <label>θ (graus) = <span id="thLabel" class="hl3">45</span>°</label>
+        <label>\(\theta\) (graus) = <span id="thLabel" class="hl3">45</span>°</label>
         <input type="range" id="slTh" min="0" max="359" step="1" value="45">
         <div class="ctrl-row">
           <label>ou a=</label>
@@ -201,19 +233,19 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
           <button id="btnFromAlg">Alg → Trig</button>
         </div>
         <div class="ctrl-row">
-          <button class="primary" id="btnRotI">Multiplicar por i (90°)</button>
+          <button class="primary" id="btnRotI">Multiplicar por i (\(90^{\circ}\))</button>
           <button id="btnReset">Reset</button>
         </div>
 
         <div class="ctrl-row play-anim-row" style="justify-content:flex-start">
-          <button type="button" id="btnAnimI">Animar ×i (90°)</button>
+          <button type="button" id="btnAnimI">Animar × i (\(90^{\circ}\))</button>
           <button type="button" id="btnAnimProd">Animar produto z·w</button>
         </div>
 
-        <label>Multiplicar por w: ρ<sub>w</sub>=</label>
+        <label>Multiplicar por w: \(\rho_w\)=</label>
         <div class="ctrl-row">
           <input type="number" id="wRho" value="1.5" step="0.1" min="0.1" style="width:70px">
-          <label>θ<sub>w</sub>°</label>
+          <label>θ_{\mathrm{w}}^{\circ}</label>
           <input type="number" id="wTh" value="30" step="5" style="width:70px">
           <button id="btnMulW">z · w</button>
         </div>
@@ -230,40 +262,40 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
   <div class="theory-grid">
     <div class="theory-card">
       <h3>Forma trigonométrica</h3>
-      <p>Todo z ≠ 0 pode ser escrito:</p>
-      <div class="formula">z = ρ (cos θ + i sen θ)</div>
-      <p>Notação abreviada: z = ρ cis θ. Aqui ρ = |z| e θ = arg(z).</p>
+      <p>Todo z \(\ne\) 0 pode ser escrito:</p>
+      <div class="formula">$$z = \rho (\cos \theta + i \operatorname{sen} \theta)$$</div>
+      <p>Notação abreviada: z = \(\rho \mathrm{cis} \theta\). Aqui \(\rho\) = \(|z|\) e \(\theta\) = \\\(\arg(z)\).</p>
     </div>
     <div class="theory-card">
       <h3>Algébrica → trigonométrica</h3>
       <ul>
-        <li>ρ = √(a² + b²)</li>
-        <li>cos θ = a/ρ &nbsp; sen θ = b/ρ</li>
-        <li>θ = atan2(b, a), ajustado a [0°, 360°)</li>
+        <li>\(\rho\) = \sqrt{\(a^{2} + b^{2}\)}</li>
+        <li>cos \(\theta\) = a/\(\rho\) &nbsp; sen \(\theta\) = b/\(\rho\)</li>
+        <li>\(\theta\) = \mathrm{atan2}(b, a), ajustado a \([0^{\circ}, 360^{\circ})\)</li>
       </ul>
     </div>
     <div class="theory-card">
       <h3>Trigonométrica → algébrica</h3>
-      <div class="formula">a = ρ cos θ &nbsp;&nbsp; b = ρ sen θ</div>
-      <p>z = a + bi.</p>
+      <div class="formula">$$a = \rho \cos \theta b = \rho \operatorname{sen} \theta$$</div>
+      <p>\(z = a + bi\).</p>
     </div>
     <div class="theory-card">
       <h3>Produto</h3>
-      <div class="formula">z₁z₂ = ρ₁ρ₂ [cos(θ₁+θ₂) + i sen(θ₁+θ₂)]</div>
-      <p><strong>Geometria:</strong> dilatação por ρ₂ e rotação de θ₂ (sentido anti-horário se θ₂ &gt; 0).</p>
+      <div class="formula">$$z_{1}z_{2} = \rho_{1}\rho_{2} [\cos(\theta_{1}+\theta_{2}) + i \operatorname{sen}(\theta_{1}+\theta_{2})]$$</div>
+      <p><strong>Geometria:</strong> dilatação por ρ_{2} e rotação de θ_{2} (sentido anti-horário se θ_{2} &gt; 0).</p>
     </div>
     <div class="theory-card">
       <h3>Quociente</h3>
-      <div class="formula">z₁/z₂ = (ρ₁/ρ₂) [cos(θ₁−θ₂) + i sen(θ₁−θ₂)]</div>
-      <p>(z₂ ≠ 0). Rotação de −θ₂ e dilatação por 1/ρ₂.</p>
+      <div class="formula">$$z_{1}/z_{2} = (\rho_{1}/\rho_{2}) [\cos(\theta_{1}-\theta_{2}) + i \operatorname{sen}(\theta_{1}-\theta_{2})]$$</div>
+      <p>(z_{2} \(\ne\) 0). Rotação de −θ_{2} e dilatação por 1/ρ_{2}.</p>
     </div>
     <div class="theory-card">
       <h3>Casos especiais</h3>
       <ul>
-        <li>Multiplicar por i = cis 90° → rotação de 90° anti-horário</li>
-        <li>Multiplicar por −1 = cis 180° → rotação de 180°</li>
-        <li>Multiplicar por −i = cis 270° → rotação de 270° (ou −90°)</li>
-        <li>|z₁z₂| = |z₁||z₂| &nbsp; e &nbsp; |z₁/z₂| = |z₁|/|z₂|</li>
+        <li>Multiplicar por i = \(\mathrm{cis} 90^{\circ}\) → rotação de \(90^{\circ}\) anti-horário</li>
+        <li>Multiplicar por -1 = \(\mathrm{cis} 180^{\circ}\) → rotação de \(180^{\circ}\)</li>
+        <li>Multiplicar por -i = \(\mathrm{cis} 270^{\circ}\) → rotação de \(270^{\circ}\) (ou \(-90^{\circ}\))</li>
+        <li>|z_{1}z_{2}| = |z_{1}||z_{2}| &nbsp; e &nbsp; |z_{1}/z_{2}| = |z_{1}|/|z_{2}|</li>
       </ul>
     </div>
   </div>
@@ -280,235 +312,235 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
 <div class="ex" id="b42-p1">
     <div class="ex-header"><span class="ex-num">P1</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">forma trig.</span></div>
-    <div class="ex-q">Escreva z = −√3 + i na forma trigonométrica (θ em graus, 0° ≤ θ &lt; 360°).</div>
+    <div class="ex-q">Escreva \(z = -\sqrt{3} + i\) na forma trigonométrica (\(\theta\) em graus, \(0^{\circ} \le \theta < 360^{\circ}\)).</div>
     
     <div class="ex-anim" id="wrap-anim-b42-p1">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b42-p1">▶ Animar</button>
       <canvas id="anim-b42-p1" width="360" height="360"></canvas>
-      <p class="anim-cap">−√3+i → 2 cis 150°</p>
+      <p class="anim-cap">-\(\sqrt{3}\)+i → 2 \(\mathrm{cis} 150^{\circ}\)</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> a <strong>forma trigonométrica</strong> (ou polar) é z = ρ(cos θ + i sen θ), onde ρ = |z| é o <strong>módulo</strong> e θ = arg(z) é o <strong>argumento</strong>. Calculamos ρ e identificamos o quadrante para achar θ.</p>
+      <p class="step-intro"><strong>Ideia:</strong> a <strong>forma trigonométrica</strong> (ou polar) é z = \(\rho\)(cosθ + isenθ), onde \(\rho\) = \(|z|\) é o <strong>módulo</strong> e \(\theta\) = \\\(\arg(z)\) é o <strong>argumento</strong>. Calculamos \(\rho\) e identificamos o quadrante para achar \(\theta\).</p>
       <ol>
-        <li><strong>Passo 1 — Calcular o módulo ρ:</strong>
-          <div class="formula">ρ = √[(−√3)² + 1²] = √(3 + 1) = √4 = 2</div>
+        <li><strong>Passo 1 — Calcular o módulo \(\rho\):</strong>
+          <div class="formula">$$\rho = \sqrt{(-\sqrt{3})^{2} + 1^{2}} = \sqrt{3 + 1} = \sqrt{4} = 2$$</div>
         </li>
-        <li><strong>Passo 2 — Identificar o quadrante:</strong> Re = −√3 &lt; 0 e Im = 1 &gt; 0 ⇒ 2º quadrante.</li>
-        <li><strong>Passo 3 — Achar cos θ e sen θ:</strong>
-          <div class="formula">cos θ = a/ρ = (−√3)/2 = −√3/2</div>
-          <div class="formula">sen θ = b/ρ = 1/2</div>
-          O ângulo no 2º quadrante com esses valores é θ = 150° (pois cos 150° = −√3/2 e sen 150° = 1/2).
+        <li><strong>Passo 2 — Identificar o quadrante:</strong> Re = −\(\sqrt{3}\) &lt; 0 e Im = 1 &gt; 0 \(\Rightarrow\) 2º quadrante.</li>
+        <li><strong>Passo 3 — Achar cos \(\theta\) e sen \(\theta\):</strong>
+          <div class="formula">$$\cos \theta = a/\rho = (-\sqrt{3})/2 = -\sqrt{3}/2$$</div>
+          <div class="formula">$$\operatorname{sen} \theta = b/\rho = 1/2$$</div>
+          O ângulo no 2º quadrante com esses valores é \(\theta\) = \(150^{\circ}\) (pois cos \(150^{\circ}\) = −\(\sqrt{3}/2\) e sen \(150^{\circ}\) = 1/2).
         </li>
         <li><strong>Passo 4 — Escrever a forma trigonométrica:</strong>
-          <div class="formula">z = 2 (cos 150° + i sen 150°)</div>
-          (Também se escreve z = 2 cis 150°.)
+          <div class="formula">$$z = 2 (\cos 150^{\circ} + i \operatorname{sen} 150^{\circ})$$</div>
+          (Também se escreve z = 2 \(\mathrm{cis} 150^{\circ}\).)
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> z = 2 (cos 150° + i sen 150°)</p>
-      <p class="dica"><strong>Dica:</strong> não diga θ = 30° só porque |cos| = √3/2 — no 2º quadrante o ângulo correspondente é 180° − 30° = 150°.</p>
+      <p class="ans"><strong>Resposta final:</strong> z = 2 (cos \(150^{\circ}\) + i sen \(150^{\circ}\))</p>
+      <p class="dica"><strong>Dica:</strong> não diga \(\theta\) = \(30^{\circ}\) só porque |cos| = \(\sqrt{3}/2\) — no 2º quadrante o ângulo correspondente é \(180^{\circ}\) − \(30^{\circ}\) = \(150^{\circ}\).</p>
     </div>
-    <div class="ans-box">Resposta: z = 2 (cos 150° + i sen 150°)</div>
+    <div class="ans-box">Resposta: z = 2 (cos \(150^{\circ}\) + i sen \(150^{\circ}\))</div>
   </div>
 
   <div class="ex">
     <div class="ex-header"><span class="ex-num">P2</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">conversão</span></div>
-    <div class="ex-q">Converta w = 4 (cos 240° + i sen 240°) para a forma algébrica a + bi.</div>
+    <div class="ex-q">Converta w = 4 (cos \(240^{\circ}\) + i sen \(240^{\circ}\)) para a forma algébrica \(a + bi\).</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> da forma trigonométrica para a algébrica usamos a = ρ cos θ e b = ρ sen θ. Precisamos dos valores exatos de cos 240° e sen 240°.</p>
+      <p class="step-intro"><strong>Ideia:</strong> da forma trigonométrica para a algébrica usamos a = \(\rho\) cos \(\theta\) e b = \(\rho\) sen \(\theta\). Precisamos dos valores exatos de cos \(240^{\circ}\) e sen \(240^{\circ}\).</p>
       <ol>
-        <li><strong>Passo 1 — Localizar 240°:</strong> 240° = 180° + 60°, 3º quadrante (cosseno e seno negativos).</li>
+        <li><strong>Passo 1 — Localizar \(240^{\circ}\):</strong> \(240^{\circ}\) = \(180^{\circ}\) + \(60^{\circ}\), 3º quadrante (cosseno e seno negativos).</li>
         <li><strong>Passo 2 — Valores trigonométricos:</strong>
-          <div class="formula">cos 240° = −cos 60° = −1/2</div>
-          <div class="formula">sen 240° = −sen 60° = −√3/2</div>
+          <div class="formula">$$\cos 240^{\circ} = -\cos 60^{\circ} = -1/2$$</div>
+          <div class="formula">$$\operatorname{sen} 240^{\circ} = -\operatorname{sen} 60^{\circ} = -\sqrt{3}/2$$</div>
         </li>
         <li><strong>Passo 3 — Calcular a e b:</strong>
-          <div class="formula">a = 4 · (−1/2) = −2</div>
-          <div class="formula">b = 4 · (−√3/2) = −2√3</div>
+          <div class="formula">$$a = 4 \cdot (-1/2) = -2$$</div>
+          <div class="formula">$$b = 4 \cdot (-\sqrt{3}/2) = -2\sqrt{3}$$</div>
         </li>
         <li><strong>Passo 4 — Forma algébrica:</strong>
-          <div class="formula">w = −2 − 2√3 i</div>
+          <div class="formula">$$w = -2 - 2\sqrt{3} i$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> w = −2 − 2√3 i</p>
+      <p class="ans"><strong>Resposta final:</strong> w = −2 − \(2\sqrt{3}\) i</p>
       <p class="dica"><strong>Dica:</strong> no 3º quadrante ambos os sinais são negativos — um erro frequente é colocar só um deles negativo.</p>
     </div>
-    <div class="ans-box">Resposta: w = −2 − 2√3 i</div>
+    <div class="ans-box">Resposta: w = −2 − \(2\sqrt{3}\) i</div>
   </div>
 
   <div class="ex" id="b42-p3">
     <div class="ex-header"><span class="ex-num">P3</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">produto</span></div>
-    <div class="ex-q">Sejam z₁ = 2 (cos 40° + i sen 40°) e z₂ = 3 (cos 80° + i sen 80°). Calcule z₁z₂ na forma trigonométrica e algébrica.</div>
+    <div class="ex-q">Sejam z_{1} = 2 (cos \(40^{\circ}\) + i sen \(40^{\circ}\)) e z_{2} = 3 (cos \(80^{\circ}\) + i sen \(80^{\circ}\)). Calcule z_{1}z_{2} na forma trigonométrica e algébrica.</div>
     
     <div class="ex-anim" id="wrap-anim-b42-p3">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b42-p3">▶ Animar</button>
       <canvas id="anim-b42-p3" width="360" height="360"></canvas>
-      <p class="anim-cap">Produto: dilatar ×3 e girar +80°</p>
+      <p class="anim-cap">Produto: dilatar ×3 e girar +\(80^{\circ}\)</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> no produto em forma trigonométrica, os módulos se multiplicam e os argumentos se somam: z₁z₂ = ρ₁ρ₂ [cos(θ₁+θ₂) + i sen(θ₁+θ₂)]. Depois convertemos para a + bi.</p>
+      <p class="step-intro"><strong>Ideia:</strong> no produto em forma trigonométrica, os módulos se multiplicam e os argumentos se somam: z_{1}z_{2} = ρ_{1}ρ_{2} [cos(θ_{1}+θ_{2}) + i sen(θ_{1}+θ_{2})]. Depois convertemos para \(a + bi\).</p>
       <ol>
         <li><strong>Passo 1 — Módulo do produto:</strong>
-          <div class="formula">ρ = ρ₁ · ρ₂ = 2 · 3 = 6</div>
+          <div class="formula">$$\rho = \rho_{1} \cdot \rho_{2} = 2 \cdot 3 = 6$$</div>
         </li>
         <li><strong>Passo 2 — Argumento do produto:</strong>
-          <div class="formula">θ = θ₁ + θ₂ = 40° + 80° = 120°</div>
+          <div class="formula">$$\theta = \theta_{1} + \theta_{2} = 40^{\circ} + 80^{\circ} = 120^{\circ}$$</div>
         </li>
         <li><strong>Passo 3 — Forma trigonométrica:</strong>
-          <div class="formula">z₁z₂ = 6 (cos 120° + i sen 120°)</div>
+          <div class="formula">$$z_{1}z_{2} = 6 (\cos 120^{\circ} + i \operatorname{sen} 120^{\circ})$$</div>
         </li>
-        <li><strong>Passo 4 — Valores de cos e sen de 120°:</strong> 120° = 180° − 60°, 2º quadrante.
-          <div class="formula">cos 120° = −1/2; &nbsp; sen 120° = √3/2</div>
+        <li><strong>Passo 4 — Valores de cos e sen de \(120^{\circ}\):</strong> \(120^{\circ}\) = \(180^{\circ}\) − \(60^{\circ}\), 2º quadrante.
+          <div class="formula">$$\cos 120^{\circ} = -1/2\; \operatorname{sen} 120^{\circ} = \sqrt{3}/2$$</div>
         </li>
         <li><strong>Passo 5 — Forma algébrica:</strong>
-          <div class="formula">a = 6 · (−1/2) = −3; &nbsp; b = 6 · (√3/2) = 3√3</div>
-          <div class="formula">z₁z₂ = −3 + 3√3 i</div>
+          <div class="formula">$$a = 6 \cdot (-1/2) = -3\; b = 6 \cdot (\sqrt{3}/2) = 3\sqrt{3}$$</div>
+          <div class="formula">$$z_{1}z_{2} = -3 + 3\sqrt{3} i$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> 6 (cos 120° + i sen 120°) = −3 + 3√3 i</p>
-      <p class="dica"><strong>Dica:</strong> geometricamente, multiplicar por z₂ dilata o vetor por 3 e gira 80° no sentido anti-horário.</p>
+      <p class="ans"><strong>Resposta final:</strong> 6 (cos \(120^{\circ}\) + i sen \(120^{\circ}\)) = −3 + \(3\sqrt{3}\) i</p>
+      <p class="dica"><strong>Dica:</strong> geometricamente, multiplicar por z_{2} dilata o vetor por 3 e gira \(80^{\circ}\) no sentido anti-horário.</p>
     </div>
-    <div class="ans-box">Resposta: 6 (cos 120° + i sen 120°) = −3 + 3√3 i</div>
+    <div class="ans-box">Resposta: 6 (cos \(120^{\circ}\) + i sen \(120^{\circ}\)) = −3 + \(3\sqrt{3}\) i</div>
   </div>
 
   <div class="ex">
     <div class="ex-header"><span class="ex-num">P4</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">quociente</span></div>
-    <div class="ex-q">Calcule z₁/z₂ com z₁ = √2 (cos 75° + i sen 75°) e z₂ = √8 (cos 30° + i sen 30°).</div>
+    <div class="ex-q">Calcule z_{1}/z_{2} com z_{1} = \(\sqrt{2}\) (cos \(75^{\circ}\) + i sen \(75^{\circ}\)) e z_{2} = \(\sqrt{8}\) (cos \(30^{\circ}\) + i sen \(30^{\circ}\)).</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> no quociente, os módulos se dividem e os argumentos se subtraem: z₁/z₂ = (ρ₁/ρ₂)[cos(θ₁−θ₂) + i sen(θ₁−θ₂)].</p>
+      <p class="step-intro"><strong>Ideia:</strong> no quociente, os módulos se dividem e os argumentos se subtraem: z_{1}/z_{2} = (ρ_{1}/ρ_{2})[cos(θ_{1}−θ_{2}) + i sen(θ_{1}−θ_{2})].</p>
       <ol>
-        <li><strong>Passo 1 — Simplificar ρ₂:</strong>
-          <div class="formula">√8 = √(4·2) = 2√2</div>
+        <li><strong>Passo 1 — Simplificar ρ_{2}:</strong>
+          <div class="formula">$$\sqrt{8} = \sqrt{4\cdot2} = 2\sqrt{2}$$</div>
         </li>
         <li><strong>Passo 2 — Razão dos módulos:</strong>
-          <div class="formula">ρ₁/ρ₂ = √2 / (2√2) = 1/2</div>
+          <div class="formula">$$\rho_{1}/\rho_{2} = \sqrt{2} / (2\sqrt{2}) = 1/2$$</div>
         </li>
         <li><strong>Passo 3 — Diferença dos argumentos:</strong>
-          <div class="formula">θ = 75° − 30° = 45°</div>
+          <div class="formula">$$\theta = 75^{\circ} - 30^{\circ} = 45^{\circ}$$</div>
         </li>
         <li><strong>Passo 4 — Forma trigonométrica:</strong>
-          <div class="formula">z₁/z₂ = (1/2)(cos 45° + i sen 45°)</div>
+          <div class="formula">$$z_{1}/z_{2} = (1/2)(\cos 45^{\circ} + i \operatorname{sen} 45^{\circ})$$</div>
         </li>
-        <li><strong>Passo 5 — Forma algébrica:</strong> cos 45° = sen 45° = √2/2, logo
-          <div class="formula">(1/2)(√2/2) + i(1/2)(√2/2) = √2/4 + (√2/4)i</div>
+        <li><strong>Passo 5 — Forma algébrica:</strong> cos \(45^{\circ}\) = sen \(45^{\circ}\) = \(\sqrt{2}/2\), logo
+          <div class="formula">$$(1/2)(\sqrt{2}/2) + i(1/2)(\sqrt{2}/2) = \sqrt{2}/4 + (\sqrt{2}/4)i$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> (1/2)(cos 45° + i sen 45°) = √2/4 + (√2/4)i</p>
-      <p class="dica"><strong>Dica:</strong> simplifique √8 = 2√2 antes de dividir — evita confusão com raízes no denominador.</p>
+      <p class="ans"><strong>Resposta final:</strong> (1/2)(cos \(45^{\circ}\) + i sen \(45^{\circ}\)) = \(\sqrt{2}/4\) + (\(\sqrt{2}/4\))i</p>
+      <p class="dica"><strong>Dica:</strong> simplifique \(\sqrt{8}\) = \(2\sqrt{2}\) antes de dividir — evita confusão com raízes no denominador.</p>
     </div>
-    <div class="ans-box">Resposta: (1/2)(cos 45° + i sen 45°) = √2/4 + (√2/4)i</div>
+    <div class="ans-box">Resposta: (1/2)(cos \(45^{\circ}\) + i sen \(45^{\circ}\)) = \(\sqrt{2}/4\) + (\(\sqrt{2}/4\))i</div>
   </div>
 
   <div class="ex">
     <div class="ex-header"><span class="ex-num">P5</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">módulo e arg</span></div>
-    <div class="ex-q">Dado z = 5√2/2 + (5√2/2)i, determine |z| e arg(z) em graus.</div>
+    <div class="ex-q">Dado z = 5\(\sqrt{2}/2\) + (5\(\sqrt{2}/2\))i, determine \(|z|\) e \\\(\arg(z)\) em graus.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> a e b são iguais e positivos ⇒ o afixo está na bissetriz do 1º quadrante (θ = 45°). O módulo é √(a² + b²).</p>
+      <p class="step-intro"><strong>Ideia:</strong> a e b são iguais e positivos \(\Rightarrow\) o afixo está na bissetriz do 1º quadrante (\(\theta\) = \(45^{\circ}\)). O módulo é \sqrt{\(a^{2} + b^{2}\)}.</p>
       <ol>
         <li><strong>Passo 1 — Identificar a e b:</strong>
-          <div class="formula">a = b = 5√2/2 &gt; 0 ⇒ 1º quadrante</div>
+          <div class="formula">$$a = b = 5\sqrt{2}/2 > 0 \Rightarrow 1º quadrante$$</div>
         </li>
-        <li><strong>Passo 2 — Calcular |z|:</strong>
-          <div class="formula">|z| = √(a² + b²) = √(2a²) = |a|√2 = (5√2/2) · √2 = 5 · 2 / 2 = 5</div>
-          (Conferência: a² = (5√2/2)² = 25·2/4 = 25/2; 2a² = 25; √25 = 5.)
+        <li><strong>Passo 2 — Calcular \(|z|\):</strong>
+          <div class="formula">$$|z| = \sqrt{a^{2} + b^{2}} = \sqrt{2a^{2}} = |a|\sqrt{2} = (5\sqrt{2}/2) \cdot \sqrt{2} = 5 \cdot 2 / 2 = 5$$</div>
+          (Conferência: \(a^{2}\) = (5\(\sqrt{2}/2\))² = 25·2/4 = 25/2; 2\(a^{2}\) = 25; \(\sqrt{25}\) = 5.)
         </li>
         <li><strong>Passo 3 — Calcular o argumento:</strong>
-          <div class="formula">cos θ = a/ρ = (5√2/2)/5 = √2/2; &nbsp; sen θ = √2/2</div>
-          <div class="formula">θ = 45°</div>
+          <div class="formula">$$\cos \theta = a/\rho = (5\sqrt{2}/2)/5 = \sqrt{2}/2\; \operatorname{sen} \theta = \sqrt{2}/2$$</div>
+          <div class="formula">$$\theta = 45^{\circ}$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> |z| = 5; arg(z) = 45°</p>
-      <p class="dica"><strong>Dica:</strong> quando a = b &gt; 0, o argumento é sempre 45° — não precisa da calculadora.</p>
+      <p class="ans"><strong>Resposta final:</strong> \(|z|\) = 5; \\\(\arg(z)\) = \(45^{\circ}\)</p>
+      <p class="dica"><strong>Dica:</strong> quando a = b &gt; 0, o argumento é sempre \(45^{\circ}\) — não precisa da calculadora.</p>
     </div>
-    <div class="ans-box">Resposta: |z| = 5; arg(z) = 45°</div>
+    <div class="ans-box">Resposta: \(|z|\) = 5; \\\(\arg(z)\) = \(45^{\circ}\)</div>
   </div>
 
   <div class="ex" id="b42-p6">
     <div class="ex-header"><span class="ex-num">P6</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">rotação</span></div>
-    <div class="ex-q">O número z = 1 + √3 i é rotacionado 90° no sentido horário em torno da origem. Qual o complexo resultante?</div>
+    <div class="ex-q">O número z = 1 + \(\sqrt{3}\) i é rotacionado \(90^{\circ}\) no sentido horário em torno da origem. Qual o complexo resultante?</div>
     
     <div class="ex-anim" id="wrap-anim-b42-p6">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b42-p6">▶ Animar</button>
       <canvas id="anim-b42-p6" width="360" height="360"></canvas>
-      <p class="anim-cap">Rotação horária 90° (−i)</p>
+      <p class="anim-cap">Rotação horária \(90^{\circ}\) (-i)</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> girar 90° no sentido horário = multiplicar por −i (pois −i = cis(−90°) = cis 270°). Podemos fazer isso na forma trigonométrica ou diretamente na algébrica.</p>
+      <p class="step-intro"><strong>Ideia:</strong> girar \(90^{\circ}\) no sentido horário = multiplicar por -i (pois -i = \(\mathrm{cis}(-90^{\circ})\) = \(\mathrm{cis} 270^{\circ}\)). Podemos fazer isso na forma trigonométrica ou diretamente na algébrica.</p>
       <ol>
         <li><strong>Passo 1 — Forma trigonométrica de z:</strong>
-          <div class="formula">ρ = √(1² + (√3)²) = √(1+3) = 2</div>
-          <div class="formula">cos θ = 1/2, sen θ = √3/2 ⇒ θ = 60°</div>
-          <div class="formula">z = 2 (cos 60° + i sen 60°)</div>
+          <div class="formula">$$\rho = \sqrt{1^{2} + (\sqrt{3})^{2}} = \sqrt{1+3} = 2$$</div>
+          <div class="formula">$$\cos \theta = 1/2, \operatorname{sen} \theta = \sqrt{3}/2 \Rightarrow \theta = 60^{\circ}$$</div>
+          <div class="formula">$$z = 2 (\cos 60^{\circ} + i \operatorname{sen} 60^{\circ})$$</div>
         </li>
-        <li><strong>Passo 2 — Aplicar a rotação de −90°:</strong>
-          <div class="formula">resultado = 2 cis(60° − 90°) = 2 cis(−30°) = 2 cis 330°</div>
+        <li><strong>Passo 2 — Aplicar a rotação de −\(90^{\circ}\):</strong>
+          <div class="formula">$$resultado = 2 \mathrm{cis}(60^{\circ} - 90^{\circ}) = 2 \mathrm{cis}(-30^{\circ}) = 2 \mathrm{cis} 330^{\circ}$$</div>
         </li>
         <li><strong>Passo 3 — Converter para algébrica:</strong>
-          <div class="formula">cos(−30°) = √3/2; &nbsp; sen(−30°) = −1/2</div>
-          <div class="formula">2(√3/2 − i·1/2) = √3 − i</div>
+          <div class="formula">$$\cos(-30^{\circ}) = \sqrt{3}/2\; \operatorname{sen}(-30^{\circ}) = -1/2$$</div>
+          <div class="formula">$$2(\sqrt{3}/2 - i\cdot1/2) = \sqrt{3} - i$$</div>
         </li>
         <li><strong>Passo 4 — Checagem algébrica direta:</strong>
-          <div class="formula">(−i)(1 + √3 i) = −i · 1 + (−i)(√3 i) = −i − √3 i² = −i − √3(−1) = √3 − i ✓</div>
+          <div class="formula">$$(-i)(1 + \sqrt{3} i) = -i \cdot 1 + (-i)(\sqrt{3} i) = -i - \sqrt{3} i^{2} = -i - \sqrt{3}(-1) = \sqrt{3} - i \checkmark$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> √3 − i</p>
-      <p class="dica"><strong>Dica:</strong> horário → −i; anti-horário → +i. Confundir o sentido é o erro mais comum em rotações.</p>
+      <p class="ans"><strong>Resposta final:</strong> \(\sqrt{3}\) - i</p>
+      <p class="dica"><strong>Dica:</strong> horário → -i; anti-horário → +i. Confundir o sentido é o erro mais comum em rotações.</p>
     </div>
-    <div class="ans-box">Resposta: √3 − i</div>
+    <div class="ans-box">Resposta: \(\sqrt{3}\) - i</div>
   </div>
 
   <div class="ex">
     <div class="ex-header"><span class="ex-num">P7</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">produto geométrico</span></div>
-    <div class="ex-q">(Vestibular-estilo) Se |z| = 3 e arg(z) = 20°, e w = 2i, então |zw| e arg(zw) são:</div>
+    <div class="ex-q">(Vestibular-estilo) Se \(|z|\) = 3 e \\\(\arg(z)\) = \(20^{\circ}\), e w = 2i, então \(|zw|\) e \\\(\arg(zw)\) são:</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> |zw| = |z||w| e arg(zw) = arg(z) + arg(w). Basta escrever w em forma trigonométrica.</p>
+      <p class="step-intro"><strong>Ideia:</strong> \(|zw|\) = \(|z|\)\(|w|\) e \\\\(\arg(zw)\) = \\\\(\arg(z)\) + \\\\(\arg(w)\). Basta escrever w em forma trigonométrica.</p>
       <ol>
         <li><strong>Passo 1 — Forma trigonométrica de w:</strong> w = 2i = 0 + 2i.
-          <div class="formula">|w| = 2; &nbsp; arg(w) = 90° (eixo imaginário positivo)</div>
-          <div class="formula">w = 2 (cos 90° + i sen 90°) = 2 cis 90°</div>
+          <div class="formula">$$|w| = 2\; \arg(w) = 90^{\circ} (eixo imaginário positivo)$$</div>
+          <div class="formula">$$w = 2 (\cos 90^{\circ} + i \operatorname{sen} 90^{\circ}) = 2 \mathrm{cis} 90^{\circ}$$</div>
         </li>
         <li><strong>Passo 2 — Módulo do produto:</strong>
-          <div class="formula">|zw| = |z| · |w| = 3 · 2 = 6</div>
+          <div class="formula">$$|zw| = |z| \cdot |w| = 3 \cdot 2 = 6$$</div>
         </li>
         <li><strong>Passo 3 — Argumento do produto:</strong>
-          <div class="formula">arg(zw) = 20° + 90° = 110°</div>
+          <div class="formula">$$\arg(zw) = 20^{\circ} + 90^{\circ} = 110^{\circ}$$</div>
         </li>
         <li><strong>Passo 4 — (Opcional) Forma trigonométrica de zw:</strong>
-          <div class="formula">zw = 6 (cos 110° + i sen 110°)</div>
+          <div class="formula">$$zw = 6 (\cos 110^{\circ} + i \operatorname{sen} 110^{\circ})$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> |zw| = 6; arg(zw) = 110°</p>
-      <p class="dica"><strong>Dica:</strong> multiplicar por i (ou por múltiplo positivo de i) sempre adiciona 90° ao argumento e multiplica o módulo por |w|.</p>
+      <p class="ans"><strong>Resposta final:</strong> \(|zw|\) = 6; \\\(\arg(zw)\) = \(110^{\circ}\)</p>
+      <p class="dica"><strong>Dica:</strong> multiplicar por i (ou por múltiplo positivo de i) sempre adiciona \(90^{\circ}\) ao argumento e multiplica o módulo por \(|w|\).</p>
     </div>
-    <div class="ans-box">Resposta: |zw| = 6; arg(zw) = 110°</div>
+    <div class="ans-box">Resposta: \(|zw|\) = 6; \\\(\arg(zw)\) = \(110^{\circ}\)</div>
   </div>
 
   <div class="ex">
     <div class="ex-header"><span class="ex-num">P8</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">conversão completa</span></div>
-    <div class="ex-q">Escreva z = −4i na forma trigonométrica e depois calcule z · (1/2 cis 45°) na forma algébrica.</div>
+    <div class="ex-q">Escreva z = −4i na forma trigonométrica e depois calcule z · (1/2 \(\mathrm{cis} 45^{\circ}\)) na forma algébrica.</div>
     <div class="steps">
       <p class="step-intro"><strong>Ideia:</strong> −4i está no semieixo imaginário negativo. Escrevemos a forma trigonométrica e usamos a regra do produto (módulos ×, argumentos +).</p>
       <ol>
         <li><strong>Passo 1 — Forma trigonométrica de z = −4i:</strong>
-          <div class="formula">ρ = |−4i| = 4; &nbsp; θ = 270° (ou −90°)</div>
-          <div class="formula">z = 4 (cos 270° + i sen 270°) = 4 cis 270°</div>
-          (Conferência: cos 270° = 0, sen 270° = −1 ⇒ 4(0 − i) = −4i ✓)
+          <div class="formula">$$\rho = |-4i| = 4\; \theta = 270^{\circ} (ou -90^{\circ})$$</div>
+          <div class="formula">$$z = 4 (\cos 270^{\circ} + i \operatorname{sen} 270^{\circ}) = 4 \mathrm{cis} 270^{\circ}$$</div>
+          (Conferência: cos \(270^{\circ}\) = 0, sen \(270^{\circ}\) = -1 \(\Rightarrow\) 4(0 − i) = −4i ✓)
         </li>
-        <li><strong>Passo 2 — Produto com (1/2) cis 45°:</strong>
-          <div class="formula">ρ_prod = 4 · (1/2) = 2</div>
-          <div class="formula">θ_prod = 270° + 45° = 315°</div>
-          <div class="formula">produto = 2 (cos 315° + i sen 315°)</div>
+        <li><strong>Passo 2 — Produto com (1/2) \(\mathrm{cis} 45^{\circ}\):</strong>
+          <div class="formula">$$\rho_{prod} = 4 \cdot (1/2) = 2$$</div>
+          <div class="formula">$$\theta_{\mathrm{prod}} = 270^{\circ} + 45^{\circ} = 315^{\circ}$$</div>
+          <div class="formula">$$produto = 2 (\cos 315^{\circ} + i \operatorname{sen} 315^{\circ})$$</div>
         </li>
-        <li><strong>Passo 3 — Converter 315°:</strong> 315° = 360° − 45°, 4º quadrante.
-          <div class="formula">cos 315° = √2/2; &nbsp; sen 315° = −√2/2</div>
+        <li><strong>Passo 3 — Converter \(315^{\circ}\):</strong> \(315^{\circ}\) = \(360^{\circ}\) − \(45^{\circ}\), 4º quadrante.
+          <div class="formula">$$\cos 315^{\circ} = \sqrt{2}/2\; \operatorname{sen} 315^{\circ} = -\sqrt{2}/2$$</div>
         </li>
         <li><strong>Passo 4 — Forma algébrica:</strong>
-          <div class="formula">2(√2/2 − i √2/2) = √2 − √2 i</div>
+          <div class="formula">$$2(\sqrt{2}/2 - i \sqrt{2}/2) = \sqrt{2} - \sqrt{2} i$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> z = 4 cis 270°; produto = √2 − √2 i</p>
-      <p class="dica"><strong>Dica:</strong> após somar ângulos, se passar de 360°, reduza (mod 360°). Aqui 315° já está no intervalo [0°, 360°).</p>
+      <p class="ans"><strong>Resposta final:</strong> z = 4 \(\mathrm{cis} 270^{\circ}\); produto = \(\sqrt{2}\) - \(\sqrt{2}\) i</p>
+      <p class="dica"><strong>Dica:</strong> após somar ângulos, se passar de \(360^{\circ}\), reduza (\(mod 360^{\circ}\)). Aqui \(315^{\circ}\) já está no intervalo \([0^{\circ}, 360^{\circ})\).</p>
     </div>
-    <div class="ans-box">Resposta: z = 4 cis 270°; produto = √2 − √2 i</div>
+    <div class="ans-box">Resposta: z = 4 \(\mathrm{cis} 270^{\circ}\); produto = \(\sqrt{2}\) - \(\sqrt{2}\) i</div>
   </div>
 
 </div>
@@ -639,14 +671,15 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
       const ox = opRho * Math.cos(opTh * Math.PI / 180);
       const oy = opRho * Math.sin(opTh * Math.PI / 180);
       const os = oy >= 0 ? '+' : '−';
-      opHtml = '<div class="hl2">' + (opLabel || 'resultado') + ' = ' + fmt(opRho, 3) + ' cis ' + fmt(normDeg(opTh), 1) + '°</div>' +
+      opHtml = '<div class="hl2">\\(' + (opLabel || 'resultado') + ' = ' + fmt(opRho, 3) + '\\,\\mathrm{cis}\\,' + fmt(normDeg(opTh), 1) + '^{\\circ}\\)</div>' +
         '<div class="hl2">= ' + fmt(ox, 3) + ' ' + os + ' ' + fmt(Math.abs(oy), 3) + 'i</div>';
     }
     liveVals.innerHTML =
-      '<div class="hl2">z = ' + fmt(rho, 3) + ' (cos ' + fmt(thDeg, 1) + '° + i sen ' + fmt(thDeg, 1) + '°)</div>' +
+      '<div class="hl2">$z = ' + fmt(rho, 3) + '(\\cos ' + fmt(thDeg, 1) + '^{\\circ} + i\\,\\operatorname{sen} ' + fmt(thDeg, 1) + '^{\\circ})$</div>' +
       '<div class="hl">z = ' + fmt(ax, 3) + ' ' + sign + ' ' + fmt(Math.abs(by), 3) + 'i</div>' +
-      '<div class="hl3">ρ = ' + fmt(rho, 3) + ' &nbsp; θ = ' + fmt(thDeg, 1) + '° = ' + fmt(thDeg * Math.PI / 180, 4) + ' rad</div>' +
+      '<div class="hl3">$\\rho = ' + fmt(rho, 3) + '\\; \\theta = ' + fmt(thDeg, 1) + '^{\\circ} = ' + fmt(thDeg * Math.PI / 180, 4) + '\\,\\mathrm{rad}$</div>' +
       opHtml;
+    if (window.renderKatex) window.renderKatex(liveVals);
   }
 
   function setPolar(r, t) {

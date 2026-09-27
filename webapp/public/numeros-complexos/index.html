@@ -172,7 +172,39 @@ footer {
   margin-top: 3rem;
 }
 .math { font-family: "Cambria Math", "Times New Roman", serif; }
+
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ans .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+.hl .katex, .hl2 .katex, .hl3 .katex, .hl4 .katex { color: inherit; }
+
 </style>
+
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+
 </head>
 <body>
 <nav>
@@ -198,21 +230,21 @@ footer {
         <div class="num">B41</div>
         <div>
           <h3>Representação geométrica</h3>
-          <p>Plano de Argand-Gauss, afixo, módulo ρ, argumento θ, conjugado e antípodas. Visualize círculos |z|=r e |z−z₀|=r.</p>
+          <p>Plano de Argand-Gauss, afixo, módulo $\rho$, argumento $\theta$, conjugado e antípodas. Visualize círculos $|z|$=r e |z-z_{0}|=r.</p>
         </div>
       </div>
       <div class="plan-step b42">
         <div class="num">B42</div>
         <div>
           <h3>Forma trigonométrica (polar)</h3>
-          <p>z = ρ(cos θ + i sen θ). Conversão algébrica ↔ trigonométrica. Multiplicação e divisão: multiplica módulos, soma/subtrai argumentos. Rotação + dilatação.</p>
+          <p>z = $\rho$(cosθ + isenθ). Conversão algébrica ↔ trigonométrica. Multiplicação e divisão: multiplica módulos, soma/subtrai argumentos. Rotação + dilatação.</p>
         </div>
       </div>
       <div class="plan-step b43">
         <div class="num">B43</div>
         <div>
           <h3>Fórmula de De Moivre</h3>
-          <p>Potências [ρ(cis θ)]ⁿ = ρⁿ(cis nθ) e raízes n-ésimas no círculo. Raízes da unidade e equações zⁿ = w.</p>
+          <p>Potências [$\rho$(cis\,$\theta$)]^{n} = $\rho^{n}$(cis\, nθ) e raízes n-ésimas no círculo. Raízes da unidade e equações $z^{n}$ = w.</p>
         </div>
       </div>
     </div>
@@ -238,7 +270,7 @@ footer {
     <a class="card b43" href="b43-moivre.html">
       <div class="tag">Módulo B43</div>
       <h2>Fórmula de De Moivre</h2>
-      <p>Potências e raízes n-ésimas. Visualização no círculo + exercícios de prática (potências, raízes, zⁿ=w).</p>
+      <p>Potências e raízes n-ésimas. Visualização no círculo + exercícios de prática (potências, raízes, $z^{n}$=w).</p>
       <div class="cta">Abrir módulo →</div>
     </a>
   </div>
