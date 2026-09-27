@@ -63,10 +63,11 @@ button.primary { background: #e65100; border-color: var(--accent3); color: #fff;
 }
 .live-vals div { margin: 0.22rem 0; }
 .hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
-.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
 .theory-card {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 1.15rem; box-shadow: var(--shadow);
+  overflow: hidden;
 }
 .theory-card h3 { margin-top: 0; color: var(--accent3); font-size: 1rem; }
 .theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
@@ -74,7 +75,23 @@ button.primary { background: #e65100; border-color: var(--accent3); color: #fff;
 .formula {
   background: var(--bg); border-left: 3px solid var(--accent3); padding: 0.6rem 0.9rem;
   margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-family: "Cambria Math", "Times New Roman", serif; font-size: 1.02rem;
+  overflow-x: auto; max-width: 100%;
 }
+
+.explain {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  margin: 0 0 1.5rem;
+  box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+
 .ex {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
@@ -164,7 +181,8 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
 .katex { color: inherit; }
 .formula .katex { color: inherit; }
-.formula .katex-display { margin: 0.35em 0; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
 .live-vals .katex { color: inherit; }
 .ans-box .katex, .ans .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
 .hl .katex, .hl2 .katex, .hl3 .katex, .hl4 .katex { color: inherit; }
@@ -249,37 +267,57 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </div>
 
-  <span class="section-label">(B) Teoria</span>
+    <!-- ===== EM PALAVRAS ===== -->
+  <span class="section-label">(B) Em palavras</span>
+  <div class="explain">
+    <p class="lead">A fórmula de De Moivre é o produto polar <strong>repetido</strong> $n$ vezes: elevar $z = \rho\,\mathrm{cis}\,\theta$ a $n$ significa elevar o módulo a $n$ e multiplicar o argumento por $n$, ou seja $[\rho(\cos\theta + i\operatorname{sen}\theta)]^{n} = \rho^{n}[\cos(n\theta) + i\operatorname{sen}(n\theta)]$.</p>
+    <p>Para potências isso é direto. Para <strong>raízes</strong>, o caminho se inverte: o módulo da raiz é $\rho^{1/n}$, e o ângulo se divide por $n$. Mas cuidado — o argumento de $z$ não é único: $\theta$, $\theta+360^{\circ}$, $\theta+720^{\circ}$, … representam o mesmo número. Por isso surgem <strong>$n$ raízes distintas</strong>, uma para cada $k = 0, 1, \ldots, n-1$.</p>
+    <p>No plano, essas $n$ raízes são os vértices de um <strong>polígono regular</strong> inscrito no círculo de centro $O$ e raio $\rho^{1/n}$. Elas estão igualmente espaçadas, de $360^{\circ}/n$ em $360^{\circ}/n$.</p>
+    <p>Um caso especial importante: as <strong>raízes da unidade</strong> (soluções de $z^{n} = 1$) ficam todas sobre o círculo de raio $1$, começando em $1$ (quando $k=0$). Resolver $z^{n} = w$ é achar as raízes $n$-ésimas de $w$: escreva $w$ em polar e aplique a mesma fórmula.</p>
+    <p>Dica prática: depois de multiplicar o ângulo por $n$ (ou somar $360^{\circ}\cdot k$ e dividir), <strong>normalize módulo $360^{\circ}$</strong> para ficar em $[0^{\circ}, 360^{\circ})$. Confira com casos conhecidos — $i^{2} = -1$, $(\mathrm{cis}\,45^{\circ})^{8} = 1$ — e use o playground para ver o polígono surgir na tela.</p>
+  </div>
+
+  <span class="section-label">(C) Fórmulas</span>
   <div class="theory-grid">
     <div class="theory-card">
       <h3>Fórmula de De Moivre</h3>
       <p>Para n inteiro (e, por extensão, racional):</p>
-      <div class="formula">$$[\rho (\cos \theta + i \operatorname{sen} \theta)]^{n} = \rho^{n} [\cos(n\theta) + i \operatorname{sen}(n\theta)]$$</div>
+      <div class="formula">$$\begin{aligned}
+&[\rho (\cos \theta + i \operatorname{sen} \theta)]^{n} \\
+&\quad= \rho^{n}\bigl[\cos(n\theta) \\
+&\qquad + i \operatorname{sen}(n\theta)\bigr]
+\end{aligned}$$</div>
       <p>Potenciar = elevar o módulo a n e multiplicar o argumento por n.</p>
     </div>
     <div class="theory-card">
       <h3>Raízes n-ésimas</h3>
       <p>As n raízes complexas de z = \(\rho \mathrm{cis} \theta\) são:</p>
-      <div class="formula">$$w_{k} = \rho^{1/n} [ \cos((\theta+2k\pi)/n) + i \operatorname{sen}((\theta+2k\pi)/n) ]$$</div>
+      <div class="formula">$$\begin{aligned}
+w_{k} &= \rho^{1/n} \bigl[\cos((\theta+2k\pi)/n) \\
+&\quad + i \operatorname{sen}((\theta+2k\pi)/n)\bigr]
+\end{aligned}$$</div>
       <p>k = 0, 1, …, n-1. Em graus: (\(\theta\) + \(360^{\circ}\)·k)/n.</p>
     </div>
     <div class="theory-card">
       <h3>Geometria das raízes</h3>
-      <p>Os afixos das raízes n-ésimas são vértices de um polígono regular de n lados, inscrito no círculo de centro O e raio \(\rho\)<sup>1/n</sup>.</p>
+      <p>Os afixos das raízes n-ésimas são vértices de um polígono regular de n lados, inscrito no círculo de centro O e raio $\rho^{1/n}$.</p>
     </div>
     <div class="theory-card">
       <h3>Raízes da unidade</h3>
-      <p>Soluções de \(z^{n}\) = 1: \(\omega\)<sub>k</sub> = \(\mathrm{cis}(2k\pi/n)\), k = 0…n-1.</p>
+      <p>Soluções de $z^{n} = 1$: $\omega_{k} = \mathrm{cis}(2k\pi/n)$, $k = 0,\ldots,n-1$.</p>
       <ul>
-        <li>\(\omega\)₀ = 1</li>
-        <li>|\(\omega\)<sub>k</sub>| = 1 (todas sobre o círculo unitário)</li>
-        <li>1 + \(\omega\) + \(\omega^{2}\) + … + \(\omega\)^{n-1} = 0 (se \(\omega\) \(\ne\) 1 primitiva)</li>
+        <li>$\omega_{0} = 1$</li>
+        <li>$|\omega_{k}| = 1$ (todas sobre o círculo unitário)</li>
+        <li>$1 + \omega + \omega^{2} + \cdots + \omega^{n-1} = 0$ (se $\omega \ne 1$ primitiva)</li>
       </ul>
     </div>
     <div class="theory-card">
       <h3>Equação \(z^{n}\) = w</h3>
       <p>Se w = R cis \(\alpha\), as soluções são as raízes n-ésimas de w:</p>
-      <div class="formula">$$z_{k} = R^{1/n} \mathrm{cis}((\alpha + 2k\pi)/n)$$</div>
+      <div class="formula">$$\begin{aligned}
+z_{k} &= R^{1/n} \\
+&\quad\cdot\mathrm{cis}\!\left(\frac{\alpha + 2k\pi}{n}\right)
+\end{aligned}$$</div>
     </div>
     <div class="theory-card">
       <h3>Dica de cálculo</h3>
@@ -291,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </div>
 
-  <h2>📐 (C) Exercícios de prática (B43)</h2>
+  <h2>📐 (D) Exercícios de prática (B43)</h2>
   <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.9rem">Exercícios no estilo vestibular, com resolução completa. <span class="badge-pratica">Prática B43</span></p>
   <p class="note" style="font-style:normal;margin-bottom:1rem">Cada resolução começa pela ideia e segue passo a passo.</p>
 
@@ -318,7 +356,11 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$1 + i = \sqrt{2} (\cos 45^{\circ} + i \operatorname{sen} 45^{\circ})$$</div>
         </li>
         <li><strong>Passo 2 — Aplicar De Moivre com n = 6:</strong>
-          <div class="formula">$$(1+i)^{6} = (\sqrt{2})^{6} [\cos(6\cdot45^{\circ}) + i \operatorname{sen}(6\cdot45^{\circ})] = (\sqrt{2})^{6} [\cos 270^{\circ} + i \operatorname{sen} 270^{\circ}]$$</div>
+          <div class="formula">$$\begin{aligned}
+(1+i)^{6} &= (\sqrt{2})^{6} [\cos(6\cdot45^{\circ}) \\
+&\quad + i \operatorname{sen}(6\cdot45^{\circ})] \\
+&= (\sqrt{2})^{6} [\cos 270^{\circ} + i \operatorname{sen} 270^{\circ}]
+\end{aligned}$$</div>
         </li>
         <li><strong>Passo 3 — Calcular (\(\sqrt{2}\))^{6}:</strong>
           <div class="formula">$$(\sqrt{2})^{6} = (2^{1/2})^{6} = 2^{3} = 8$$</div>
@@ -346,13 +388,24 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$-\sqrt{3} + i = 2 (\cos 150^{\circ} + i \operatorname{sen} 150^{\circ})$$</div>
         </li>
         <li><strong>Passo 2 — De Moivre com n = 5:</strong>
-          <div class="formula">$$(-\sqrt{3}+i)^{5} = 2^{5} [\cos(5\cdot150^{\circ}) + i \operatorname{sen}(5\cdot150^{\circ})] = 32 [\cos 750^{\circ} + i \operatorname{sen} 750^{\circ}]$$</div>
+          <div class="formula">$$\begin{aligned}
+(-\sqrt{3}+i)^{5} &= 2^{5} [\cos(5\cdot150^{\circ}) \\
+&\quad + i \operatorname{sen}(5\cdot150^{\circ})] \\
+&= 32 [\cos 750^{\circ} + i \operatorname{sen} 750^{\circ}]
+\end{aligned}$$</div>
         </li>
         <li><strong>Passo 3 — Reduzir \(750^{\circ}\):</strong>
-          <div class="formula">$$750^{\circ} = 2\cdot360^{\circ} + 30^{\circ} = 720^{\circ} + 30^{\circ} \Rightarrow ângulo equivalente: 30^{\circ}$$</div>
+          <div class="formula">$$\begin{aligned}
+750^{\circ} &= 2\cdot360^{\circ} + 30^{\circ} = 720^{\circ} + 30^{\circ} \\
+&\Rightarrow \text{ângulo equivalente: } 30^{\circ}
+\end{aligned}$$</div>
         </li>
         <li><strong>Passo 4 — Forma algébrica:</strong>
-          <div class="formula">$$32 (\cos 30^{\circ} + i \operatorname{sen} 30^{\circ}) = 32(\sqrt{3}/2 + i\cdot1/2) = 16\sqrt{3} + 16i$$</div>
+          <div class="formula">$$\begin{aligned}
+32 (\cos 30^{\circ} + i \operatorname{sen} 30^{\circ})
+&= 32(\sqrt{3}/2 + i\cdot1/2) \\
+&= 16\sqrt{3} + 16i
+\end{aligned}$$</div>
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> \(16\sqrt{3}\) + 16i</p>
@@ -456,8 +509,8 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$k=2: \omega^{2} = \mathrm{cis} 240^{\circ} = -1/2 - (\sqrt{3}/2)i$$</div>
         </li>
         <li><strong>Passo 3 — Somar 1 + \(\omega\) + \(\omega^{2}\):</strong>
-          <div class="formula">$$Parte real: 1 + (-1/2) + (-1/2) = 1 - 1 = 0$$</div>
-          <div class="formula">$$Parte imaginária: 0 + \sqrt{3}/2 - \sqrt{3}/2 = 0$$</div>
+          <div class="formula">$$\text{Parte real: } 1 + (-1/2) + (-1/2) = 1 - 1 = 0$$</div>
+          <div class="formula">$$\text{Parte imaginária: } 0 + \sqrt{3}/2 - \sqrt{3}/2 = 0$$</div>
           <div class="formula">$$1 + \omega + \omega^{2} = 0 \checkmark$$</div>
         </li>
         <li><strong>Passo 4 — Interpretação geométrica:</strong> o centroide (baricentro) do triângulo equilátero com vértices 1, \(\omega\), \(\omega^{2}\) é a origem — por isso a soma vetorial é o vetor nulo.</li>
