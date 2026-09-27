@@ -59,10 +59,11 @@ button.primary { background: #2e7d32; border-color: var(--accent2); color: #fff;
 }
 .live-vals div { margin: 0.25rem 0; }
 .hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
-.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
 .theory-card {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 1.15rem; box-shadow: var(--shadow);
+  overflow: hidden;
 }
 .theory-card h3 { margin-top: 0; color: var(--accent2); font-size: 1rem; }
 .theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
@@ -70,7 +71,23 @@ button.primary { background: #2e7d32; border-color: var(--accent2); color: #fff;
 .formula {
   background: var(--bg); border-left: 3px solid var(--accent2); padding: 0.6rem 0.9rem;
   margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-family: "Cambria Math", "Times New Roman", serif; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
 }
+
+.explain {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  margin: 0 0 1.5rem;
+  box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+
 .ex {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
@@ -160,7 +177,8 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
 .katex { color: inherit; }
 .formula .katex { color: inherit; }
-.formula .katex-display { margin: 0.35em 0; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
 .live-vals .katex { color: inherit; }
 .ans-box .katex, .ans .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
 .hl .katex, .hl2 .katex, .hl3 .katex, .hl4 .katex { color: inherit; }
@@ -258,7 +276,17 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </div>
 
-  <span class="section-label">(B) Teoria</span>
+    <!-- ===== EM PALAVRAS ===== -->
+  <span class="section-label">(B) Em palavras</span>
+  <div class="explain">
+    <p class="lead">No B41 vimos $z$ como ponto $P(a,b)$. Há outro jeito de nomear o mesmo ponto: pela distância à origem e pelo ângulo — as coordenadas polares $(\rho, \theta)$. Isso é a <strong>forma trigonométrica</strong> (ou polar).</p>
+    <p>Escrevemos $z = \rho(\cos\theta + i\operatorname{sen}\theta)$, ou de modo abreviado $z = \rho\,\mathrm{cis}\,\theta$. Para ir da forma algébrica $a+bi$ à polar: $\rho = \sqrt{a^{2}+b^{2}}$ e $\theta$ vem de $\cos\theta = a/\rho$, $\operatorname{sen}\theta = b/\rho$ (cuidado com o quadrante!). No sentido contrário: $a = \rho\cos\theta$ e $b = \rho\operatorname{sen}\theta$.</p>
+    <p>A grande vantagem aparece nas operações. O produto $z_{1}z_{2}$ <strong>multiplica os módulos</strong> e <strong>soma os argumentos</strong>: geometricamente, dilata por $\rho_{2}$ e gira de $\theta_{2}$. O quociente faz o oposto — divide módulos e subtrai argumentos (dilatação por $1/\rho_{2}$ e rotação de $-\theta_{2}$).</p>
+    <p>Casos especiais memoráveis: multiplicar por $i = \mathrm{cis}\,90^{\circ}$ gira $90^{\circ}$ no sentido anti-horário; por $-1 = \mathrm{cis}\,180^{\circ}$ gira meia volta; por $-i = \mathrm{cis}\,270^{\circ}$ gira $270^{\circ}$ (ou $-90^{\circ}$). Em todos eles o módulo fica igual se o fator tem módulo $1$.</p>
+    <p>Conecte com o playground do B41: o mesmo afixo agora “fala” em polar. Quando você multiplica, não precisa expandir $(a+bi)(c+di)$ — basta olhar $\rho$ e $\theta$. Essa economia de cálculo prepara o terreno para potências e raízes com De Moivre.</p>
+  </div>
+
+  <span class="section-label">(C) Fórmulas</span>
   <div class="theory-grid">
     <div class="theory-card">
       <h3>Forma trigonométrica</h3>
@@ -276,17 +304,24 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
     <div class="theory-card">
       <h3>Trigonométrica → algébrica</h3>
-      <div class="formula">$$a = \rho \cos \theta b = \rho \operatorname{sen} \theta$$</div>
+      <div class="formula">$$a = \rho \cos \theta$$</div>
+      <div class="formula">$$b = \rho \operatorname{sen} \theta$$</div>
       <p>\(z = a + bi\).</p>
     </div>
     <div class="theory-card">
       <h3>Produto</h3>
-      <div class="formula">$$z_{1}z_{2} = \rho_{1}\rho_{2} [\cos(\theta_{1}+\theta_{2}) + i \operatorname{sen}(\theta_{1}+\theta_{2})]$$</div>
-      <p><strong>Geometria:</strong> dilatação por ρ_{2} e rotação de θ_{2} (sentido anti-horário se θ_{2} &gt; 0).</p>
+      <div class="formula">$$\begin{aligned}
+z_{1}z_{2} &= \rho_{1}\rho_{2}\bigl[\cos(\theta_{1}+\theta_{2}) \\
+&\quad + i \operatorname{sen}(\theta_{1}+\theta_{2})\bigr]
+\end{aligned}$$</div>
+      <p><strong>Geometria:</strong> dilatação por $\rho_{2}$ e rotação de $\theta_{2}$ (sentido anti-horário se $\theta_{2} &gt; 0$).</p>
     </div>
     <div class="theory-card">
       <h3>Quociente</h3>
-      <div class="formula">$$z_{1}/z_{2} = (\rho_{1}/\rho_{2}) [\cos(\theta_{1}-\theta_{2}) + i \operatorname{sen}(\theta_{1}-\theta_{2})]$$</div>
+      <div class="formula">$$\begin{aligned}
+\dfrac{z_{1}}{z_{2}} &= \dfrac{\rho_{1}}{\rho_{2}}\bigl[\cos(\theta_{1}-\theta_{2}) \\
+&\quad + i \operatorname{sen}(\theta_{1}-\theta_{2})\bigr]
+\end{aligned}$$</div>
       <p>($z_{2} \ne 0$). Rotação de $-\theta_{2}$ e dilatação por $1/\rho_{2}$.</p>
     </div>
     <div class="theory-card">
@@ -300,7 +335,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
   </div>
 
-  <h2>📐 (C) Exercícios de prática (B42)</h2>
+  <h2>📐 (D) Exercícios de prática (B42)</h2>
   <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.9rem">Exercícios inventados no estilo vestibular brasileiro, com resolução completa. <span class="badge-pratica">Prática B42</span></p>
   <p class="note" style="font-style:normal;margin-bottom:1rem">Cada resolução começa pela ideia e segue passo a passo.</p>
 
@@ -389,10 +424,12 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$z_{1}z_{2} = 6 (\cos 120^{\circ} + i \operatorname{sen} 120^{\circ})$$</div>
         </li>
         <li><strong>Passo 4 — Valores de cos e sen de \(120^{\circ}\):</strong> \(120^{\circ}\) = \(180^{\circ}\) − \(60^{\circ}\), 2º quadrante.
-          <div class="formula">$$\cos 120^{\circ} = -1/2\; \operatorname{sen} 120^{\circ} = \sqrt{3}/2$$</div>
+          <div class="formula">$$\cos 120^{\circ} = -1/2$$</div>
+          <div class="formula">$$\operatorname{sen} 120^{\circ} = \sqrt{3}/2$$</div>
         </li>
         <li><strong>Passo 5 — Forma algébrica:</strong>
-          <div class="formula">$$a = 6 \cdot (-1/2) = -3\; b = 6 \cdot (\sqrt{3}/2) = 3\sqrt{3}$$</div>
+          <div class="formula">$$a = 6 \cdot (-1/2) = -3$$</div>
+          <div class="formula">$$b = 6 \cdot (\sqrt{3}/2) = 3\sqrt{3}$$</div>
           <div class="formula">$$z_{1}z_{2} = -3 + 3\sqrt{3} i$$</div>
         </li>
       </ol>
@@ -408,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="steps">
       <p class="step-intro"><strong>Ideia:</strong> no quociente, os módulos se dividem e os argumentos se subtraem: $z_{1}/z_{2} = (\rho_{1}/\rho_{2})[\cos(\theta_{1}-\theta_{2}) + i \operatorname{sen}(\theta_{1}-\theta_{2})]$.</p>
       <ol>
-        <li><strong>Passo 1 — Simplificar ρ_{2}:</strong>
+        <li><strong>Passo 1 — Simplificar $\rho_{2}$:</strong>
           <div class="formula">$$\sqrt{8} = \sqrt{4\cdot2} = 2\sqrt{2}$$</div>
         </li>
         <li><strong>Passo 2 — Razão dos módulos:</strong>
@@ -472,14 +509,21 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$z = 2 (\cos 60^{\circ} + i \operatorname{sen} 60^{\circ})$$</div>
         </li>
         <li><strong>Passo 2 — Aplicar a rotação de −\(90^{\circ}\):</strong>
-          <div class="formula">$$resultado = 2 \mathrm{cis}(60^{\circ} - 90^{\circ}) = 2 \mathrm{cis}(-30^{\circ}) = 2 \mathrm{cis} 330^{\circ}$$</div>
+          <div class="formula">$$\begin{aligned}
+\text{resultado} &= 2 \mathrm{cis}(60^{\circ} - 90^{\circ}) \\
+&= 2 \mathrm{cis}(-30^{\circ}) = 2 \mathrm{cis} 330^{\circ}
+\end{aligned}$$</div>
         </li>
         <li><strong>Passo 3 — Converter para algébrica:</strong>
           <div class="formula">$$\cos(-30^{\circ}) = \sqrt{3}/2\; \operatorname{sen}(-30^{\circ}) = -1/2$$</div>
           <div class="formula">$$2(\sqrt{3}/2 - i\cdot1/2) = \sqrt{3} - i$$</div>
         </li>
         <li><strong>Passo 4 — Checagem algébrica direta:</strong>
-          <div class="formula">$$(-i)(1 + \sqrt{3} i) = -i \cdot 1 + (-i)(\sqrt{3} i) = -i - \sqrt{3} i^{2} = -i - \sqrt{3}(-1) = \sqrt{3} - i \checkmark$$</div>
+          <div class="formula">$$\begin{aligned}
+(-i)(1 + \sqrt{3} i) &= -i \cdot 1 + (-i)(\sqrt{3} i) \\
+&= -i - \sqrt{3} i^{2} = -i - \sqrt{3}(-1) \\
+&= \sqrt{3} - i \checkmark
+\end{aligned}$$</div>
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> \(\sqrt{3}\) - i</p>
@@ -495,7 +539,8 @@ document.addEventListener("DOMContentLoaded", function() {
       <p class="step-intro"><strong>Ideia:</strong> $|zw| = |z||w|$ e $\arg(zw) = \arg(z) + \arg(w)$. Basta escrever w em forma trigonométrica.</p>
       <ol>
         <li><strong>Passo 1 — Forma trigonométrica de w:</strong> w = 2i = 0 + 2i.
-          <div class="formula">$$|w| = 2\; \arg(w) = 90^{\circ} (eixo imaginário positivo)$$</div>
+          <div class="formula">$$|w| = 2,\quad \arg(w) = 90^{\circ}$$</div>
+          <p style="margin:0.2rem 0;color:var(--muted);font-size:0.9rem">(eixo imaginário positivo)</p>
           <div class="formula">$$w = 2 (\cos 90^{\circ} + i \operatorname{sen} 90^{\circ}) = 2 \mathrm{cis} 90^{\circ}$$</div>
         </li>
         <li><strong>Passo 2 — Módulo do produto:</strong>

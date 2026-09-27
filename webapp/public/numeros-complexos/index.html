@@ -171,6 +171,21 @@ footer {
   border-top: 1px solid var(--border);
   margin-top: 3rem;
 }
+
+.explain {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  margin: 0 0 1.5rem;
+  box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+
 .math { font-family: "Cambria Math", "Times New Roman", serif; }
 
 .katex { color: inherit; }
@@ -223,6 +238,16 @@ document.addEventListener("DOMContentLoaded", function() {
 </header>
 
 <div class="wrap">
+  <section class="plan" style="margin-top:0">
+    <h2>O que você vai aprender</h2>
+    <p style="color:var(--muted);font-size:0.95rem">
+      Um número complexo $z = a + bi$ não é só uma conta algébrica: no plano de Argand-Gauss ele vira um <strong style="color:var(--text)">ponto</strong> e um <strong style="color:var(--text)">vetor</strong>.
+      Em <strong style="color:var(--accent)">B41</strong> você enxerga módulo e argumento geometricamente; em <strong style="color:var(--accent2)">B42</strong> esses mesmos $\rho$ e $\theta$ viram a forma trigonométrica, onde produto e quociente são dilatação + rotação;
+      em <strong style="color:var(--accent3)">B43</strong>, De Moivre eleva essa ideia a potências e raízes — e as raízes desenham polígonos regulares no círculo.
+      Cada módulo traz playground, explicação em palavras, fórmulas e exercícios.
+    </p>
+  </section>
+
   <section class="plan">
     <h2>📅 Plano de Setembro</h2>
     <div class="plan-steps">
@@ -251,7 +276,7 @@ document.addEventListener("DOMContentLoaded", function() {
   </section>
 
   <h2 style="margin-bottom:0.25rem;color:var(--accent)">Módulos</h2>
-  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.95rem">Cada módulo traz playground interativo, teoria e resolução completa dos exercícios.</p>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.95rem">Cada módulo traz playground interativo, explicação em palavras, fórmulas e resolução completa dos exercícios.</p>
   <p style="color:var(--accent3);margin:0.75rem 0 0;font-size:0.92rem;font-weight:600">Novo: modo treino (esconde resoluções), animações no plano e animações em exercícios geométricos.</p>
 
   <div class="cards">

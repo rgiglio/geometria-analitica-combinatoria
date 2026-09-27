@@ -68,10 +68,11 @@ button.primary:hover { background: #1976d2; }
 .live-vals .hl2 { color: var(--accent2); }
 .live-vals .hl3 { color: var(--accent3); }
 .live-vals .hl4 { color: var(--accent4); }
-.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
 .theory-card {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 1.15rem; box-shadow: var(--shadow);
+  overflow: hidden;
 }
 .theory-card h3 { margin-top: 0; color: var(--accent); font-size: 1rem; }
 .theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
@@ -79,7 +80,23 @@ button.primary:hover { background: #1976d2; }
 .formula {
   background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
   margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
 }
+
+.explain {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  margin: 0 0 1.5rem;
+  box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+
 .ex {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
@@ -173,7 +190,8 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
 .katex { color: inherit; }
 .formula .katex { color: inherit; }
-.formula .katex-display { margin: 0.35em 0; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
 .live-vals .katex { color: inherit; }
 .ans-box .katex, .ans .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
 .hl .katex, .hl2 .katex, .hl3 .katex, .hl4 .katex { color: inherit; }
@@ -271,7 +289,17 @@ document.addEventListener("DOMContentLoaded", function() {
   </div>
 
   <!-- ===== THEORY ===== -->
-  <span class="section-label">(B) Teoria</span>
+    <!-- ===== EM PALAVRAS ===== -->
+  <span class="section-label">(B) Em palavras</span>
+  <div class="explain">
+    <p class="lead">Imagine o plano cartesiano — mas agora cada ponto não é só um par ordenado: ele <strong>é</strong> um número complexo. Esse é o plano de Argand-Gauss.</p>
+    <p>O número $z = a + bi$ fica no ponto $P(a,b)$: a abscissa $a$ é a <strong>parte real</strong> (eixo horizontal) e a ordenada $b$ é a <strong>parte imaginária</strong> (eixo vertical). O vetor que vai da origem $O$ até $P$ também representa $z$; esse ponto (ou vetor) se chama <strong>afixo</strong> de $z$.</p>
+    <p>Duas grandezas geométricas saltam aos olhos. O <strong>módulo</strong> $\rho = |z| = \sqrt{a^{2}+b^{2}}$ é a distância de $O$ até $P$ — o “tamanho” do número. O <strong>argumento</strong> $\theta = \arg(z)$ é o ângulo orientado do semieixo real positivo até o vetor $OP$, no sentido anti-horário. No 1º quadrante $\theta$ fica entre $0^{\circ}$ e $90^{\circ}$; no 2º, entre $90^{\circ}$ e $180^{\circ}$; e assim por diante até completar a volta em $[0^{\circ}, 360^{\circ})$.</p>
+    <p>Operações simples viram reflexões e rotações: o conjugado $\bar{z} = a - bi$ é o espelho de $z$ pelo eixo real; $-z$ é a rotação de $180^{\circ}$ (antípoda pela origem). Já a equação $|z - z_{0}| = r$ descreve um círculo de centro $z_{0}$ e raio $r$ — a distância até $z_{0}$ é constante.</p>
+    <p>Por que essa figura importa? Porque, antes de escrever a forma trigonométrica, você precisa “enxergar” o número como ponto e vetor. Módulo e argumento são exatamente as coordenadas polares desse ponto — e é delas que nasce a forma $\rho(\cos\theta + i\operatorname{sen}\theta)$ no módulo seguinte.</p>
+  </div>
+
+  <span class="section-label">(C) Fórmulas</span>
   <div class="theory-grid">
     <div class="theory-card">
       <h3>Plano complexo (Argand-Gauss)</h3>
@@ -310,7 +338,7 @@ document.addEventListener("DOMContentLoaded", function() {
   </div>
 
   <!-- ===== EXERCISES ===== -->
-  <h2>📐 (C) Resolução dos exercícios</h2>
+  <h2>📐 (D) Resolução dos exercícios</h2>
   <p class="note" style="font-style:normal;margin-bottom:1rem">Cada resolução começa pela ideia e segue passo a passo.</p>
 
   
@@ -739,8 +767,8 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$-12i^{2} = -12(-1) = 12$$</div>
         </li>
         <li><strong>Passo 3 — Juntar real e imaginário:</strong>
-          <div class="formula">$$Parte real: -6 + 12 = 6$$</div>
-          <div class="formula">$$Parte imaginária: 9i + 8i = 17i$$</div>
+          <div class="formula">$$\text{Parte real: } -6 + 12 = 6$$</div>
+          <div class="formula">$$\text{Parte imaginária: } 9i + 8i = 17i$$</div>
           <div class="formula">$$Produto = 6 + 17i$$</div>
         </li>
       </ol>
