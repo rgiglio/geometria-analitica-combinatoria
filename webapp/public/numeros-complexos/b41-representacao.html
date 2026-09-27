@@ -78,8 +78,7 @@ button.primary:hover { background: #1976d2; }
 .theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
 .formula {
   background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
-  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-family: "Cambria Math", "Times New Roman", serif;
-  font-size: 1.05rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
 }
 .ex {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -171,7 +170,39 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 .play-anim-row { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 0.55rem; }
 .play-caption { text-align: center; color: var(--accent3); font-size: 0.85rem; margin-top: 0.4rem; font-weight: 600; }
 
+
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ans .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+.hl .katex, .hl2 .katex, .hl3 .katex, .hl4 .katex { color: inherit; }
+
 </style>
+
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+
 </head>
 <body class="treino-ativo">
 <nav>
@@ -216,19 +247,19 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
         </div>
 
         <div class="ctrl-row play-anim-row" style="justify-content:flex-start;margin-top:0.25rem">
-          <button type="button" id="btnAnimI">Animar ×i (90°)</button>
+          <button type="button" id="btnAnimI">Animar × i ($90^{\circ}$)</button>
           <button type="button" id="btnAnimConj">Animar conjugado</button>
-          <button type="button" id="btnAnimNeg">Animar −z (180°)</button>
+          <button type="button" id="btnAnimNeg">Animar -z ($180^{\circ}$)</button>
         </div>
 
-        <label class="toggle"><input type="checkbox" id="togConj"> Mostrar conjugado z̄</label>
-        <label class="toggle"><input type="checkbox" id="togNeg"> Mostrar −z</label>
-        <label class="toggle"><input type="checkbox" id="togNegConj"> Mostrar −z̄</label>
+        <label class="toggle"><input type="checkbox" id="togConj"> Mostrar conjugado $\bar{z}$</label>
+        <label class="toggle"><input type="checkbox" id="togNeg"> Mostrar -z</label>
+        <label class="toggle"><input type="checkbox" id="togNegConj"> Mostrar -$\bar{z}$</label>
         <label class="toggle"><input type="checkbox" id="togQuad"> Quadrilátero Q + perímetro</label>
-        <label class="toggle"><input type="checkbox" id="togCircO"> Círculo |z| = ρ (centro O)</label>
-        <label class="toggle"><input type="checkbox" id="togCircZ0"> Círculo |z − z₀| = r</label>
+        <label class="toggle"><input type="checkbox" id="togCircO"> Círculo $$|z|$ = \rho$ (centro O)</label>
+        <label class="toggle"><input type="checkbox" id="togCircZ0"> Círculo |z - z_{0}| = r</label>
         <div class="ctrl-row" id="z0Controls" style="display:none">
-          <label>z₀:</label>
+          <label>z_{0}:</label>
           <input type="number" id="z0a" value="2" step="0.5" style="width:60px"> +
           <input type="number" id="z0b" value="1" step="0.5" style="width:60px"> i
           <label>r=</label>
@@ -244,8 +275,8 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
   <div class="theory-grid">
     <div class="theory-card">
       <h3>Plano complexo (Argand-Gauss)</h3>
-      <p>Cada número complexo z = a + bi corresponde a um ponto P(a, b) no plano cartesiano: eixo horizontal = parte real, eixo vertical = parte imaginária.</p>
-      <div class="formula">z = a + bi ↔ P(a, b)</div>
+      <p>Cada número complexo $z = $a + bi$$ corresponde a um ponto P(a, b) no plano cartesiano: eixo horizontal = parte real, eixo vertical = parte imaginária.</p>
+      <div class="formula">$$z = a + bi \leftrightarrow P(a, b)$$</div>
     </div>
     <div class="theory-card">
       <h3>Afixo</h3>
@@ -254,26 +285,26 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
     <div class="theory-card">
       <h3>Módulo</h3>
       <p>O módulo (ou valor absoluto) é a distância de O ao afixo:</p>
-      <div class="formula">ρ = |z| = √(a² + b²)</div>
-      <p>|z| ≥ 0 sempre. Geometricamente: comprimento do vetor OP.</p>
+      <div class="formula">$$\rho = |z| = \sqrt{a^{2} + b^{2}}$$</div>
+      <p>$|z| \ge 0$ sempre. Geometricamente: comprimento do vetor OP.</p>
     </div>
     <div class="theory-card">
       <h3>Argumento</h3>
-      <p>O argumento θ é o ângulo que o vetor OP forma com o semieixo real positivo, medido no sentido anti-horário.</p>
-      <div class="formula">θ = arg(z), &nbsp; 0° ≤ θ &lt; 360°</div>
-      <p>Em radianos: θ_rad = θ_deg · π/180. Use atan2(b, a) e ajuste para [0, 360).</p>
+      <p>O argumento $\theta$ é o ângulo que o vetor OP forma com o semieixo real positivo, medido no sentido anti-horário.</p>
+      <div class="formula">$$\theta = \arg(z),\; 0^{\circ} \le \theta < 360^{\circ}$$</div>
+      <p>Em radianos: $\theta_{\mathrm{rad}} = \theta_{\mathrm{deg}} \cdot \dfrac{\pi}{180}$. Use $\mathrm{atan2}(b, a)$ e ajuste para $[0, 360)$.</p>
     </div>
     <div class="theory-card">
       <h3>Conjugação geométrica</h3>
-      <p>z̄ = a − bi é a reflexão de z pelo eixo real. −z = −a − bi é a reflexão pelo origem (rotação de 180°). −z̄ = −a + bi é a reflexão pelo eixo imaginário.</p>
-      <p>Os quatro pontos z, z̄, −z, −z̄ formam um retângulo (ou quadrado) centrado na origem.</p>
+      <p>$\bar{z}$ = a − bi é a reflexão de z pelo eixo real. -z = −a − bi é a reflexão pelo origem (rotação de $180^{\circ}$). −$\bar{z}$ = −$a + bi$ é a reflexão pelo eixo imaginário.</p>
+      <p>Os quatro pontos z, $\bar{z}$, -z, −$\bar{z}$ formam um retângulo (ou quadrado) centrado na origem.</p>
     </div>
     <div class="theory-card">
       <h3>Lugares geométricos</h3>
       <ul>
-        <li>|z| = r → círculo de centro O e raio r</li>
-        <li>|z − z₀| = r → círculo de centro z₀ e raio r</li>
-        <li>arg(z) = α → semirreta partindo de O com ângulo α</li>
+        <li>$$|z|$ = r$ → círculo de centro O e raio r</li>
+        <li>|z - z_{0}| = r → círculo de centro z_{0} e raio r</li>
+        <li>\\\\\$\$\arg(z)$ = \alpha$ → semirreta partindo de O com ângulo $\alpha$</li>
       </ul>
     </div>
   </div>
@@ -292,72 +323,72 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
   <div class="ex" id="p01">
     <div class="ex-header"><span class="ex-num">01</span><span class="ex-src">Propostos p.732</span></div>
-    <div class="ex-q">Dados os afixos no plano, escreva cada número complexo na forma algébrica a + bi.</div>
+    <div class="ex-q">Dados os afixos no plano, escreva cada número complexo na forma algébrica $a + bi$.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> o <strong>afixo</strong> de um complexo z é o ponto P(a, b) no plano de Argand-Gauss; a abscissa a é a <strong>parte real</strong> e a ordenada b é a <strong>parte imaginária</strong>, logo z = a + bi.</p>
+      <p class="step-intro"><strong>Ideia:</strong> o <strong>afixo</strong> de um complexo z é o ponto P(a, b) no plano de Argand-Gauss; a abscissa a é a <strong>parte real</strong> e a ordenada b é a <strong>parte imaginária</strong>, logo $z = $a + bi$$.</p>
       <ol>
-        <li><strong>Passo 1 — Ler z₁:</strong> o afixo está em (4, 2), logo a = 4 e b = 2.
-          <div class="formula">z₁ = 4 + 2i</div>
+        <li><strong>Passo 1 — Ler z_{1}:</strong> o afixo está em (4, 2), logo a = 4 e b = 2.
+          <div class="formula">$$z_{1} = 4 + 2i$$</div>
         </li>
-        <li><strong>Passo 2 — Ler z₂:</strong> o afixo está em (0, 4): parte real nula (está sobre o eixo imaginário).
-          <div class="formula">z₂ = 0 + 4i = 4i</div>
+        <li><strong>Passo 2 — Ler z_{2}:</strong> o afixo está em (0, 4): parte real nula (está sobre o eixo imaginário).
+          <div class="formula">$$z_{2} = 0 + 4i = 4i$$</div>
         </li>
         <li><strong>Passo 3 — Ler z₃:</strong> o afixo está em (−4, 5), 2º quadrante.
-          <div class="formula">z₃ = −4 + 5i</div>
+          <div class="formula">$$z_{3} = -4 + 5i$$</div>
         </li>
         <li><strong>Passo 4 — Ler z₄:</strong> o afixo está em (−5, 0): imaginário nulo (número real puro, sobre o eixo real negativo).
-          <div class="formula">z₄ = −5 + 0i = −5</div>
+          <div class="formula">$$z_{4} = -5 + 0i = -5$$</div>
         </li>
         <li><strong>Passo 5 — Ler z₅:</strong> o afixo está em (−2, −5), 3º quadrante.
-          <div class="formula">z₅ = −2 − 5i</div>
+          <div class="formula">$$z_{5} = -2 - 5i$$</div>
         </li>
         <li><strong>Passo 6 — Ler z₆:</strong> o afixo está em (0, −2): real nulo, imaginário negativo.
-          <div class="formula">z₆ = −2i</div>
+          <div class="formula">$$z_{6} = -2i$$</div>
         </li>
         <li><strong>Passo 7 — Ler z₇:</strong> o afixo está em (6, −4), 4º quadrante.
-          <div class="formula">z₇ = 6 − 4i</div>
+          <div class="formula">$$z_{7} = 6 - 4i$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> z₁ = 4+2i; z₂ = 4i; z₃ = −4+5i; z₄ = −5; z₅ = −2−5i; z₆ = −2i; z₇ = 6−4i</p>
+      <p class="ans"><strong>Resposta final:</strong> z_{1} = 4+2i; z_{2} = 4i; z₃ = −4+5i; z₄ = −5; z₅ = −2−5i; z₆ = −2i; z₇ = 6−4i</p>
       <p class="dica"><strong>Dica:</strong> não confunda abscissa com ordenada. O primeiro número do par (a, b) é sempre a parte real.</p>
     </div>
-    <div class="ans-box">Resposta: z₁=4+2i; z₂=4i; z₃=−4+5i; z₄=−5; z₅=−2−5i; z₆=−2i; z₇=6−4i</div>
+    <div class="ans-box">Resposta: z_{1}=4+2i; z_{2}=4i; z₃=−4+5i; z₄=−5; z₅=−2−5i; z₆=−2i; z₇=6−4i</div>
   </div>
 
   <div class="ex" id="p02">
     <div class="ex-header"><span class="ex-num">02</span><span class="ex-src">Propostos p.732</span></div>
-    <div class="ex-q">Seja z = a + bi, com a, b ∈ ℝ. Sabendo que a − b = 1 e |z| = 5, determine z.</div>
+    <div class="ex-q">Seja $z = $a + bi, com a, b ∈ ℝ. Sabendo que a − b = 1 e $|z|$ = 5, determine z.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> temos duas condições — uma linear (a − b = 1) e o <strong>módulo</strong> |z| = √(a² + b²) = 5. Isolamos a, substituímos na equação do módulo e resolvemos a equação do 2º grau em b.</p>
+      <p class="step-intro"><strong>Ideia:</strong> temos duas condições — uma linear (a − b = 1) e o <strong>módulo</strong> $|z|$ = $\sqrt{a^{2} + b^{2}}$ = 5. Isolamos a, substituímos na equação do módulo e resolvemos a equação do 2º grau em b.</p>
       <ol>
         <li><strong>Passo 1 — Isolar a:</strong> de a − b = 1 vem
-          <div class="formula">a = 1 + b</div>
+          <div class="formula">$$a = 1 + b$$</div>
         </li>
-        <li><strong>Passo 2 — Escrever o módulo:</strong> |z| = 5 significa √(a² + b²) = 5. Elevando ao quadrado (ambos os lados positivos):
-          <div class="formula">a² + b² = 25</div>
+        <li><strong>Passo 2 — Escrever o módulo:</strong> $|z|$ = 5 significa $\sqrt{a^{2} + b^{2}}$ = 5. Elevando ao quadrado (ambos os lados positivos):
+          <div class="formula">$$a^{2} + b^{2} = 25$$</div>
         </li>
         <li><strong>Passo 3 — Substituir a = 1 + b:</strong>
-          <div class="formula">(1 + b)² + b² = 25</div>
+          <div class="formula">$$(1 + b)^{2} + b^{2} = 25$$</div>
         </li>
-        <li><strong>Passo 4 — Expandir completamente:</strong> (1 + b)² = 1 + 2b + b², logo
-          <div class="formula">1 + 2b + b² + b² = 25</div>
-          <div class="formula">2b² + 2b + 1 = 25</div>
-          <div class="formula">2b² + 2b − 24 = 0</div>
+        <li><strong>Passo 4 — Expandir completamente:</strong> (1 + b)^{2} = 1 + 2b + $b^{2}$, logo
+          <div class="formula">$$1 + 2b + b^{2} + b^{2} = 25$$</div>
+          <div class="formula">$$2b^{2} + 2b + 1 = 25$$</div>
+          <div class="formula">$$2b^{2} + 2b - 24 = 0$$</div>
           Dividindo por 2:
-          <div class="formula">b² + b − 12 = 0</div>
+          <div class="formula">$$b^{2} + b - 12 = 0$$</div>
         </li>
-        <li><strong>Passo 5 — Resolver por Bhaskara (ou fatoração):</strong> Δ = 1² − 4(1)(−12) = 1 + 48 = 49 = 7².
-          <div class="formula">b = (−1 ± 7) / 2</div>
-          Assim b = (−1 + 7)/2 = 3 &nbsp;ou&nbsp; b = (−1 − 7)/2 = −4.
+        <li><strong>Passo 5 — Resolver por Bhaskara (ou fatoração):</strong> Δ = 1² − 4(1)(-12) = 1 + 48 = 49 = 7².
+          <div class="formula">$$b = (-1 \pm 7) / 2$$</div>
+          Assim b = (-1 + 7)/2 = 3 &nbsp;ou&nbsp; b = (-1 − 7)/2 = −4.
           (Fatorando: (b + 4)(b − 3) = 0 dá o mesmo.)
         </li>
         <li><strong>Passo 6 — Achar a e montar z:</strong>
-          <div class="formula">b = 3 ⇒ a = 1 + 3 = 4 ⇒ z = 4 + 3i</div>
-          <div class="formula">b = −4 ⇒ a = 1 + (−4) = −3 ⇒ z = −3 − 4i</div>
+          <div class="formula">$$b = 3 \Rightarrow a = 1 + 3 = 4 \Rightarrow z = 4 + 3i$$</div>
+          <div class="formula">$$b = -4 \Rightarrow a = 1 + (-4) = -3 \Rightarrow z = -3 - 4i$$</div>
         </li>
-        <li><strong>Passo 7 — Verificar |z| = 5 e a − b = 1:</strong>
-          <div class="formula">|4+3i| = √(16+9) = √25 = 5; &nbsp; 4 − 3 = 1 ✓</div>
-          <div class="formula">|−3−4i| = √(9+16) = √25 = 5; &nbsp; −3 − (−4) = 1 ✓</div>
+        <li><strong>Passo 7 — Verificar $|z|$ = 5 e a − b = 1:</strong>
+          <div class="formula">$$|4+3i| = \sqrt{16+9} = \sqrt{25} = 5\; 4 - 3 = 1 \checkmark$$</div>
+          <div class="formula">$$|-3-4i| = \sqrt{9+16} = \sqrt{25} = 5\; -3 - (-4) = 1 \checkmark$$</div>
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> z = −3 − 4i &nbsp;ou&nbsp; z = 4 + 3i</p>
@@ -368,27 +399,27 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
   <div class="ex" id="p03">
     <div class="ex-header"><span class="ex-num">03</span><span class="ex-src">Propostos p.732</span></div>
-    <div class="ex-q">Determine o complexo z tal que |z| = 4√2 e arg(z) = 135°.</div>
+    <div class="ex-q">Determine o complexo z tal que $|z|$ = $4\sqrt{2}$ e \\\$\arg(z)$ = $135^{\circ}$.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> conhecemos o <strong>módulo</strong> ρ e o <strong>argumento</strong> θ. Usamos a forma trigonométrica z = ρ(cos θ + i sen θ), ou equivalentemente a = ρ cos θ e b = ρ sen θ.</p>
+      <p class="step-intro"><strong>Ideia:</strong> conhecemos o <strong>módulo</strong> $\rho$ e o <strong>argumento</strong> $\theta$. Usamos a forma trigonométrica z = $\rho$(cosθ + isenθ), ou equivalentemente a = $\rho$ cos $\theta$ e b = $\rho$ sen $\theta$.</p>
       <ol>
-        <li><strong>Passo 1 — Identificar ρ e θ:</strong>
-          <div class="formula">ρ = 4√2, &nbsp; θ = 135°</div>
-          135° está no 2º quadrante (entre 90° e 180°).
+        <li><strong>Passo 1 — Identificar $\rho$ e $\theta$:</strong>
+          <div class="formula">$$\rho = 4\sqrt{2}, \theta = 135^{\circ}$$</div>
+          $135^{\circ}$ está no 2º quadrante (entre $90^{\circ}$ e $180^{\circ}$).
         </li>
-        <li><strong>Passo 2 — Valores de cosseno e seno:</strong> 135° = 180° − 45°, logo
-          <div class="formula">cos 135° = −cos 45° = −√2/2</div>
-          <div class="formula">sen 135° = sen 45° = √2/2</div>
+        <li><strong>Passo 2 — Valores de cosseno e seno:</strong> $135^{\circ}$ = $180^{\circ}$ − $45^{\circ}$, logo
+          <div class="formula">$$\cos 135^{\circ} = -\cos 45^{\circ} = -\sqrt{2}/2$$</div>
+          <div class="formula">$$\operatorname{sen} 135^{\circ} = \operatorname{sen} 45^{\circ} = \sqrt{2}/2$$</div>
         </li>
-        <li><strong>Passo 3 — Parte real a = ρ cos θ:</strong>
-          <div class="formula">a = 4√2 · (−√2/2) = −4√2 · √2 / 2 = −4 · 2 / 2 = −4</div>
+        <li><strong>Passo 3 — Parte real a = $\rho$ cos $\theta$:</strong>
+          <div class="formula">$$a = 4\sqrt{2} \cdot (-\sqrt{2}/2) = -4\sqrt{2} \cdot \sqrt{2} / 2 = -4 \cdot 2 / 2 = -4$$</div>
         </li>
-        <li><strong>Passo 4 — Parte imaginária b = ρ sen θ:</strong>
-          <div class="formula">b = 4√2 · (√2/2) = 4√2 · √2 / 2 = 4 · 2 / 2 = 4</div>
+        <li><strong>Passo 4 — Parte imaginária b = $\rho$ sen $\theta$:</strong>
+          <div class="formula">$$b = 4\sqrt{2} \cdot (\sqrt{2}/2) = 4\sqrt{2} \cdot \sqrt{2} / 2 = 4 \cdot 2 / 2 = 4$$</div>
         </li>
         <li><strong>Passo 5 — Montar z e conferir:</strong>
-          <div class="formula">z = −4 + 4i</div>
-          <div class="formula">|z| = √(16+16) = √32 = √(16·2) = 4√2; &nbsp; arg = 135° ✓</div>
+          <div class="formula">$$z = -4 + 4i$$</div>
+          <div class="formula">$$|z| = \sqrt{16+16} = \sqrt{32} = \sqrt{16\cdot2} = 4\sqrt{2}\; \arg = 135^{\circ} \checkmark$$</div>
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> z = −4 + 4i</p>
@@ -399,65 +430,65 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
   <div class="ex" id="p04">
     <div class="ex-header"><span class="ex-num">04</span><span class="ex-src">Propostos p.732</span></div>
-    <div class="ex-q">Descreva geometricamente o conjunto A = { z ∈ ℂ : |z| = 3 } e dê a equação cartesiana.</div>
+    <div class="ex-q">Descreva geometricamente o conjunto A = { z ∈ ℂ : $|z|$ = 3 } e dê a equação cartesiana.</div>
     
     <div class="ex-anim" id="wrap-anim-b41-p04">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b41-p04">▶ Animar</button>
       <canvas id="anim-b41-p04" width="360" height="360"></canvas>
-      <p class="anim-cap">Círculo |z| = 3 (centro O)</p>
+      <p class="anim-cap">Círculo $|z|$ = 3 (centro O)</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> o módulo |z| é a distância do afixo à origem O. Logo |z| = 3 descreve todos os pontos a distância 3 de O — uma circunferência.</p>
+      <p class="step-intro"><strong>Ideia:</strong> o módulo $|z|$ é a distância do afixo à origem O. Logo $|z|$ = 3 descreve todos os pontos a distância 3 de O — uma circunferência.</p>
       <ol>
-        <li><strong>Passo 1 — Interpretação geométrica:</strong> |z| = 3 significa “distância de P a O é 3”. Portanto A é a <strong>circunferência de centro O(0, 0) e raio 3</strong>.</li>
-        <li><strong>Passo 2 — Equação cartesiana:</strong> se z = a + bi, então
-          <div class="formula">√(a² + b²) = 3 ⇒ a² + b² = 9</div>
+        <li><strong>Passo 1 — Interpretação geométrica:</strong> $|z|$ = 3 significa “distância de P a O é 3”. Portanto A é a <strong>circunferência de centro O(0, 0) e raio 3</strong>.</li>
+        <li><strong>Passo 2 — Equação cartesiana:</strong> se $z = $a + bi$$, então
+          <div class="formula">$$\sqrt{a^{2} + b^{2}} = 3 \Rightarrow a^{2} + b^{2} = 9$$</div>
         </li>
         <li><strong>Passo 3 — Pontos notáveis:</strong> a circunferência corta os eixos em
-          <div class="formula">(3, 0) → 3; &nbsp; (−3, 0) → −3; &nbsp; (0, 3) → 3i; &nbsp; (0, −3) → −3i</div>
+          <div class="formula">$$(3, 0) \to 3\; (-3, 0) \to -3\; (0, 3) \to 3i\; (0, -3) \to -3i$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> círculo de centro O e raio 3; equação a² + b² = 9</p>
-      <p class="dica"><strong>Dica:</strong> |z| = r (constante) sempre dá círculo centrado na origem; |z − z₀| = r dá círculo centrado em z₀.</p>
+      <p class="ans"><strong>Resposta final:</strong> círculo de centro O e raio 3; equação $a^{2} + b^{2} = 9$</p>
+      <p class="dica"><strong>Dica:</strong> $$|z|$ = r$ (constante) sempre dá círculo centrado na origem; |z - z_{0}| = r dá círculo centrado em z_{0}.</p>
     </div>
-    <div class="ans-box">Resposta: círculo centro O, raio 3; equação a² + b² = 9</div>
+    <div class="ans-box">Resposta: círculo centro O, raio 3; equação $a^{2} + b^{2} = 9$</div>
   </div>
 
   <div class="ex" id="p05">
     <div class="ex-header"><span class="ex-num">05</span><span class="ex-src">Propostos p.732</span></div>
-    <div class="ex-q">Seja z = 2 + 3i. Os afixos de z, z̄, −z e −z̄ formam um quadrilátero Q. Calcule o perímetro de Q.</div>
+    <div class="ex-q">Seja z = 2 + 3i. Os afixos de z, $\bar{z}$, -z e −$\bar{z}$ formam um quadrilátero Q. Calcule o perímetro de Q.</div>
     
     <div class="ex-anim" id="wrap-anim-b41-p05">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b41-p05">▶ Animar</button>
       <canvas id="anim-b41-p05" width="360" height="360"></canvas>
-      <p class="anim-cap">Retângulo Q: z, z̄, −z, −z̄ · perímetro 20</p>
+      <p class="anim-cap">Retângulo Q: z, $\bar{z}$, -z, −$\bar{z}$ · perímetro 20</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> o <strong>conjugado</strong> z̄ reflete z pelo eixo real; −z reflete pela origem; −z̄ reflete pelo eixo imaginário. Os quatro pontos formam um retângulo centrado em O; basta achar os lados e dobrar a soma.</p>
+      <p class="step-intro"><strong>Ideia:</strong> o <strong>conjugado</strong> $\bar{z}$ reflete z pelo eixo real; -z reflete pela origem; −$\bar{z}$ reflete pelo eixo imaginário. Os quatro pontos formam um retângulo centrado em O; basta achar os lados e dobrar a soma.</p>
       <ol>
         <li><strong>Passo 1 — Listar os quatro pontos (afixos):</strong>
-          <div class="formula">z = 2 + 3i → (2, 3)</div>
-          <div class="formula">z̄ = 2 − 3i → (2, −3)</div>
-          <div class="formula">−z = −2 − 3i → (−2, −3)</div>
-          <div class="formula">−z̄ = −2 + 3i → (−2, 3)</div>
+          <div class="formula">$$z = 2 + 3i \to (2, 3)$$</div>
+          <div class="formula">$$\bar{z} = 2 - 3i \to (2, -3)$$</div>
+          <div class="formula">$$-z = -2 - 3i \to (-2, -3)$$</div>
+          <div class="formula">$$-\bar{z} = -2 + 3i \to (-2, 3)$$</div>
         </li>
         <li><strong>Passo 2 — Ordenar em torno do retângulo:</strong> por exemplo no sentido anti-horário a partir de z:
-          <div class="formula">(2,3) → (−2,3) → (−2,−3) → (2,−3) → de volta a (2,3)</div>
+          <div class="formula">$$(2,3) \to (-2,3) \to (-2,-3) \to (2,-3) \to de volta a (2,3)$$</div>
           A figura é um retângulo com lados paralelos aos eixos, centrado na origem O.
         </li>
         <li><strong>Passo 3 — Comprimento dos lados horizontais:</strong> distância entre (2, 3) e (−2, 3):
-          <div class="formula">|2 − (−2)| = 4</div>
+          <div class="formula">$$|2 - (-2)| = 4$$</div>
           (Mesmo valor entre (2, −3) e (−2, −3).)
         </li>
         <li><strong>Passo 4 — Comprimento dos lados verticais:</strong> distância entre (2, 3) e (2, −3):
-          <div class="formula">|3 − (−3)| = 6</div>
+          <div class="formula">$$|3 - (-3)| = 6$$</div>
         </li>
         <li><strong>Passo 5 — Perímetro:</strong>
-          <div class="formula">P = 2(4 + 6) = 2 · 10 = 20</div>
+          <div class="formula">$$P = 2(4 + 6) = 2 \cdot 10 = 20$$</div>
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> perímetro = 20</p>
-      <p class="dica"><strong>Dica:</strong> em geral, para z = a + bi, os lados medem 2|a| e 2|b|, e o perímetro é 4(|a| + |b|). Aqui 4(2+3) = 20.</p>
+      <p class="dica"><strong>Dica:</strong> em geral, para $z = $a + bi$$, os lados medem 2|a| e 2|b|, e o perímetro é 4(|a| + |b|). Aqui 4(2+3) = 20.</p>
     </div>
     <div class="ans-box">Resposta: perímetro = 20 &nbsp;(vértices: (2,3), (2,−3), (−2,−3), (−2,3); lados 4 e 6)</div>
   </div>
@@ -466,102 +497,102 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
   <div class="ex" id="c01">
     <div class="ex-header"><span class="ex-num">01</span><span class="ex-src">Complementares p.733 · UEPB</span></div>
-    <div class="ex-q">Considere z = (2 − i³⁵)/(3 + i). Em qual quadrante está o afixo de z?</div>
+    <div class="ex-q">Considere z = (2 − $i^{3}$⁵)/(3 + i). Em qual quadrante está o afixo de z?</div>
     <div class="steps">
       <p class="step-intro"><strong>Ideia:</strong> reduzir a potência de i pelo ciclo de período 4, reescrever o numerador, dividir multiplicando pelo <strong>conjugado</strong> do denominador e olhar os sinais de Re(z) e Im(z).</p>
       <ol>
         <li><strong>Passo 1 — Ciclo das potências de i:</strong>
-          <div class="formula">i⁰ = 1, &nbsp; i¹ = i, &nbsp; i² = −1, &nbsp; i³ = −i, &nbsp; i⁴ = 1, …</div>
+          <div class="formula">$$i^{0} = 1, i^{1} = i, i^{2} = -1, i^{3} = -i, i^{4} = 1, \ldots$$</div>
           O resto da divisão do expoente por 4 decide o valor.
         </li>
-        <li><strong>Passo 2 — Reduzir i³⁵:</strong> 35 ÷ 4 = 8 resto 3, pois 4·8 = 32 e 35 − 32 = 3. Logo
-          <div class="formula">i³⁵ = i³ = −i</div>
+        <li><strong>Passo 2 — Reduzir $i^{3}$⁵:</strong> 35 ÷ 4 = 8 resto 3, pois 4·8 = 32 e 35 − 32 = 3. Logo
+          <div class="formula">$$i^{35} = i^{3} = -i$$</div>
         </li>
         <li><strong>Passo 3 — Reescrever o numerador:</strong>
-          <div class="formula">2 − i³⁵ = 2 − (−i) = 2 + i</div>
+          <div class="formula">$$2 - i^{35} = 2 - (-i) = 2 + i$$</div>
           Assim
-          <div class="formula">z = (2 + i)/(3 + i)</div>
+          <div class="formula">$$z = (2 + i)/(3 + i)$$</div>
         </li>
         <li><strong>Passo 4 — Multiplicar por conjugado do denominador:</strong> conjugado de 3 + i é 3 − i.
-          <div class="formula">z = (2 + i)(3 − i) / [(3 + i)(3 − i)]</div>
+          <div class="formula">$$z = (2 + i)(3 - i) / [(3 + i)(3 - i)]$$</div>
         </li>
         <li><strong>Passo 5 — Expandir o numerador (FOIL completo):</strong>
-          <div class="formula">(2+i)(3−i) = 2·3 + 2·(−i) + i·3 + i·(−i) = 6 − 2i + 3i − i²</div>
-          Como i² = −1: −i² = −(−1) = 1. Logo
-          <div class="formula">6 + (−2i + 3i) + 1 = 7 + i</div>
+          <div class="formula">$$(2+i)(3-i) = 2\cdot3 + 2\cdot(-i) + i\cdot3 + i\cdot(-i) = 6 - 2i + 3i - i^{2}$$</div>
+          Como $i^{2}$ = -1: -$i^{2}$ = −(-1) = 1. Logo
+          <div class="formula">$$6 + (-2i + 3i) + 1 = 7 + i$$</div>
         </li>
         <li><strong>Passo 6 — Denominador:</strong>
-          <div class="formula">(3+i)(3−i) = 9 − i² = 9 − (−1) = 9 + 1 = 10</div>
+          <div class="formula">$$(3+i)(3-i) = 9 - i^{2} = 9 - (-1) = 9 + 1 = 10$$</div>
         </li>
         <li><strong>Passo 7 — Forma algébrica e quadrante:</strong>
-          <div class="formula">z = (7 + i)/10 = 7/10 + (1/10)i</div>
-          Re(z) = 7/10 &gt; 0 e Im(z) = 1/10 &gt; 0 ⇒ afixo no <strong>1º quadrante</strong>.
+          <div class="formula">$$z = (7 + i)/10 = 7/10 + (1/10)i$$</div>
+          Re(z) = 7/10 &gt; 0 e Im(z) = 1/10 &gt; 0 $\Rightarrow$ afixo no <strong>1º quadrante</strong>.
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> alternativa (d) — 1º quadrante &nbsp;(z = 7/10 + i/10)</p>
-      <p class="dica"><strong>Dica:</strong> erro comum: escrever 2 − i³⁵ = 2 − i em vez de reduzir i³⁵ primeiro. Outro erro: esquecer que −i² = +1 ao expandir.</p>
+      <p class="dica"><strong>Dica:</strong> erro comum: escrever 2 − $i^{3}$⁵ = 2 − i em vez de reduzir $i^{3}$⁵ primeiro. Outro erro: esquecer que -$i^{2}$ = +1 ao expandir.</p>
     </div>
     <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — 1º quadrante &nbsp;(z = 7/10 + i/10)</div>
   </div>
 
   <div class="ex" id="c02">
     <div class="ex-header"><span class="ex-num">02</span><span class="ex-src">Complementares p.733 · Mackenzie</span></div>
-    <div class="ex-q">Na figura, z = 2 + i e |w| = |z|, com w obtido por rotação de 90° no sentido anti-horário a partir de z (marca de ângulo reto). Determine o produto zw.</div>
+    <div class="ex-q">Na figura, z = 2 + i e $|w|$ = $|z|$, com w obtido por rotação de $90^{\circ}$ no sentido anti-horário a partir de z (marca de ângulo reto). Determine o produto zw.</div>
     
     <div class="ex-anim" id="wrap-anim-b41-c02">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b41-c02">▶ Animar</button>
       <canvas id="anim-b41-c02" width="360" height="360"></canvas>
-      <p class="anim-cap">z → w = i·z (90°) e produto zw</p>
+      <p class="anim-cap">z → w = i·z ($90^{\circ}$) e produto zw</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> a figura mostra o afixo de z = 2 + i e um vetor w de mesmo módulo, perpendicular a z no sentido anti-horário. Geometricamente, girar 90° anti-horário = multiplicar por i.</p>
+      <p class="step-intro"><strong>Ideia:</strong> a figura mostra o afixo de z = 2 + i e um vetor w de mesmo módulo, perpendicular a z no sentido anti-horário. Geometricamente, girar $90^{\circ}$ anti-horário = multiplicar por i.</p>
       <ol>
-        <li><strong>Passo 1 — Ler a figura:</strong> z = 2 + i tem afixo (2, 1). O vetor w parte de O, tem o mesmo comprimento |z| = √5, e forma 90° no sentido anti-horário com z.</li>
+        <li><strong>Passo 1 — Ler a figura:</strong> z = 2 + i tem afixo (2, 1). O vetor w parte de O, tem o mesmo comprimento $|z|$ = $\sqrt{5}$, e forma $90^{\circ}$ no sentido anti-horário com z.</li>
         <li><strong>Passo 2 — Obter w multiplicando por i:</strong>
-          <div class="formula">w = i · z = i(2 + i) = 2i + i² = 2i + (−1) = −1 + 2i</div>
+          <div class="formula">$$w = i \cdot z = i(2 + i) = 2i + i^{2} = 2i + (-1) = -1 + 2i$$</div>
         </li>
         <li><strong>Passo 3 — Conferir módulo e perpendicularidade:</strong>
-          <div class="formula">|w| = √[(−1)² + 2²] = √5 = |z| ✓</div>
-          Produto escalar dos vetores (2, 1) e (−1, 2): 2·(−1) + 1·2 = 0 ⇒ perpendiculares ✓
+          <div class="formula">$$|w| = \sqrt{(-1)^{2} + 2^{2}} = \sqrt{5} = |z| \checkmark$$</div>
+          Produto escalar dos vetores (2, 1) e (-1, 2): 2·(-1) + 1·2 = 0 $\Rightarrow$ perpendiculares ✓
         </li>
         <li><strong>Passo 4 — Produto zw com FOIL completo:</strong>
-          <div class="formula">zw = (2+i)(−1+2i) = 2·(−1) + 2·(2i) + i·(−1) + i·(2i)</div>
-          <div class="formula">= −2 + 4i − i + 2i² = −2 + 3i + 2(−1) = −2 + 3i − 2 = −4 + 3i</div>
+          <div class="formula">$$zw = (2+i)(-1+2i) = 2\cdot(-1) + 2\cdot(2i) + i\cdot(-1) + i\cdot(2i)$$</div>
+          <div class="formula">$$= -2 + 4i - i + 2i^{2} = -2 + 3i + 2(-1) = -2 + 3i - 2 = -4 + 3i$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> alternativa (e) — zw = −4 + 3i &nbsp;(com w = −1 + 2i)</p>
-      <p class="dica"><strong>Dica:</strong> rotação de 90° no sentido horário seria multiplicar por −i, não por i. Confira a setinha da figura.</p>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (e) — zw = −4 + 3i &nbsp;(com w = -1 + 2i)</p>
+      <p class="dica"><strong>Dica:</strong> rotação de $90^{\circ}$ no sentido horário seria multiplicar por -i, não por i. Confira a setinha da figura.</p>
     </div>
-    <div class="ans-box">Resposta: <span class="alt">alternativa (e)</span> — zw = −4 + 3i &nbsp;(com w = −1 + 2i)</div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (e)</span> — zw = −4 + 3i &nbsp;(com w = -1 + 2i)</div>
   </div>
 
   <div class="ex" id="c03">
     <div class="ex-header"><span class="ex-num">03</span><span class="ex-src">Complementares p.733 · Fatec</span></div>
-    <div class="ex-q">O ponto P está no 3º quadrante, Re(z) = −2, e o ângulo que OP forma com o semieixo real negativo é 30°. Determine z̄.</div>
+    <div class="ex-q">O ponto P está no 3º quadrante, Re(z) = −2, e o ângulo que OP forma com o semieixo real negativo é $30^{\circ}$. Determine $\bar{z}$.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> no 3º quadrante, Re &lt; 0 e Im &lt; 0. O ângulo de 30° é medido a partir do semieixo real <em>negativo</em>. Achamos Im pela tangente, montamos z e depois o <strong>conjugado</strong> z̄ (que é o que a questão pede).</p>
+      <p class="step-intro"><strong>Ideia:</strong> no 3º quadrante, Re &lt; 0 e Im &lt; 0. O ângulo de $30^{\circ}$ é medido a partir do semieixo real <em>negativo</em>. Achamos Im pela tangente, montamos z e depois o <strong>conjugado</strong> $\bar{z}$ (que é o que a questão pede).</p>
       <ol>
-        <li><strong>Passo 1 — Situar o ponto:</strong> Re(z) = −2, 3º quadrante ⇒ o afixo está à esquerda do eixo imaginário e abaixo do eixo real. O segmento OP faz 30° com a parte negativa do eixo real.</li>
+        <li><strong>Passo 1 — Situar o ponto:</strong> Re(z) = −2, 3º quadrante $\Rightarrow$ o afixo está à esquerda do eixo imaginário e abaixo do eixo real. O segmento OP faz $30^{\circ}$ com a parte negativa do eixo real.</li>
         <li><strong>Passo 2 — Argumento a partir do semieixo positivo:</strong>
-          <div class="formula">arg(z) = 180° + 30° = 210°</div>
-          (ou equivalentemente −150°).
+          <div class="formula">$$\arg(z) = 180^{\circ} + 30^{\circ} = 210^{\circ}$$</div>
+          (ou equivalentemente −$150^{\circ}$).
         </li>
-        <li><strong>Passo 3 — Relacionar |Im| com tan 30°:</strong> no triângulo retângulo, o cateto adjacente ao ângulo de 30° (ao longo do eixo real negativo) tem comprimento |Re| = 2. O cateto oposto é |Im| = |b|. Logo
-          <div class="formula">|b| / 2 = tan 30° = 1/√3 = √3/3</div>
-          <div class="formula">|b| = 2 · (√3/3) = 2√3/3</div>
+        <li><strong>Passo 3 — Relacionar |Im| com tan $30^{\circ}$:</strong> no triângulo retângulo, o cateto adjacente ao ângulo de $30^{\circ}$ (ao longo do eixo real negativo) tem comprimento |Re| = 2. O cateto oposto é |Im| = |b|. Logo
+          <div class="formula">$$|b| / 2 = \tan 30^{\circ} = 1/\sqrt{3} = \sqrt{3}/3$$</div>
+          <div class="formula">$$|b| = 2 \cdot (\sqrt{3}/3) = 2\sqrt{3}/3$$</div>
         </li>
         <li><strong>Passo 4 — Sinal de b no 3º quadrante:</strong> Im &lt; 0, portanto
-          <div class="formula">z = −2 − (2√3/3) i</div>
+          <div class="formula">$$z = -2 - (2\sqrt{3}/3) i$$</div>
         </li>
         <li><strong>Passo 5 — Conjugado:</strong> o conjugado troca o sinal da parte imaginária:
-          <div class="formula">z̄ = −2 + (2√3/3) i</div>
+          <div class="formula">$$\bar{z} = -2 + (2\sqrt{3}/3) i$$</div>
           Por isso a alternativa correta fala do conjugado, e não de z propriamente.
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — z̄ = −2 + (2√3/3) i</p>
-      <p class="dica"><strong>Dica:</strong> leia o enunciado até o fim — muitas alternativas dão z, mas a pergunta pede z̄. Também não use 30° como se fosse o argumento a partir do eixo positivo.</p>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — $\bar{z}$ = −2 + (2$\sqrt{3}/3$) i</p>
+      <p class="dica"><strong>Dica:</strong> leia o enunciado até o fim — muitas alternativas dão z, mas a pergunta pede $\bar{z}$. Também não use $30^{\circ}$ como se fosse o argumento a partir do eixo positivo.</p>
     </div>
-    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — z̄ = −2 + (2√3/3) i</div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — $\bar{z}$ = −2 + (2$\sqrt{3}/3$) i</div>
   </div>
 
   <div class="ex" id="c04">
@@ -574,23 +605,23 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
       <p class="anim-cap">Círculo centro (2,1), raio 5</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> |z − z₀| é a distância entre o afixo de z e o afixo de z₀. Aqui z₀ = 2 + i.</p>
+      <p class="step-intro"><strong>Ideia:</strong> |z - z_{0}| é a distância entre o afixo de z e o afixo de z_{0}. Aqui z_{0} = 2 + i.</p>
       <ol>
         <li><strong>Passo 1 — Reescrever a condição:</strong>
-          <div class="formula">|z − 2 − i| = |z − (2 + i)| = 5</div>
+          <div class="formula">$$|z - 2 - i| = |z - (2 + i)| = 5$$</div>
         </li>
         <li><strong>Passo 2 — Interpretar:</strong> distância do afixo de z ao ponto (2, 1) é constante e igual a 5.</li>
         <li><strong>Passo 3 — Conclusão geométrica:</strong> circunferência de centro (2, 1) e raio 5.</li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> alternativa (c) — círculo centro (2, 1), raio 5</p>
-      <p class="dica"><strong>Dica:</strong> |z − 2 − i| não é |z| − |2 + i|. O centro é o ponto (2, 1), não a origem.</p>
+      <p class="dica"><strong>Dica:</strong> |z − 2 − i| não é $|z|$ − |2 + i|. O centro é o ponto (2, 1), não a origem.</p>
     </div>
     <div class="ans-box">Resposta: <span class="alt">alternativa (c)</span> — círculo centro (2, 1), raio 5</div>
   </div>
 
   <div class="ex" id="c05">
     <div class="ex-header"><span class="ex-num">05</span><span class="ex-src">Complementares p.733 · UERJ</span></div>
-    <div class="ex-q">Calcule (1+i)⁹ e a distância d da origem ao afixo do resultado.</div>
+    <div class="ex-q">Calcule (1+i)^{9} e a distância d da origem ao afixo do resultado.</div>
     
     <div class="ex-anim" id="wrap-anim-b41-c05">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b41-c05">▶ Animar</button>
@@ -598,37 +629,37 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
       <p class="anim-cap">Potências de (1+i) até 16+16i</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> podemos usar a forma polar com De Moivre, ou um atalho binomial notando que (1+i)² = 2i. Os dois caminhos devem bater.</p>
+      <p class="step-intro"><strong>Ideia:</strong> podemos usar a forma polar com De Moivre, ou um atalho binomial notando que (1+i)^{2} = 2i. Os dois caminhos devem bater.</p>
       <ol>
-        <li><strong>Passo 1 — Método polar:</strong> 1 + i tem módulo ρ = √(1²+1²) = √2 e argumento θ = 45°.
-          <div class="formula">(1+i)⁹ = (√2)⁹ [cos(9·45°) + i sen(9·45°)] = (√2)⁹ [cos 405° + i sen 405°]</div>
+        <li><strong>Passo 1 — Método polar:</strong> 1 + i tem módulo $\rho$ = √(1²+1²) = $\sqrt{2}$ e argumento $\theta$ = $45^{\circ}$.
+          <div class="formula">$$(1+i)^{9} = (\sqrt{2})^{9} [\cos(9\cdot45^{\circ}) + i \operatorname{sen}(9\cdot45^{\circ})] = (\sqrt{2})^{9} [\cos 405^{\circ} + i \operatorname{sen} 405^{\circ}]$$</div>
         </li>
-        <li><strong>Passo 2 — Reduzir o ângulo:</strong> 405° = 360° + 45°, logo cos 405° = cos 45° = √2/2 e sen 405° = √2/2.</li>
-        <li><strong>Passo 3 — Calcular (√2)⁹:</strong>
-          <div class="formula">(√2)⁹ = (2^{1/2})⁹ = 2^{9/2} = 2^{4 + 1/2} = 2⁴ · √2 = 16√2</div>
+        <li><strong>Passo 2 — Reduzir o ângulo:</strong> $405^{\circ}$ = $360^{\circ}$ + $45^{\circ}$, logo cos $405^{\circ}$ = cos $45^{\circ}$ = $\sqrt{2}/2$ e sen $405^{\circ}$ = $\sqrt{2}/2$.</li>
+        <li><strong>Passo 3 — Calcular ($\sqrt{2}$)^{9}:</strong>
+          <div class="formula">$$(\sqrt{2})^{9} = (2^{1/2})^{9} = 2^{9/2} = 2^{4 + 1/2} = 2^{4} \cdot \sqrt{2} = 16\sqrt{2}$$</div>
         </li>
         <li><strong>Passo 4 — Forma algébrica:</strong>
-          <div class="formula">(1+i)⁹ = 16√2 · (√2/2)(1 + i) = 16√2 · √2/2 · (1+i) = 16 · 2/2 · (1+i) = 16(1+i) = 16 + 16i</div>
+          <div class="formula">$$(1+i)^{9} = 16\sqrt{2} \cdot (\sqrt{2}/2)(1 + i) = 16\sqrt{2} \cdot \sqrt{2}/2 \cdot (1+i) = 16 \cdot 2/2 \cdot (1+i) = 16(1+i) = 16 + 16i$$</div>
         </li>
         <li><strong>Passo 5 — Método alternativo (potências de 2i):</strong>
-          <div class="formula">(1+i)² = 1 + 2i + i² = 1 + 2i − 1 = 2i</div>
-          <div class="formula">(1+i)⁴ = (2i)² = 4i² = −4</div>
-          <div class="formula">(1+i)⁸ = (−4)² = 16</div>
-          <div class="formula">(1+i)⁹ = 16(1+i) = 16 + 16i ✓</div>
+          <div class="formula">$$(1+i)^{2} = 1 + 2i + i^{2} = 1 + 2i - 1 = 2i$$</div>
+          <div class="formula">$$(1+i)^{4} = (2i)^{2} = 4i^{2} = -4$$</div>
+          <div class="formula">$$(1+i)^{8} = (-4)^{2} = 16$$</div>
+          <div class="formula">$$(1+i)^{9} = 16(1+i) = 16 + 16i \checkmark$$</div>
         </li>
         <li><strong>Passo 6 — Distância d ao afixo (16, 16):</strong>
-          <div class="formula">d = √(16² + 16²) = √(2 · 256) = 16√2</div>
+          <div class="formula">$$d = \sqrt{16^{2} + 16^{2}} = \sqrt{2 \cdot 256} = 16\sqrt{2}$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> (1+i)⁹ = 16 + 16i; coordenadas (16, 16); d = 16√2</p>
-      <p class="dica"><strong>Dica:</strong> d = |(1+i)⁹| = |1+i|⁹ = (√2)⁹ = 16√2 — dá para achar a distância sem expandir a forma algébrica.</p>
+      <p class="ans"><strong>Resposta final:</strong> (1+i)^{9} = 16 + 16i; coordenadas (16, 16); d = $16\sqrt{2}$</p>
+      <p class="dica"><strong>Dica:</strong> d = |(1+i)^{9}| = |1+i|⁹ = ($\sqrt{2}$)^{9} = $16\sqrt{2}$ — dá para achar a distância sem expandir a forma algébrica.</p>
     </div>
-    <div class="ans-box">Resposta: (1+i)⁹ = 16 + 16i; coordenadas (16, 16); d = 16√2</div>
+    <div class="ans-box">Resposta: (1+i)^{9} = 16 + 16i; coordenadas (16, 16); d = $16\sqrt{2}$</div>
   </div>
 
   <div class="ex" id="c06">
     <div class="ex-header"><span class="ex-num">06</span><span class="ex-src">Complementares p.733 · UFG</span></div>
-    <div class="ex-q">Se Re(1/z) = 1/4, descreva geometricamente o lugar dos afixos de z (z ≠ 0).</div>
+    <div class="ex-q">Se Re(1/z) = 1/4, descreva geometricamente o lugar dos afixos de z (z $\ne$ 0).</div>
     
     <div class="ex-anim" id="wrap-anim-b41-c06">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b41-c06">▶ Animar</button>
@@ -638,23 +669,23 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
     <div class="steps">
       <p class="step-intro"><strong>Ideia:</strong> escrever 1/z em forma algébrica, impor que a parte real vale 1/4, e completar o quadrado para reconhecer uma circunferência — lembrando de excluir z = 0.</p>
       <ol>
-        <li><strong>Passo 1 — Escrever 1/z:</strong> seja z = x + yi, com z ≠ 0. Então
-          <div class="formula">1/z = z̄ / |z|² = (x − yi)/(x² + y²)</div>
+        <li><strong>Passo 1 — Escrever 1/z:</strong> seja z = x + yi, com z $\ne$ 0. Então
+          <div class="formula">$$1/z = \bar{z} / |z|^{2} = (x - yi)/(x^{2} + y^{2})$$</div>
           Logo
-          <div class="formula">Re(1/z) = x / (x² + y²)</div>
+          <div class="formula">$$\mathrm{Re}(1/z) = x / (x^{2} + y^{2})$$</div>
         </li>
         <li><strong>Passo 2 — Impor a condição:</strong>
-          <div class="formula">x / (x² + y²) = 1/4</div>
-          Como x² + y² ≠ 0 (z ≠ 0), multiplicamos ambos os lados por 4(x² + y²):
-          <div class="formula">4x = x² + y²</div>
+          <div class="formula">$$x / (x^{2} + y^{2}) = 1/4$$</div>
+          Como $x^{2} + y^{2}$ $\ne$ 0 (z $\ne$ 0), multiplicamos ambos os lados por 4($x^{2} + y^{2}$):
+          <div class="formula">$$4x = x^{2} + y^{2}$$</div>
         </li>
         <li><strong>Passo 3 — Completar o quadrado:</strong>
-          <div class="formula">x² − 4x + y² = 0</div>
-          <div class="formula">x² − 4x + 4 + y² = 4</div>
-          <div class="formula">(x − 2)² + y² = 4</div>
+          <div class="formula">$$x^{2} - 4x + y^{2} = 0$$</div>
+          <div class="formula">$$x^{2} - 4x + 4 + y^{2} = 4$$</div>
+          <div class="formula">$$(x - 2)^{2} + y^{2} = 4$$</div>
         </li>
         <li><strong>Passo 4 — Interpretação:</strong> circunferência de centro (2, 0) e raio 2.</li>
-        <li><strong>Passo 5 — Excluir a origem:</strong> a origem (0, 0) satisfaz (0−2)² + 0² = 4, ou seja, está sobre a circunferência. Mas z = 0 torna 1/z indefinido. Nenhum outro ponto da circunferência tem x = 0 (pois 4 + y² = 4 ⇒ y = 0). Portanto o lugar geométrico é essa circunferência <strong>excluindo a origem</strong>.</li>
+        <li><strong>Passo 5 — Excluir a origem:</strong> a origem (0, 0) satisfaz (0−2)² + $0^{2}$ = 4, ou seja, está sobre a circunferência. Mas z = 0 torna 1/z indefinido. Nenhum outro ponto da circunferência tem x = 0 (pois 4 + $y^{2}$ = 4 $\Rightarrow$ y = 0). Portanto o lugar geométrico é essa circunferência <strong>excluindo a origem</strong>.</li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> círculo centro (2, 0), raio 2, excluindo a origem</p>
       <p class="dica"><strong>Dica:</strong> sempre verifique se a origem (ou outro ponto que anule um denominador) precisa ser excluída do lugar geométrico.</p>
@@ -664,57 +695,57 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 
   <div class="ex" id="c07">
     <div class="ex-header"><span class="ex-num">07</span><span class="ex-src">Complementares p.733 · PUC</span></div>
-    <div class="ex-q">Seja z = i⁸⁷(i¹⁰⁵ + √3). Determine a alternativa correta sobre z (argumento, módulo, quadrante).</div>
+    <div class="ex-q">Seja z = $i^{87}$($i^{1}$⁰⁵ + $\sqrt{3}$). Determine a alternativa correta sobre z (argumento, módulo, quadrante).</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> reduzir as potências de i, expandir o produto, obter a forma algébrica de z e comparar módulo/argumento/quadrante com as alternativas — em particular com v = ½ − (√3/2)i.</p>
+      <p class="step-intro"><strong>Ideia:</strong> reduzir as potências de i, expandir o produto, obter a forma algébrica de z e comparar módulo/argumento/quadrante com as alternativas — em particular com v = $\tfrac{1}{2}$ − ($\sqrt{3}/2$)i.</p>
       <ol>
-        <li><strong>Passo 1 — Reduzir i⁸⁷:</strong> 87 ÷ 4 = 21 resto 3 (4·21 = 84; 87 − 84 = 3).
-          <div class="formula">i⁸⁷ = i³ = −i</div>
+        <li><strong>Passo 1 — Reduzir $i^{87}$:</strong> 87 ÷ 4 = 21 resto 3 (4·21 = 84; 87 − 84 = 3).
+          <div class="formula">$$i^{87} = i^{3} = -i$$</div>
         </li>
-        <li><strong>Passo 2 — Reduzir i¹⁰⁵:</strong> 105 ÷ 4 = 26 resto 1 (4·26 = 104; 105 − 104 = 1).
-          <div class="formula">i¹⁰⁵ = i¹ = i</div>
+        <li><strong>Passo 2 — Reduzir $i^{1}$⁰⁵:</strong> 105 ÷ 4 = 26 resto 1 (4·26 = 104; 105 − 104 = 1).
+          <div class="formula">$$i^{105} = i^{1} = i$$</div>
         </li>
         <li><strong>Passo 3 — Substituir e expandir:</strong>
-          <div class="formula">z = (−i)(i + √3) = (−i)(√3) + (−i)(i) = −√3 i − i²</div>
-          <div class="formula">−i² = −(−1) = 1 ⇒ z = 1 − √3 i</div>
+          <div class="formula">$$z = (-i)(i + \sqrt{3}) = (-i)(\sqrt{3}) + (-i)(i) = -\sqrt{3} i - i^{2}$$</div>
+          <div class="formula">$$-i^{2} = -(-1) = 1 \Rightarrow z = 1 - \sqrt{3} i$$</div>
         </li>
         <li><strong>Passo 4 — Módulo e quadrante:</strong>
-          <div class="formula">|z| = √(1² + (√3)²) = √(1+3) = √4 = 2</div>
-          Re &gt; 0, Im &lt; 0 ⇒ 4º quadrante.
+          <div class="formula">$$|z| = \sqrt{1^{2} + (\sqrt{3})^{2}} = \sqrt{1+3} = \sqrt{4} = 2$$</div>
+          Re &gt; 0, Im &lt; 0 $\Rightarrow$ 4º quadrante.
         </li>
-        <li><strong>Passo 5 — Argumento:</strong> cos θ = Re/|z| = 1/2, sen θ = Im/|z| = −√3/2 ⇒ θ = −60° = 300°.</li>
-        <li><strong>Passo 6 — Comparar com v = ½ − (√3/2)i:</strong>
-          <div class="formula">v = z/|z| = z/2 = 1/2 − (√3/2)i</div>
-          Portanto v e z têm o <strong>mesmo argumento</strong> (v é a “versão unitária” de z). A alternativa (d) afirma justamente arg(z) = arg(v).
+        <li><strong>Passo 5 — Argumento:</strong> cos $\theta$ = Re/$|z|$ = 1/2, sen $\theta$ = Im/$|z|$ = −$\sqrt{3}/2$ $\Rightarrow$ $\theta$ = −$60^{\circ}$ = $300^{\circ}$.</li>
+        <li><strong>Passo 6 — Comparar com v = $\tfrac{1}{2}$ − ($\sqrt{3}/2$)i:</strong>
+          <div class="formula">$$v = z/|z| = z/2 = 1/2 - (\sqrt{3}/2)i$$</div>
+          Portanto v e z têm o <strong>mesmo argumento</strong> (v é a “versão unitária” de z). A alternativa (d) afirma justamente \\\\\$\arg(z)$ = \\\\\$\arg(v)$.
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — arg(z) = arg(v) com v = ½ − (√3/2)i &nbsp;(também: |z|=2, 4º quadrante; z = 1 − √3 i)</p>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — \\\\$\arg(z)$ = \\\\$\arg(v)$ com v = $\tfrac{1}{2}$ − ($\sqrt{3}/2$)i &nbsp;(também: $|z|$=2, 4º quadrante; z = 1 - $\sqrt{3}$ i)</p>
       <p class="dica"><strong>Dica:</strong> dois complexos não nulos têm o mesmo argumento se, e só se, um é múltiplo real positivo do outro.</p>
     </div>
-    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — arg(z) = arg(v) com v = ½ − (√3/2)i &nbsp;(também: |z|=2, 4º quadrante; z = 1 − √3 i)</div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — \\\\\$\arg(z)$ = \\\\\$\arg(v)$ com v = $\tfrac{1}{2}$ − ($\sqrt{3}/2$)i &nbsp;(também: $|z|$=2, 4º quadrante; z = 1 - $\sqrt{3}$ i)</div>
   </div>
 
   <div class="ex" id="c08">
     <div class="ex-header"><span class="ex-num">08</span><span class="ex-src">Complementares p.733 · UEL</span></div>
     <div class="ex-q">Calcule o produto (−3 + 4i)(2 − 3i).</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> multiplicação na forma algébrica pelo método FOIL (First, Outer, Inner, Last), lembrando que i² = −1.</p>
+      <p class="step-intro"><strong>Ideia:</strong> multiplicação na forma algébrica pelo método FOIL (First, Outer, Inner, Last), lembrando que $i^{2}$ = -1.</p>
       <ol>
         <li><strong>Passo 1 — Expandir termo a termo:</strong>
-          <div class="formula">(−3)(2) + (−3)(−3i) + (4i)(2) + (4i)(−3i)</div>
-          <div class="formula">= −6 + 9i + 8i − 12i²</div>
+          <div class="formula">$$(-3)(2) + (-3)(-3i) + (4i)(2) + (4i)(-3i)$$</div>
+          <div class="formula">$$= -6 + 9i + 8i - 12i^{2}$$</div>
         </li>
-        <li><strong>Passo 2 — Trocar i² por −1:</strong>
-          <div class="formula">−12i² = −12(−1) = 12</div>
+        <li><strong>Passo 2 — Trocar $i^{2}$ por -1:</strong>
+          <div class="formula">$$-12i^{2} = -12(-1) = 12$$</div>
         </li>
         <li><strong>Passo 3 — Juntar real e imaginário:</strong>
-          <div class="formula">Parte real: −6 + 12 = 6</div>
-          <div class="formula">Parte imaginária: 9i + 8i = 17i</div>
-          <div class="formula">Produto = 6 + 17i</div>
+          <div class="formula">$$Parte real: -6 + 12 = 6$$</div>
+          <div class="formula">$$Parte imaginária: 9i + 8i = 17i$$</div>
+          <div class="formula">$$Produto = 6 + 17i$$</div>
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> alternativa (e) — 6 + 17i</p>
-      <p class="dica"><strong>Dica:</strong> o termo com i² “vira” parte real. Esquecer o sinal de −12i² = +12 é o erro mais comum.</p>
+      <p class="dica"><strong>Dica:</strong> o termo com $i^{2}$ “vira” parte real. Esquecer o sinal de -12$i^{2}$ = +12 é o erro mais comum.</p>
     </div>
     <div class="ans-box">Resposta: <span class="alt">alternativa (e)</span> — 6 + 17i</div>
   </div>
@@ -909,13 +940,13 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
     const sign = b >= 0 ? '+' : '−';
     const bAbs = Math.abs(b);
     liveVals.innerHTML =
-      '<div class="hl">z = ' + fmt(a, 3) + ' ' + sign + ' ' + fmt(bAbs, 3) + 'i</div>' +
-      '<div>Re(z) = <span class="hl">' + fmt(a, 3) + '</span> &nbsp; Im(z) = <span class="hl">' + fmt(b, 3) + '</span></div>' +
-      '<div class="hl2">ρ = |z| = √(a²+b²) = ' + fmt(rho, 4) + '</div>' +
-      '<div class="hl3">arg θ = ' + fmt(th, 2) + '° = ' + fmt(thRad, 4) + ' rad</div>' +
-      '<div class="hl4">z̄ = ' + fmt(a, 3) + ' ' + (b >= 0 ? '−' : '+') + ' ' + fmt(bAbs, 3) + 'i</div>' +
+      '<div class="hl">$z = ' + fmt(a, 3) + ' ' + sign + ' ' + fmt(bAbs, 3) + 'i$</div>' +
+      '<div>$\\mathrm{Re}(z)=$ <span class="hl">$' + fmt(a, 3) + '$</span> &nbsp; $\\mathrm{Im}(z)=$ <span class="hl">$' + fmt(b, 3) + '$</span></div>' +
+      '<div class="hl2">$\\rho = |z| = \\sqrt{a^{2}+b^{2}} = ' + fmt(rho, 4) + '$</div>' +
+      '<div class="hl3">$\\arg\\,\\theta = ' + fmt(th, 2) + '^{\\circ} = ' + fmt(thRad, 4) + '\\,\\mathrm{rad}$</div>' +
+      '<div class="hl4">$\\bar{z} = ' + fmt(a, 3) + ' ' + (b >= 0 ? '-' : '+') + ' ' + fmt(bAbs, 3) + 'i$</div>' +
       peri;
-  }
+    if (window.renderKatex) window.renderKatex(liveVals);
 
   function setAB(na, nb) {
     a = na; b = nb;
