@@ -254,12 +254,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
         <label class="toggle"><input type="checkbox" id="togConj"> Mostrar conjugado $\bar{z}$</label>
         <label class="toggle"><input type="checkbox" id="togNeg"> Mostrar -z</label>
-        <label class="toggle"><input type="checkbox" id="togNegConj"> Mostrar -$\bar{z}$</label>
+        <label class="toggle"><input type="checkbox" id="togNegConj"> Mostrar $-\bar{z}$</label>
         <label class="toggle"><input type="checkbox" id="togQuad"> Quadrilátero Q + perímetro</label>
-        <label class="toggle"><input type="checkbox" id="togCircO"> Círculo $$|z|$ = \rho$ (centro O)</label>
-        <label class="toggle"><input type="checkbox" id="togCircZ0"> Círculo |z - z_{0}| = r</label>
+        <label class="toggle"><input type="checkbox" id="togCircO"> Círculo $|z| = \rho$ (centro O)</label>
+        <label class="toggle"><input type="checkbox" id="togCircZ0"> Círculo $|z - z_{0}| = r$</label>
         <div class="ctrl-row" id="z0Controls" style="display:none">
-          <label>z_{0}:</label>
+          <label>$z_{0}$:</label>
           <input type="number" id="z0a" value="2" step="0.5" style="width:60px"> +
           <input type="number" id="z0b" value="1" step="0.5" style="width:60px"> i
           <label>r=</label>
@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function() {
   <div class="theory-grid">
     <div class="theory-card">
       <h3>Plano complexo (Argand-Gauss)</h3>
-      <p>Cada número complexo $z = $a + bi$$ corresponde a um ponto P(a, b) no plano cartesiano: eixo horizontal = parte real, eixo vertical = parte imaginária.</p>
+      <p>Cada número complexo $z = a + bi$ corresponde a um ponto P(a, b) no plano cartesiano: eixo horizontal = parte real, eixo vertical = parte imaginária.</p>
       <div class="formula">$$z = a + bi \leftrightarrow P(a, b)$$</div>
     </div>
     <div class="theory-card">
@@ -296,15 +296,15 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
     <div class="theory-card">
       <h3>Conjugação geométrica</h3>
-      <p>$\bar{z}$ = a − bi é a reflexão de z pelo eixo real. -z = −a − bi é a reflexão pelo origem (rotação de $180^{\circ}$). −$\bar{z}$ = −$a + bi$ é a reflexão pelo eixo imaginário.</p>
-      <p>Os quatro pontos z, $\bar{z}$, -z, −$\bar{z}$ formam um retângulo (ou quadrado) centrado na origem.</p>
+      <p>$\bar{z} = a - bi$ é a reflexão de z pelo eixo real. $-z = -a - bi$ é a reflexão pela origem (rotação de $180^{\circ}$). $-\bar{z} = -a + bi$ é a reflexão pelo eixo imaginário.</p>
+      <p>Os quatro pontos $z$, $\bar{z}$, $-z$, $-\bar{z}$ formam um retângulo (ou quadrado) centrado na origem.</p>
     </div>
     <div class="theory-card">
       <h3>Lugares geométricos</h3>
       <ul>
-        <li>$$|z|$ = r$ → círculo de centro O e raio r</li>
-        <li>|z - z_{0}| = r → círculo de centro z_{0} e raio r</li>
-        <li>\\\\\$\$\arg(z)$ = \alpha$ → semirreta partindo de O com ângulo $\alpha$</li>
+        <li>$|z| = r$ → círculo de centro O e raio r</li>
+        <li>$|z - z_{0}| = r$ → círculo de centro $z_{0}$ e raio $r$</li>
+        <li>$\arg(z) = \alpha$ → semirreta partindo de O com ângulo $\alpha$</li>
       </ul>
     </div>
   </div>
@@ -325,46 +325,46 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="ex-header"><span class="ex-num">01</span><span class="ex-src">Propostos p.732</span></div>
     <div class="ex-q">Dados os afixos no plano, escreva cada número complexo na forma algébrica $a + bi$.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> o <strong>afixo</strong> de um complexo z é o ponto P(a, b) no plano de Argand-Gauss; a abscissa a é a <strong>parte real</strong> e a ordenada b é a <strong>parte imaginária</strong>, logo $z = $a + bi$$.</p>
+      <p class="step-intro"><strong>Ideia:</strong> o <strong>afixo</strong> de um complexo z é o ponto P(a, b) no plano de Argand-Gauss; a abscissa a é a <strong>parte real</strong> e a ordenada b é a <strong>parte imaginária</strong>, logo $z = a + bi$.</p>
       <ol>
-        <li><strong>Passo 1 — Ler z_{1}:</strong> o afixo está em (4, 2), logo a = 4 e b = 2.
+        <li><strong>Passo 1 — Ler $z_{1}$:</strong> o afixo está em (4, 2), logo a = 4 e b = 2.
           <div class="formula">$$z_{1} = 4 + 2i$$</div>
         </li>
-        <li><strong>Passo 2 — Ler z_{2}:</strong> o afixo está em (0, 4): parte real nula (está sobre o eixo imaginário).
+        <li><strong>Passo 2 — Ler $z_{2}$:</strong> o afixo está em (0, 4): parte real nula (está sobre o eixo imaginário).
           <div class="formula">$$z_{2} = 0 + 4i = 4i$$</div>
         </li>
-        <li><strong>Passo 3 — Ler z₃:</strong> o afixo está em (−4, 5), 2º quadrante.
+        <li><strong>Passo 3 — Ler $z_{3}$:</strong> o afixo está em (−4, 5), 2º quadrante.
           <div class="formula">$$z_{3} = -4 + 5i$$</div>
         </li>
-        <li><strong>Passo 4 — Ler z₄:</strong> o afixo está em (−5, 0): imaginário nulo (número real puro, sobre o eixo real negativo).
+        <li><strong>Passo 4 — Ler $z_{4}$:</strong> o afixo está em (−5, 0): imaginário nulo (número real puro, sobre o eixo real negativo).
           <div class="formula">$$z_{4} = -5 + 0i = -5$$</div>
         </li>
-        <li><strong>Passo 5 — Ler z₅:</strong> o afixo está em (−2, −5), 3º quadrante.
+        <li><strong>Passo 5 — Ler $z_{5}$:</strong> o afixo está em (−2, −5), 3º quadrante.
           <div class="formula">$$z_{5} = -2 - 5i$$</div>
         </li>
-        <li><strong>Passo 6 — Ler z₆:</strong> o afixo está em (0, −2): real nulo, imaginário negativo.
+        <li><strong>Passo 6 — Ler $z_{6}$:</strong> o afixo está em (0, −2): real nulo, imaginário negativo.
           <div class="formula">$$z_{6} = -2i$$</div>
         </li>
-        <li><strong>Passo 7 — Ler z₇:</strong> o afixo está em (6, −4), 4º quadrante.
+        <li><strong>Passo 7 — Ler $z_{7}$:</strong> o afixo está em (6, −4), 4º quadrante.
           <div class="formula">$$z_{7} = 6 - 4i$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> z_{1} = 4+2i; z_{2} = 4i; z₃ = −4+5i; z₄ = −5; z₅ = −2−5i; z₆ = −2i; z₇ = 6−4i</p>
+      <p class="ans"><strong>Resposta final:</strong> $z_{1} = 4+2i$; $z_{2} = 4i$; $z_{3} = -4+5i$; $z_{4} = -5$; $z_{5} = -2-5i$; $z_{6} = -2i$; $z_{7} = 6-4i$</p>
       <p class="dica"><strong>Dica:</strong> não confunda abscissa com ordenada. O primeiro número do par (a, b) é sempre a parte real.</p>
     </div>
-    <div class="ans-box">Resposta: z_{1}=4+2i; z_{2}=4i; z₃=−4+5i; z₄=−5; z₅=−2−5i; z₆=−2i; z₇=6−4i</div>
+    <div class="ans-box">Resposta: $z_{1}=4+2i$; $z_{2}=4i$; $z_{3}=-4+5i$; $z_{4}=-5$; $z_{5}=-2-5i$; $z_{6}=-2i$; $z_{7}=6-4i$</div>
   </div>
 
   <div class="ex" id="p02">
     <div class="ex-header"><span class="ex-num">02</span><span class="ex-src">Propostos p.732</span></div>
-    <div class="ex-q">Seja $z = $a + bi, com a, b ∈ ℝ. Sabendo que a − b = 1 e $|z|$ = 5, determine z.</div>
+    <div class="ex-q">Seja $z = a + bi$, com $a, b \in \mathbb{R}$. Sabendo que a − b = 1 e $|z| = 5$, determine z.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> temos duas condições — uma linear (a − b = 1) e o <strong>módulo</strong> $|z|$ = $\sqrt{a^{2} + b^{2}}$ = 5. Isolamos a, substituímos na equação do módulo e resolvemos a equação do 2º grau em b.</p>
+      <p class="step-intro"><strong>Ideia:</strong> temos duas condições — uma linear (a − b = 1) e o <strong>módulo</strong> $|z| = \sqrt{a^{2} + b^{2}} = 5$. Isolamos a, substituímos na equação do módulo e resolvemos a equação do 2º grau em b.</p>
       <ol>
         <li><strong>Passo 1 — Isolar a:</strong> de a − b = 1 vem
           <div class="formula">$$a = 1 + b$$</div>
         </li>
-        <li><strong>Passo 2 — Escrever o módulo:</strong> $|z|$ = 5 significa $\sqrt{a^{2} + b^{2}}$ = 5. Elevando ao quadrado (ambos os lados positivos):
+        <li><strong>Passo 2 — Escrever o módulo:</strong> $|z| = 5$ significa $\sqrt{a^{2} + b^{2}} = 5$. Elevando ao quadrado (ambos os lados positivos):
           <div class="formula">$$a^{2} + b^{2} = 25$$</div>
         </li>
         <li><strong>Passo 3 — Substituir a = 1 + b:</strong>
@@ -386,7 +386,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$b = 3 \Rightarrow a = 1 + 3 = 4 \Rightarrow z = 4 + 3i$$</div>
           <div class="formula">$$b = -4 \Rightarrow a = 1 + (-4) = -3 \Rightarrow z = -3 - 4i$$</div>
         </li>
-        <li><strong>Passo 7 — Verificar $|z|$ = 5 e a − b = 1:</strong>
+        <li><strong>Passo 7 — Verificar $|z| = 5$ e a − b = 1:</strong>
           <div class="formula">$$|4+3i| = \sqrt{16+9} = \sqrt{25} = 5\; 4 - 3 = 1 \checkmark$$</div>
           <div class="formula">$$|-3-4i| = \sqrt{9+16} = \sqrt{25} = 5\; -3 - (-4) = 1 \checkmark$$</div>
         </li>
@@ -399,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   <div class="ex" id="p03">
     <div class="ex-header"><span class="ex-num">03</span><span class="ex-src">Propostos p.732</span></div>
-    <div class="ex-q">Determine o complexo z tal que $|z|$ = $4\sqrt{2}$ e \\\$\arg(z)$ = $135^{\circ}$.</div>
+    <div class="ex-q">Determine o complexo z tal que $|z| = 4\sqrt{2}$ e $\arg(z) = 135^{\circ}$.</div>
     <div class="steps">
       <p class="step-intro"><strong>Ideia:</strong> conhecemos o <strong>módulo</strong> $\rho$ e o <strong>argumento</strong> $\theta$. Usamos a forma trigonométrica z = $\rho$(cosθ + isenθ), ou equivalentemente a = $\rho$ cos $\theta$ e b = $\rho$ sen $\theta$.</p>
       <ol>
@@ -441,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <p class="step-intro"><strong>Ideia:</strong> o módulo $|z|$ é a distância do afixo à origem O. Logo $|z|$ = 3 descreve todos os pontos a distância 3 de O — uma circunferência.</p>
       <ol>
         <li><strong>Passo 1 — Interpretação geométrica:</strong> $|z|$ = 3 significa “distância de P a O é 3”. Portanto A é a <strong>circunferência de centro O(0, 0) e raio 3</strong>.</li>
-        <li><strong>Passo 2 — Equação cartesiana:</strong> se $z = $a + bi$$, então
+        <li><strong>Passo 2 — Equação cartesiana:</strong> se $z = a + bi$, então
           <div class="formula">$$\sqrt{a^{2} + b^{2}} = 3 \Rightarrow a^{2} + b^{2} = 9$$</div>
         </li>
         <li><strong>Passo 3 — Pontos notáveis:</strong> a circunferência corta os eixos em
@@ -449,22 +449,22 @@ document.addEventListener("DOMContentLoaded", function() {
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> círculo de centro O e raio 3; equação $a^{2} + b^{2} = 9$</p>
-      <p class="dica"><strong>Dica:</strong> $$|z|$ = r$ (constante) sempre dá círculo centrado na origem; |z - z_{0}| = r dá círculo centrado em z_{0}.</p>
+      <p class="dica"><strong>Dica:</strong> $|z| = r$ (constante) sempre dá círculo centrado na origem; $|z - z_{0}| = r$ dá círculo centrado em $z_{0}$.</p>
     </div>
     <div class="ans-box">Resposta: círculo centro O, raio 3; equação $a^{2} + b^{2} = 9$</div>
   </div>
 
   <div class="ex" id="p05">
     <div class="ex-header"><span class="ex-num">05</span><span class="ex-src">Propostos p.732</span></div>
-    <div class="ex-q">Seja z = 2 + 3i. Os afixos de z, $\bar{z}$, -z e −$\bar{z}$ formam um quadrilátero Q. Calcule o perímetro de Q.</div>
+    <div class="ex-q">Seja z = 2 + 3i. Os afixos de $z$, $\bar{z}$, $-z$ e $-\bar{z}$ formam um quadrilátero Q. Calcule o perímetro de Q.</div>
     
     <div class="ex-anim" id="wrap-anim-b41-p05">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b41-p05">▶ Animar</button>
       <canvas id="anim-b41-p05" width="360" height="360"></canvas>
-      <p class="anim-cap">Retângulo Q: z, $\bar{z}$, -z, −$\bar{z}$ · perímetro 20</p>
+      <p class="anim-cap">Retângulo Q: $z$, $\bar{z}$, $-z$, $-\bar{z}$ · perímetro 20</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> o <strong>conjugado</strong> $\bar{z}$ reflete z pelo eixo real; -z reflete pela origem; −$\bar{z}$ reflete pelo eixo imaginário. Os quatro pontos formam um retângulo centrado em O; basta achar os lados e dobrar a soma.</p>
+      <p class="step-intro"><strong>Ideia:</strong> o <strong>conjugado</strong> $\bar{z}$ reflete z pelo eixo real; -z reflete pela origem; $-\bar{z}$ reflete pelo eixo imaginário. Os quatro pontos formam um retângulo centrado em O; basta achar os lados e dobrar a soma.</p>
       <ol>
         <li><strong>Passo 1 — Listar os quatro pontos (afixos):</strong>
           <div class="formula">$$z = 2 + 3i \to (2, 3)$$</div>
@@ -488,7 +488,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> perímetro = 20</p>
-      <p class="dica"><strong>Dica:</strong> em geral, para $z = $a + bi$$, os lados medem 2|a| e 2|b|, e o perímetro é 4(|a| + |b|). Aqui 4(2+3) = 20.</p>
+      <p class="dica"><strong>Dica:</strong> em geral, para $z = a + bi$, os lados medem $2|a|$ e $2|b|$, e o perímetro é $4(|a| + |b|)$. Aqui 4(2+3) = 20.</p>
     </div>
     <div class="ans-box">Resposta: perímetro = 20 &nbsp;(vértices: (2,3), (2,−3), (−2,−3), (−2,3); lados 4 e 6)</div>
   </div>
@@ -537,7 +537,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   <div class="ex" id="c02">
     <div class="ex-header"><span class="ex-num">02</span><span class="ex-src">Complementares p.733 · Mackenzie</span></div>
-    <div class="ex-q">Na figura, z = 2 + i e $|w|$ = $|z|$, com w obtido por rotação de $90^{\circ}$ no sentido anti-horário a partir de z (marca de ângulo reto). Determine o produto zw.</div>
+    <div class="ex-q">Na figura, z = 2 + i e $|w| = |z|$, com w obtido por rotação de $90^{\circ}$ no sentido anti-horário a partir de z (marca de ângulo reto). Determine o produto zw.</div>
     
     <div class="ex-anim" id="wrap-anim-b41-c02">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b41-c02">▶ Animar</button>
@@ -547,7 +547,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="steps">
       <p class="step-intro"><strong>Ideia:</strong> a figura mostra o afixo de z = 2 + i e um vetor w de mesmo módulo, perpendicular a z no sentido anti-horário. Geometricamente, girar $90^{\circ}$ anti-horário = multiplicar por i.</p>
       <ol>
-        <li><strong>Passo 1 — Ler a figura:</strong> z = 2 + i tem afixo (2, 1). O vetor w parte de O, tem o mesmo comprimento $|z|$ = $\sqrt{5}$, e forma $90^{\circ}$ no sentido anti-horário com z.</li>
+        <li><strong>Passo 1 — Ler a figura:</strong> z = 2 + i tem afixo (2, 1). O vetor w parte de O, tem o mesmo comprimento $|z| = \sqrt{5}$, e forma $90^{\circ}$ no sentido anti-horário com z.</li>
         <li><strong>Passo 2 — Obter w multiplicando por i:</strong>
           <div class="formula">$$w = i \cdot z = i(2 + i) = 2i + i^{2} = 2i + (-1) = -1 + 2i$$</div>
         </li>
@@ -605,7 +605,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <p class="anim-cap">Círculo centro (2,1), raio 5</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> |z - z_{0}| é a distância entre o afixo de z e o afixo de z_{0}. Aqui z_{0} = 2 + i.</p>
+      <p class="step-intro"><strong>Ideia:</strong> $|z - z_{0}|$ é a distância entre o afixo de $z$ e o afixo de $z_{0}$. Aqui $z_{0} = 2 + i$.</p>
       <ol>
         <li><strong>Passo 1 — Reescrever a condição:</strong>
           <div class="formula">$$|z - 2 - i| = |z - (2 + i)| = 5$$</div>
@@ -716,13 +716,13 @@ document.addEventListener("DOMContentLoaded", function() {
         <li><strong>Passo 5 — Argumento:</strong> cos $\theta$ = Re/$|z|$ = 1/2, sen $\theta$ = Im/$|z|$ = −$\sqrt{3}/2$ $\Rightarrow$ $\theta$ = −$60^{\circ}$ = $300^{\circ}$.</li>
         <li><strong>Passo 6 — Comparar com v = $\tfrac{1}{2}$ − ($\sqrt{3}/2$)i:</strong>
           <div class="formula">$$v = z/|z| = z/2 = 1/2 - (\sqrt{3}/2)i$$</div>
-          Portanto v e z têm o <strong>mesmo argumento</strong> (v é a “versão unitária” de z). A alternativa (d) afirma justamente \\\\\$\arg(z)$ = \\\\\$\arg(v)$.
+          Portanto v e z têm o <strong>mesmo argumento</strong> (v é a “versão unitária” de z). A alternativa (d) afirma justamente $\arg(z) = \arg(v)$.
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — \\\\$\arg(z)$ = \\\\$\arg(v)$ com v = $\tfrac{1}{2}$ − ($\sqrt{3}/2$)i &nbsp;(também: $|z|$=2, 4º quadrante; z = 1 - $\sqrt{3}$ i)</p>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — $\arg(z) = \arg(v)$ com $v = \tfrac{1}{2} - (\sqrt{3}/2)i$ &nbsp;(também: $|z|=2$, 4º quadrante; $z = 1 - \sqrt{3}\, i$)</p>
       <p class="dica"><strong>Dica:</strong> dois complexos não nulos têm o mesmo argumento se, e só se, um é múltiplo real positivo do outro.</p>
     </div>
-    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — \\\\\$\arg(z)$ = \\\\\$\arg(v)$ com v = $\tfrac{1}{2}$ − ($\sqrt{3}/2$)i &nbsp;(também: $|z|$=2, 4º quadrante; z = 1 - $\sqrt{3}$ i)</div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — $\arg(z) = \arg(v)$ com $v = \tfrac{1}{2} - (\sqrt{3}/2)i$ &nbsp;(também: $|z|=2$, 4º quadrante; $z = 1 - \sqrt{3}\, i$)</div>
   </div>
 
   <div class="ex" id="c08">
