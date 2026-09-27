@@ -107,6 +107,7 @@ header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
   border-radius: 10px;
   border-left: 4px solid var(--accent);
 }
+.plan-step.prep { border-left-color: var(--accent4); }
 .plan-step.b42 { border-left-color: var(--accent2); }
 .plan-step.b43 { border-left-color: var(--accent3); }
 .plan-step .num {
@@ -115,6 +116,7 @@ header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
   color: var(--accent);
   min-width: 2.5rem;
 }
+.plan-step.prep .num { color: var(--accent4); }
 .plan-step.b42 .num { color: var(--accent2); }
 .plan-step.b43 .num { color: var(--accent3); }
 .plan-step h3 { font-size: 1rem; margin-bottom: 0.25rem; }
@@ -149,6 +151,7 @@ header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
   text-transform: uppercase;
   margin-bottom: 0.5rem;
 }
+.card.prep .tag { color: var(--accent4); }
 .card.b41 .tag { color: var(--accent); }
 .card.b42 .tag { color: var(--accent2); }
 .card.b43 .tag { color: var(--accent3); }
@@ -160,6 +163,7 @@ header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
   font-weight: 600;
   font-size: 0.9rem;
 }
+.card.prep .cta { color: var(--accent4); }
 .card.b42 .cta { color: var(--accent2); }
 .card.b43 .cta { color: var(--accent3); }
 
@@ -225,6 +229,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <nav>
   <span class="brand">ℂ Números Complexos</span>
   <a href="index.html" class="active">Início</a>
+  <a href="revisao-trigonometria.html">Revisão trig.</a>
   <a href="b41-representacao.html">B41 Representação</a>
   <a href="b42-forma-trigonometrica.html">B42 Forma Trig.</a>
   <a href="b43-moivre.html">B43 Moivre</a>
@@ -233,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <header class="hero">
   <h1>Números Complexos</h1>
   <p>Pack offline completo · 3º ano Ensino Médio · Versa Sistema de Ensino Vol. 11</p>
-  <p>Colégio Stella Maris · Módulos B41 – B43</p>
+  <p>Colégio Stella Maris · Revisão + Módulos B41 – B43</p>
   <span class="badge">Setembro · Plano de estudo</span>
 </header>
 
@@ -241,7 +246,8 @@ document.addEventListener("DOMContentLoaded", function() {
   <section class="plan" style="margin-top:0">
     <h2>O que você vai aprender</h2>
     <p style="color:var(--muted);font-size:0.95rem">
-      Um número complexo $z = a + bi$ não é só uma conta algébrica: no plano de Argand-Gauss ele vira um <strong style="color:var(--text)">ponto</strong> e um <strong style="color:var(--text)">vetor</strong>.
+      Antes de mergulhar nos complexos, a <strong style="color:var(--accent4)">Revisão</strong> aquece seno, cosseno e tangente no círculo unitário (o que o B42 vai usar o tempo todo).
+      Depois, um número complexo $z = a + bi$ não é só uma conta algébrica: no plano de Argand-Gauss ele vira um <strong style="color:var(--text)">ponto</strong> e um <strong style="color:var(--text)">vetor</strong>.
       Em <strong style="color:var(--accent)">B41</strong> você enxerga módulo e argumento geometricamente; em <strong style="color:var(--accent2)">B42</strong> esses mesmos $\rho$ e $\theta$ viram a forma trigonométrica, onde produto e quociente são dilatação + rotação;
       em <strong style="color:var(--accent3)">B43</strong>, De Moivre eleva essa ideia a potências e raízes — e as raízes desenham polígonos regulares no círculo.
       Cada módulo traz playground, explicação em palavras, fórmulas e exercícios.
@@ -251,6 +257,13 @@ document.addEventListener("DOMContentLoaded", function() {
   <section class="plan">
     <h2>📅 Plano de Setembro</h2>
     <div class="plan-steps">
+      <div class="plan-step prep">
+        <div class="num">Prep</div>
+        <div>
+          <h3>Revisão — seno, cosseno e tangente</h3>
+          <p>Círculo unitário, valores exatos, sinais por quadrante (ASTC), identidade $\operatorname{sen}^{2}\theta+\cos^{2}\theta=1$, graus ↔ radianos e ponte suave para $z=\rho(\cos\theta+i\operatorname{sen}\theta)$.</p>
+        </div>
+      </div>
       <div class="plan-step">
         <div class="num">B41</div>
         <div>
@@ -280,6 +293,12 @@ document.addEventListener("DOMContentLoaded", function() {
   <p style="color:var(--accent3);margin:0.75rem 0 0;font-size:0.92rem;font-weight:600">Novo: modo treino (esconde resoluções), animações no plano e animações em exercícios geométricos.</p>
 
   <div class="cards">
+    <a class="card prep" href="revisao-trigonometria.html">
+      <div class="tag">Revisão · Prep</div>
+      <h2>Seno, cosseno e tangente</h2>
+      <p>Círculo unitário interativo, tabela de valores exatos, sinais por quadrante e conversão graus/radianos — aquecimento antes de B41–B43.</p>
+      <div class="cta">Abrir revisão →</div>
+    </a>
     <a class="card b41" href="b41-representacao.html">
       <div class="tag">Módulo B41</div>
       <h2>Representação Geométrica</h2>
