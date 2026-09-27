@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B43 — Fórmula de De Moivre | Números Complexos</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent3); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent3); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent3); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent3); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+}
+.controls { display: flex; flex-direction: column; gap: 0.65rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"], select {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent3); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent3); }
+button.primary { background: #e65100; border-color: var(--accent3); color: #fff; }
+.mode-tabs { display: flex; gap: 0.4rem; margin-bottom: 0.3rem; }
+.mode-tabs button { flex: 1; }
+.mode-tabs button.on { background: #e65100; border-color: var(--accent3); color: #fff; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-family: "Cambria Math", "Times New Roman", serif; font-size: 0.88rem;
+  max-height: 220px; overflow-y: auto;
+}
+.live-vals div { margin: 0.22rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow);
+}
+.theory-card h3 { margin-top: 0; color: var(--accent3); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent3); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-family: "Cambria Math", "Times New Roman", serif; font-size: 1.02rem;
+}
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent3); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent2); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans { color: var(--accent2); }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(255,183,77,.1);
+  border: 1px solid rgba(255,183,77,.35); border-radius: 8px; color: var(--accent3); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(255,183,77,.15); color: var(--accent3);
+  border: 1px solid rgba(255,183,77,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+
+
+.btn-anim-play { margin-bottom: 0.35rem; }
+.btn-anim-play.primary { background: #1565c0; border-color: var(--accent); color: #fff; }
+/* === Modo treino === */
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps,
+.ex.collapsed .ans-box,
+.ex.collapsed .ex-anim { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .ex.collapsed .ex-anim { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.ex-anim {
+  margin: 0.85rem 0; text-align: center;
+  background: var(--bg); border-radius: 10px; padding: 0.75rem; border: 1px solid var(--border);
+}
+.ex-anim canvas {
+  width: 100%; max-width: 360px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0.45rem auto;
+  cursor: default; touch-action: none;
+}
+.ex-anim .anim-cap { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+.play-anim-row { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 0.55rem; }
+.play-caption { text-align: center; color: var(--accent3); font-size: 0.85rem; margin-top: 0.4rem; font-weight: 600; }
+
+</style>
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">ℂ Números Complexos</span>
+  <a href="index.html">Início</a>
+  <a href="b41-representacao.html">B41 Representação</a>
+  <a href="b42-forma-trigonometrica.html">B42 Forma Trig.</a>
+  <a href="b43-moivre.html" class="active">B43 Moivre</a>
+</nav>
+
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+  <h1>B43 — Fórmula de De Moivre</h1>
+  <p class="subtitle">Potências · raízes n-ésimas · raízes da unidade · zⁿ = w · Versa Vol. 11</p>
+
+  <span class="section-label">(A) Playground interativo</span>
+  <div class="playground">
+    <div class="play-grid">
+      <div>
+        <canvas id="moivre" width="560" height="560"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem">Modo Potência: z e zⁿ &nbsp;|&nbsp; Modo Raízes: todas as raízes n-ésimas sobre o círculo</p>
+        <p class="play-caption">Calcular anima: argumento ×n (varredura) · raízes aparecem uma a uma + polígono</p>
+      </div>
+      <div class="controls">
+        <div class="mode-tabs">
+          <button type="button" id="modePow" class="on">Potência zⁿ</button>
+          <button type="button" id="modeRoot">Raízes √ⁿz</button>
+        </div>
+        <label>ρ = <span id="rhoLabel" class="hl3">2</span></label>
+        <input type="range" id="slRho" min="0.5" max="5" step="0.1" value="2">
+        <label>θ (graus) = <span id="thLabel" class="hl">60</span>°</label>
+        <input type="range" id="slTh" min="0" max="359" step="1" value="60">
+        <div class="ctrl-row">
+          <label>n =</label>
+          <input type="number" id="inpN" value="3" min="2" max="12" step="1" style="width:70px">
+          <button class="primary" id="btnGo">Calcular</button>
+        </div>
+        <div class="ctrl-row">
+          <button id="btnEx1">Ex: (1+i)⁴</button>
+          <button id="btnEx2">Ex: √[3]{8}</button>
+          <button id="btnEx3">Raízes da unidade n=5</button>
+        </div>
+        <div class="live-vals" id="liveVals"></div>
+      </div>
+    </div>
+  </div>
+
+  <span class="section-label">(B) Teoria</span>
+  <div class="theory-grid">
+    <div class="theory-card">
+      <h3>Fórmula de De Moivre</h3>
+      <p>Para n inteiro (e, por extensão, racional):</p>
+      <div class="formula">[ρ (cos θ + i sen θ)]ⁿ = ρⁿ [cos(nθ) + i sen(nθ)]</div>
+      <p>Potenciar = elevar o módulo a n e multiplicar o argumento por n.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Raízes n-ésimas</h3>
+      <p>As n raízes complexas de z = ρ cis θ são:</p>
+      <div class="formula">w<sub>k</sub> = ρ<sup>1/n</sup> [ cos((θ+2kπ)/n) + i sen((θ+2kπ)/n) ]</div>
+      <p>k = 0, 1, …, n−1. Em graus: (θ + 360°·k)/n.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Geometria das raízes</h3>
+      <p>Os afixos das raízes n-ésimas são vértices de um polígono regular de n lados, inscrito no círculo de centro O e raio ρ<sup>1/n</sup>.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Raízes da unidade</h3>
+      <p>Soluções de zⁿ = 1: ω<sub>k</sub> = cis(2kπ/n), k = 0…n−1.</p>
+      <ul>
+        <li>ω₀ = 1</li>
+        <li>|ω<sub>k</sub>| = 1 (todas sobre o círculo unitário)</li>
+        <li>1 + ω + ω² + … + ωⁿ⁻¹ = 0 (se ω ≠ 1 primitiva)</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>Equação zⁿ = w</h3>
+      <p>Se w = R cis α, as soluções são as raízes n-ésimas de w:</p>
+      <div class="formula">z<sub>k</sub> = R<sup>1/n</sup> cis((α + 2kπ)/n)</div>
+    </div>
+    <div class="theory-card">
+      <h3>Dica de cálculo</h3>
+      <ul>
+        <li>Sempre normalize o ângulo (mod 360°) depois de multiplicar por n.</li>
+        <li>Para potências negativas: z⁻ⁿ = (1/z)ⁿ = (1/ρ)ⁿ cis(−nθ).</li>
+        <li>Verifique com casos conhecidos: i² = −1, (cis 45°)⁸ = 1, etc.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>📐 (C) Exercícios de prática (B43)</h2>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.9rem">Exercícios no estilo vestibular, com resolução completa. <span class="badge-pratica">Prática B43</span></p>
+  <p class="note" style="font-style:normal;margin-bottom:1rem">Cada resolução começa pela ideia e segue passo a passo.</p>
+
+  
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+<div class="ex" id="b43-p1">
+    <div class="ex-header"><span class="ex-num">P1</span><span class="ex-src">Exercícios de prática (B43)</span><span class="badge-pratica">potência</span></div>
+    <div class="ex-q">Calcule (1 + i)⁶ usando De Moivre.</div>
+    
+    <div class="ex-anim" id="wrap-anim-b43-p1">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b43-p1">▶ Animar</button>
+      <canvas id="anim-b43-p1" width="360" height="360"></canvas>
+      <p class="anim-cap">(1+i)⁶ — módulo e argumento ×6</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> a <strong>fórmula de De Moivre</strong> diz que [ρ(cos θ + i sen θ)]ⁿ = ρⁿ [cos(nθ) + i sen(nθ)]. Primeiro escrevemos 1+i na forma trigonométrica.</p>
+      <ol>
+        <li><strong>Passo 1 — Forma trigonométrica de 1 + i:</strong>
+          <div class="formula">ρ = √(1² + 1²) = √2; &nbsp; θ = 45°</div>
+          <div class="formula">1 + i = √2 (cos 45° + i sen 45°)</div>
+        </li>
+        <li><strong>Passo 2 — Aplicar De Moivre com n = 6:</strong>
+          <div class="formula">(1+i)⁶ = (√2)⁶ [cos(6·45°) + i sen(6·45°)] = (√2)⁶ [cos 270° + i sen 270°]</div>
+        </li>
+        <li><strong>Passo 3 — Calcular (√2)⁶:</strong>
+          <div class="formula">(√2)⁶ = (2^{1/2})⁶ = 2³ = 8</div>
+        </li>
+        <li><strong>Passo 4 — Avaliar cos 270° e sen 270°:</strong>
+          <div class="formula">cos 270° = 0; &nbsp; sen 270° = −1</div>
+          <div class="formula">(1+i)⁶ = 8(0 + i(−1)) = −8i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> (1+i)⁶ = −8i</p>
+      <p class="dica"><strong>Dica:</strong> 6·45° = 270° já está em [0°, 360°); se o ângulo ultrapassar 360°, reduza (mod 360°) antes de ler seno/cosseno.</p>
+    </div>
+    <div class="ans-box">Resposta: (1+i)⁶ = −8i</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P2</span><span class="ex-src">Exercícios de prática (B43)</span><span class="badge-pratica">potência</span></div>
+    <div class="ex-q">Determine (−√3 + i)⁵ na forma algébrica.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> passar para a forma trigonométrica, elevar módulo e argumento com De Moivre, reduzir o ângulo módulo 360° e voltar à forma a + bi.</p>
+      <ol>
+        <li><strong>Passo 1 — Módulo e argumento:</strong>
+          <div class="formula">ρ = √[(−√3)² + 1²] = √(3+1) = 2</div>
+          Re &lt; 0, Im &gt; 0 ⇒ 2º quadrante; cos θ = −√3/2, sen θ = 1/2 ⇒ θ = 150°.
+          <div class="formula">−√3 + i = 2 (cos 150° + i sen 150°)</div>
+        </li>
+        <li><strong>Passo 2 — De Moivre com n = 5:</strong>
+          <div class="formula">(−√3+i)⁵ = 2⁵ [cos(5·150°) + i sen(5·150°)] = 32 [cos 750° + i sen 750°]</div>
+        </li>
+        <li><strong>Passo 3 — Reduzir 750°:</strong>
+          <div class="formula">750° = 2·360° + 30° = 720° + 30° ⇒ ângulo equivalente: 30°</div>
+        </li>
+        <li><strong>Passo 4 — Forma algébrica:</strong>
+          <div class="formula">32 (cos 30° + i sen 30°) = 32(√3/2 + i·1/2) = 16√3 + 16i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> 16√3 + 16i</p>
+      <p class="dica"><strong>Dica:</strong> ao reduzir ângulos, subtraia 360° quantas vezes forem necessárias (ou divida por 360 e use o resto).</p>
+    </div>
+    <div class="ans-box">Resposta: 16√3 + 16i</div>
+  </div>
+
+  <div class="ex" id="b43-p3">
+    <div class="ex-header"><span class="ex-num">P3</span><span class="ex-src">Exercícios de prática (B43)</span><span class="badge-pratica">raízes</span></div>
+    <div class="ex-q">Calcule as raízes cúbicas de 8 (ou seja, resolva z³ = 8).</div>
+    
+    <div class="ex-anim" id="wrap-anim-b43-p3">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b43-p3">▶ Animar</button>
+      <canvas id="anim-b43-p3" width="360" height="360"></canvas>
+      <p class="anim-cap">Raízes cúbicas de 8 no círculo</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> as <strong>raízes n-ésimas</strong> de ρ cis θ são w_k = ρ^{1/n} cis((θ + 360°·k)/n), com k = 0, 1, …, n−1. Geometricamente, formam um polígono regular inscrito num círculo.</p>
+      <ol>
+        <li><strong>Passo 1 — Escrever 8 na forma trigonométrica:</strong>
+          <div class="formula">8 = 8 (cos 0° + i sen 0°) = 8 cis 0°</div>
+          (Também 8 cis 360°, 8 cis 720°, … — usamos isso com o índice k.)
+        </li>
+        <li><strong>Passo 2 — Raio das raízes:</strong>
+          <div class="formula">ρ^{1/3} = 8^{1/3} = 2</div>
+        </li>
+        <li><strong>Passo 3 — Ângulos para k = 0, 1, 2:</strong>
+          <div class="formula">θ_k = (0° + 360°·k)/3 = 120°·k</div>
+        </li>
+        <li><strong>Passo 4 — k = 0:</strong>
+          <div class="formula">z₀ = 2 cis 0° = 2(1 + 0i) = 2</div>
+        </li>
+        <li><strong>Passo 5 — k = 1:</strong>
+          <div class="formula">z₁ = 2 cis 120° = 2(−1/2 + i √3/2) = −1 + √3 i</div>
+        </li>
+        <li><strong>Passo 6 — k = 2:</strong>
+          <div class="formula">z₂ = 2 cis 240° = 2(−1/2 − i √3/2) = −1 − √3 i</div>
+        </li>
+        <li><strong>Passo 7 — Geometria:</strong> os afixos são os vértices de um triângulo equilátero inscrito no círculo de centro O e raio 2 (um vértice em (2, 0)).</li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> z₀ = 2; z₁ = −1 + √3 i; z₂ = −1 − √3 i</p>
+      <p class="dica"><strong>Dica:</strong> no ℝ só existe a raiz 2; no ℂ aparecem mais duas. Não esqueça k = 1 e k = 2.</p>
+    </div>
+    <div class="ans-box">Resposta: z₀ = 2; z₁ = −1 + √3 i; z₂ = −1 − √3 i</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P4</span><span class="ex-src">Exercícios de prática (B43)</span><span class="badge-pratica">raízes</span></div>
+    <div class="ex-q">Encontre as raízes quartas de −16 (z⁴ = −16).</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> −16 está no semieixo real negativo, logo arg = 180°. As quatro raízes quartas ficam nos vértices de um quadrado sobre o círculo de raio 2.</p>
+      <ol>
+        <li><strong>Passo 1 — Forma trigonométrica de −16:</strong>
+          <div class="formula">−16 = 16 (cos 180° + i sen 180°) = 16 cis 180°</div>
+        </li>
+        <li><strong>Passo 2 — Raio:</strong>
+          <div class="formula">16^{1/4} = (2⁴)^{1/4} = 2</div>
+        </li>
+        <li><strong>Passo 3 — Ângulos:</strong>
+          <div class="formula">θ_k = (180° + 360°·k)/4 , &nbsp; k = 0, 1, 2, 3</div>
+        </li>
+        <li><strong>Passo 4 — k = 0:</strong> θ = 180°/4 = 45°
+          <div class="formula">2 cis 45° = 2(√2/2 + i √2/2) = √2 + √2 i</div>
+        </li>
+        <li><strong>Passo 5 — k = 1:</strong> θ = (180°+360°)/4 = 540°/4 = 135°
+          <div class="formula">2 cis 135° = 2(−√2/2 + i √2/2) = −√2 + √2 i</div>
+        </li>
+        <li><strong>Passo 6 — k = 2:</strong> θ = (180°+720°)/4 = 900°/4 = 225°
+          <div class="formula">2 cis 225° = 2(−√2/2 − i √2/2) = −√2 − √2 i</div>
+        </li>
+        <li><strong>Passo 7 — k = 3:</strong> θ = (180°+1080°)/4 = 1260°/4 = 315°
+          <div class="formula">2 cis 315° = 2(√2/2 − i √2/2) = √2 − √2 i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> √2+√2 i; −√2+√2 i; −√2−√2 i; √2−√2 i</p>
+      <p class="dica"><strong>Dica:</strong> se começar com arg(−16) = −180° em vez de 180°, os ângulos mudam de ordem, mas o conjunto das quatro raízes é o mesmo.</p>
+    </div>
+    <div class="ans-box">Resposta: ±√2 ± √2 i (todas as quatro combinações de sinais com Re·Im &gt; 0 nos pares: √2+√2i, −√2+√2i, −√2−√2i, √2−√2i)</div>
+  </div>
+
+  <div class="ex" id="b43-p5">
+    <div class="ex-header"><span class="ex-num">P5</span><span class="ex-src">Exercícios de prática (B43)</span><span class="badge-pratica">raízes da unidade</span></div>
+    <div class="ex-q">Determine as raízes cúbicas da unidade e mostre que 1 + ω + ω² = 0, onde ω = cis 120°.</div>
+    
+    <div class="ex-anim" id="wrap-anim-b43-p5">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b43-p5">▶ Animar</button>
+      <canvas id="anim-b43-p5" width="360" height="360"></canvas>
+      <p class="anim-cap">Raízes cúbicas da unidade</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> as <strong>raízes da unidade</strong> são as soluções de zⁿ = 1. Para n = 3, ficam nos vértices de um triângulo equilátero no círculo unitário. A soma das raízes não reais com 1 dá zero (centroide na origem).</p>
+      <ol>
+        <li><strong>Passo 1 — Equação z³ = 1:</strong>
+          <div class="formula">1 = 1 cis 0°</div>
+          Raízes: cis((0° + 360°k)/3) = cis(120°·k), k = 0, 1, 2.
+        </li>
+        <li><strong>Passo 2 — Listar as três raízes:</strong>
+          <div class="formula">k=0: cis 0° = 1</div>
+          <div class="formula">k=1: ω = cis 120° = −1/2 + (√3/2)i</div>
+          <div class="formula">k=2: ω² = cis 240° = −1/2 − (√3/2)i</div>
+        </li>
+        <li><strong>Passo 3 — Somar 1 + ω + ω²:</strong>
+          <div class="formula">Parte real: 1 + (−1/2) + (−1/2) = 1 − 1 = 0</div>
+          <div class="formula">Parte imaginária: 0 + √3/2 − √3/2 = 0</div>
+          <div class="formula">1 + ω + ω² = 0 ✓</div>
+        </li>
+        <li><strong>Passo 4 — Interpretação geométrica:</strong> o centroide (baricentro) do triângulo equilátero com vértices 1, ω, ω² é a origem — por isso a soma vetorial é o vetor nulo.</li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> 1; −½+(√3/2)i; −½−(√3/2)i &nbsp;e&nbsp; 1+ω+ω² = 0</p>
+      <p class="dica"><strong>Dica:</strong> em geral, para ω = cis(360°/n) ≠ 1, vale 1 + ω + ω² + … + ωⁿ⁻¹ = 0.</p>
+    </div>
+    <div class="ans-box">Resposta: 1; −½+(√3/2)i; −½−(√3/2)i &nbsp;e&nbsp; 1+ω+ω²=0</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P6</span><span class="ex-src">Exercícios de prática (B43)</span><span class="badge-pratica">equação</span></div>
+    <div class="ex-q">Resolva a equação z² = 2 + 2√3 i.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> resolver z² = w é achar as raízes quadradas de w. Escrevemos w na forma trigonométrica e aplicamos a fórmula das raízes com n = 2.</p>
+      <ol>
+        <li><strong>Passo 1 — Forma trigonométrica de w = 2 + 2√3 i:</strong>
+          <div class="formula">ρ = √(2² + (2√3)²) = √(4 + 12) = √16 = 4</div>
+          <div class="formula">cos θ = 2/4 = 1/2; &nbsp; sen θ = 2√3/4 = √3/2 ⇒ θ = 60°</div>
+          <div class="formula">w = 4 cis 60°</div>
+        </li>
+        <li><strong>Passo 2 — Raio das raízes:</strong>
+          <div class="formula">√ρ = √4 = 2</div>
+        </li>
+        <li><strong>Passo 3 — Ângulos para k = 0 e k = 1:</strong>
+          <div class="formula">θ_k = (60° + 360°·k)/2</div>
+        </li>
+        <li><strong>Passo 4 — k = 0:</strong> θ = 30°
+          <div class="formula">z₀ = 2 cis 30° = 2(√3/2 + i·1/2) = √3 + i</div>
+        </li>
+        <li><strong>Passo 5 — k = 1:</strong> θ = (60°+360°)/2 = 210°
+          <div class="formula">z₁ = 2 cis 210° = 2(−√3/2 − i·1/2) = −√3 − i</div>
+          (Note que z₁ = −z₀, como sempre nas raízes quadradas.)
+        </li>
+        <li><strong>Passo 6 — Verificação:</strong>
+          <div class="formula">(√3 + i)² = 3 + 2√3 i + i² = 3 + 2√3 i − 1 = 2 + 2√3 i ✓</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> z = √3 + i &nbsp;ou&nbsp; z = −√3 − i</p>
+      <p class="dica"><strong>Dica:</strong> as duas raízes quadradas de um complexo não nulo são sempre opostas (uma é a outra multiplicada por −1).</p>
+    </div>
+    <div class="ans-box">Resposta: z = √3 + i &nbsp;ou&nbsp; z = −√3 − i</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P7</span><span class="ex-src">Exercícios de prática (B43)</span><span class="badge-pratica">potência</span></div>
+    <div class="ex-q">(Estilo vestibular) O valor de [√2 (cos 15° + i sen 15°)]¹² é:</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> aplicação direta de De Moivre: elevar o módulo a 12 e multiplicar o argumento por 12.</p>
+      <ol>
+        <li><strong>Passo 1 — Elevar o módulo:</strong>
+          <div class="formula">(√2)¹² = (2^{1/2})¹² = 2⁶ = 64</div>
+        </li>
+        <li><strong>Passo 2 — Multiplicar o argumento:</strong>
+          <div class="formula">12 · 15° = 180°</div>
+        </li>
+        <li><strong>Passo 3 — Avaliar:</strong>
+          <div class="formula">64 (cos 180° + i sen 180°) = 64(−1 + 0i) = −64</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> −64</p>
+      <p class="dica"><strong>Dica:</strong> 12·15° = 180° “cai” exatamente no semieixo real negativo — o resultado é um real puro negativo.</p>
+    </div>
+    <div class="ans-box">Resposta: −64</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P8</span><span class="ex-src">Exercícios de prática (B43)</span><span class="badge-pratica">raízes + geometria</span></div>
+    <div class="ex-q">As raízes sextas de i estão sobre uma circunferência de que raio? Dê também a raiz com menor argumento positivo.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> i = 1·cis 90°. As raízes sextas têm módulo 1^{1/6} = 1 (círculo unitário) e argumentos (90° + 360°k)/6.</p>
+      <ol>
+        <li><strong>Passo 1 — Forma trigonométrica de i:</strong>
+          <div class="formula">i = 1 (cos 90° + i sen 90°) = cis 90°</div>
+        </li>
+        <li><strong>Passo 2 — Raio das raízes sextas:</strong>
+          <div class="formula">ρ^{1/6} = 1^{1/6} = 1</div>
+          Logo todas estão sobre a circunferência de centro O e raio 1 (círculo unitário).
+        </li>
+        <li><strong>Passo 3 — Ângulos:</strong>
+          <div class="formula">θ_k = (90° + 360°·k)/6 = 15° + 60°·k , &nbsp; k = 0, 1, 2, 3, 4, 5</div>
+          Os seis afixos são vértices de um hexágono regular inscrito no círculo unitário.
+        </li>
+        <li><strong>Passo 4 — Menor argumento positivo:</strong> k = 0 ⇒ θ = 15°.
+          <div class="formula">raiz = cis 15° = cos 15° + i sen 15°</div>
+        </li>
+        <li><strong>Passo 5 — Valores exatos (opcional):</strong> usando cos(45°−30°) e sen(45°−30°):
+          <div class="formula">cos 15° = (√6 + √2)/4; &nbsp; sen 15° = (√6 − √2)/4</div>
+          <div class="formula">cis 15° = (√6+√2)/4 + i(√6−√2)/4</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> raio = 1; raiz de menor arg positivo = cis 15° = (√6+√2)/4 + i(√6−√2)/4</p>
+      <p class="dica"><strong>Dica:</strong> “menor argumento positivo” significa o menor θ com 0° &lt; θ &lt; 360° (aqui 15°, não 15°+60°·5 = 315°).</p>
+    </div>
+    <div class="ans-box">Resposta: raio = 1; raiz de menor arg positivo = cis 15° = (√6+√2)/4 + i(√6−√2)/4</div>
+  </div>
+
+</div>
+
+<footer>B43 · Fórmula de De Moivre · Pack Números Complexos · Versa Vol. 11</footer>
+
+<script>
+(function () {
+  const canvas = document.getElementById('moivre');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const CX = W / 2, CY = H / 2;
+  const SCALE = 45;
+  const RANGE = 5;
+
+  let mode = 'pow'; // 'pow' | 'root'
+  let rho = 2, thDeg = 60, n = 3;
+
+  const slRho = document.getElementById('slRho');
+  const slTh = document.getElementById('slTh');
+  const inpN = document.getElementById('inpN');
+  const liveVals = document.getElementById('liveVals');
+
+  const COLORS = ['#4fc3f7','#81c784','#ffb74d','#ce93d8','#ef5350','#4dd0e1','#aed581','#ff8a65','#b39ddb','#f48fb1','#80cbc4','#fff176'];
+
+  function toC(x, y) { return [CX + x * SCALE, CY - y * SCALE]; }
+  function fmt(n, d) {
+    d = d === undefined ? 3 : d;
+    const r = Math.round(n * Math.pow(10, d)) / Math.pow(10, d);
+    return Object.is(r, -0) ? 0 : r;
+  }
+  function normDeg(t) {
+    t = t % 360;
+    if (t < 0) t += 360;
+    return t;
+  }
+
+  function drawGrid() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = '#1e2a3a';
+    ctx.lineWidth = 1;
+    for (let i = -RANGE; i <= RANGE; i++) {
+      ctx.beginPath();
+      let p = toC(i, -RANGE); ctx.moveTo(p[0], p[1]);
+      p = toC(i, RANGE); ctx.lineTo(p[0], p[1]);
+      p = toC(-RANGE, i); ctx.moveTo(p[0], p[1]);
+      p = toC(RANGE, i); ctx.lineTo(p[0], p[1]);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = '#5a6a80';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(20, CY); ctx.lineTo(W - 20, CY);
+    ctx.moveTo(CX, 20); ctx.lineTo(CX, H - 20);
+    ctx.stroke();
+    ctx.fillStyle = '#8b9bb4';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('Re', W - 38, CY + 18);
+    ctx.fillText('Im', CX + 8, 28);
+  }
+
+  function drawPoint(x, y, color, label) {
+    const p = toC(x, y);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#0a0e14';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    if (label) {
+      ctx.fillStyle = color;
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText(label, p[0] + 9, p[1] - 8);
+    }
+  }
+
+  function drawVec(x, y, color) {
+    const p = toC(x, y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(CX, CY);
+    ctx.lineTo(p[0], p[1]);
+    ctx.stroke();
+  }
+
+  function drawCircle(r, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.arc(CX, CY, r * SCALE, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawPolygon(pts, color) {
+    if (pts.length < 2) return;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    const p0 = toC(pts[0][0], pts[0][1]);
+    ctx.moveTo(p0[0], p0[1]);
+    for (let i = 1; i < pts.length; i++) {
+      const p = toC(pts[i][0], pts[i][1]);
+      ctx.lineTo(p[0], p[1]);
+    }
+    ctx.closePath();
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  function compute() {
+    n = Math.max(2, Math.min(12, parseInt(inpN.value, 10) || 3));
+    inpN.value = n;
+    drawGrid();
+
+    const ax = rho * Math.cos(thDeg * Math.PI / 180);
+    const by = rho * Math.sin(thDeg * Math.PI / 180);
+
+    document.getElementById('rhoLabel').textContent = fmt(rho, 2);
+    document.getElementById('thLabel').textContent = fmt(thDeg, 0);
+
+    if (mode === 'pow') {
+      const pn = Math.pow(rho, n);
+      // scale display if too large
+      let displayScale = 1;
+      if (pn > RANGE * 0.95) displayScale = (RANGE * 0.9) / pn;
+
+      drawCircle(rho, 'rgba(79,195,247,0.35)');
+      drawVec(ax, by, '#4fc3f7');
+      drawPoint(ax, by, '#4fc3f7', 'z');
+
+      const thN = normDeg(n * thDeg);
+      const rx = pn * Math.cos(thN * Math.PI / 180);
+      const ry = pn * Math.sin(thN * Math.PI / 180);
+
+      if (pn <= RANGE * 1.05) {
+        drawCircle(pn, 'rgba(255,183,77,0.35)');
+        drawVec(rx, ry, '#ffb74d');
+        drawPoint(rx, ry, '#ffb74d', 'zⁿ');
+      } else {
+        // show direction even if off-scale
+        const dx = (RANGE * 0.85) * Math.cos(thN * Math.PI / 180);
+        const dy = (RANGE * 0.85) * Math.sin(thN * Math.PI / 180);
+        drawVec(dx, dy, '#ffb74d');
+        drawPoint(dx, dy, '#ffb74d', 'zⁿ (dir.)');
+      }
+
+      const sign = by >= 0 ? '+' : '−';
+      const rsign = ry >= 0 ? '+' : '−';
+      liveVals.innerHTML =
+        '<div class="hl">z = ' + fmt(rho, 3) + ' cis ' + fmt(thDeg, 1) + '°</div>' +
+        '<div class="hl">= ' + fmt(ax, 3) + ' ' + sign + ' ' + fmt(Math.abs(by), 3) + 'i</div>' +
+        '<div class="hl3">n = ' + n + '</div>' +
+        '<div class="hl3">zⁿ = ' + fmt(pn, 4) + ' cis ' + fmt(thN, 1) + '°</div>' +
+        '<div class="hl3">= ' + fmt(rx, 4) + ' ' + rsign + ' ' + fmt(Math.abs(ry), 4) + 'i</div>' +
+        (pn > RANGE ? '<div style="color:#ef5350;font-size:0.8rem">|zⁿ| grande demais para a escala; seta mostra só a direção.</div>' : '');
+    } else {
+      // roots
+      const rRoot = Math.pow(rho, 1 / n);
+      drawCircle(rRoot, 'rgba(129,199,132,0.45)');
+      // also show original z
+      drawVec(ax, by, 'rgba(79,195,247,0.5)');
+      drawPoint(ax, by, '#4fc3f7', 'z');
+
+      const pts = [];
+      let html = '<div class="hl">z = ' + fmt(rho, 3) + ' cis ' + fmt(thDeg, 1) + '°</div>' +
+        '<div class="hl2">Raio das raízes: ρ<sup>1/n</sup> = ' + fmt(rRoot, 4) + '</div>' +
+        '<div class="hl3">n = ' + n + ' raízes:</div>';
+
+      for (let k = 0; k < n; k++) {
+        const ang = normDeg((thDeg + 360 * k) / n);
+        const x = rRoot * Math.cos(ang * Math.PI / 180);
+        const y = rRoot * Math.sin(ang * Math.PI / 180);
+        pts.push([x, y]);
+        const col = COLORS[k % COLORS.length];
+        drawVec(x, y, col);
+        drawPoint(x, y, col, 'w' + k);
+        const s = y >= 0 ? '+' : '−';
+        html += '<div style="color:' + col + '">w<sub>' + k + '</sub> = ' + fmt(rRoot, 3) + ' cis ' + fmt(ang, 1) +
+          '° = ' + fmt(x, 3) + ' ' + s + ' ' + fmt(Math.abs(y), 3) + 'i</div>';
+      }
+      drawPolygon(pts, 'rgba(129,199,132,0.7)');
+      liveVals.innerHTML = html;
+    }
+  }
+
+  slRho.addEventListener('input', function () { rho = parseFloat(this.value); compute(); });
+  slTh.addEventListener('input', function () { thDeg = parseFloat(this.value); compute(); });
+  inpN.addEventListener('change', compute);
+  // btnGo wired after animation helpers
+
+  document.getElementById('modePow').addEventListener('click', function () {
+    mode = 'pow';
+    this.classList.add('on');
+    document.getElementById('modeRoot').classList.remove('on');
+    compute();
+  });
+  document.getElementById('modeRoot').addEventListener('click', function () {
+    mode = 'root';
+    this.classList.add('on');
+    document.getElementById('modePow').classList.remove('on');
+    compute();
+  });
+
+  document.getElementById('btnEx1').addEventListener('click', function () {
+    // (1+i)^4
+    mode = 'pow';
+    document.getElementById('modePow').classList.add('on');
+    document.getElementById('modeRoot').classList.remove('on');
+    rho = Math.SQRT2; thDeg = 45; n = 4;
+    slRho.value = Math.min(5, rho);
+    slTh.value = 45;
+    inpN.value = 4;
+    compute();
+  });
+  document.getElementById('btnEx2').addEventListener('click', function () {
+    // cube roots of 8
+    mode = 'root';
+    document.getElementById('modeRoot').classList.add('on');
+    document.getElementById('modePow').classList.remove('on');
+    rho = 8; thDeg = 0; n = 3;
+    slRho.value = 5; // slider max; actual rho=8
+    // allow rho above slider via direct set
+    slTh.value = 0;
+    inpN.value = 3;
+    compute();
+  });
+  document.getElementById('btnEx3').addEventListener('click', function () {
+    mode = 'root';
+    document.getElementById('modeRoot').classList.add('on');
+    document.getElementById('modePow').classList.remove('on');
+    rho = 1; thDeg = 0; n = 5;
+    slRho.value = 1;
+    slTh.value = 0;
+    inpN.value = 5;
+    compute();
+  });
+
+
+  var animating = false;
+  var rootReveal = 1; // 0..1 fraction of roots shown
+  var powAnimT = 1;   // 0..1 power animation progress
+
+  var _origCompute = compute;
+  compute = function () {
+    n = Math.max(2, Math.min(12, parseInt(inpN.value, 10) || 3));
+    inpN.value = n;
+    drawGrid();
+
+    var ax = rho * Math.cos(thDeg * Math.PI / 180);
+    var by = rho * Math.sin(thDeg * Math.PI / 180);
+
+    document.getElementById('rhoLabel').textContent = fmt(rho, 2);
+    document.getElementById('thLabel').textContent = fmt(thDeg, 0);
+
+    if (mode === 'pow') {
+      var pnTarget = Math.pow(rho, n);
+      var thNTarget = normDeg(n * thDeg);
+      var t = powAnimT;
+      var pn = Math.pow(rho, n * t);
+      var thN = normDeg(n * thDeg * t);
+
+      drawCircle(rho, 'rgba(79,195,247,0.35)');
+      drawVec(ax, by, '#4fc3f7');
+      drawPoint(ax, by, '#4fc3f7', 'z');
+
+      // sweeping arc
+      ctx.strokeStyle = 'rgba(255,183,77,0.55)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      var sweep = (n * thDeg * t) * Math.PI / 180;
+      ctx.arc(CX, CY, Math.min(55, rho * SCALE * 0.5), 0, -sweep, true);
+      ctx.stroke();
+
+      var rx = pn * Math.cos(thN * Math.PI / 180);
+      var ry = pn * Math.sin(thN * Math.PI / 180);
+
+      if (pn <= RANGE * 1.05) {
+        drawCircle(pn, 'rgba(255,183,77,0.35)');
+        drawVec(rx, ry, '#ffb74d');
+        drawPoint(rx, ry, '#ffb74d', t >= 0.99 ? 'zⁿ' : '…');
+      } else {
+        var dx = (RANGE * 0.85) * Math.cos(thN * Math.PI / 180);
+        var dy = (RANGE * 0.85) * Math.sin(thN * Math.PI / 180);
+        drawVec(dx, dy, '#ffb74d');
+        drawPoint(dx, dy, '#ffb74d', 'zⁿ (dir.)');
+      }
+
+      var sign = by >= 0 ? '+' : '−';
+      var rsign = ry >= 0 ? '+' : '−';
+      liveVals.innerHTML =
+        '<div class="hl">z = ' + fmt(rho, 3) + ' cis ' + fmt(thDeg, 1) + '°</div>' +
+        '<div class="hl">= ' + fmt(ax, 3) + ' ' + sign + ' ' + fmt(Math.abs(by), 3) + 'i</div>' +
+        '<div class="hl3">n = ' + n + '</div>' +
+        '<div class="hl3">zⁿ = ' + fmt(pnTarget, 4) + ' cis ' + fmt(thNTarget, 1) + '°</div>' +
+        '<div class="hl3">= ' + fmt(pnTarget * Math.cos(thNTarget * Math.PI / 180), 4) + ' ' +
+          (Math.sin(thNTarget * Math.PI / 180) >= 0 ? '+' : '−') + ' ' +
+          fmt(Math.abs(pnTarget * Math.sin(thNTarget * Math.PI / 180)), 4) + 'i</div>' +
+        (pnTarget > RANGE ? '<div style="color:#ef5350;font-size:0.8rem">|zⁿ| grande demais para a escala; seta mostra só a direção.</div>' : '');
+    } else {
+      var rRoot = Math.pow(rho, 1 / n);
+      drawCircle(rRoot, 'rgba(129,199,132,0.45)');
+      drawVec(ax, by, 'rgba(79,195,247,0.5)');
+      drawPoint(ax, by, '#4fc3f7', 'z');
+
+      var pts = [];
+      var html = '<div class="hl">z = ' + fmt(rho, 3) + ' cis ' + fmt(thDeg, 1) + '°</div>' +
+        '<div class="hl2">Raio das raízes: ρ<sup>1/n</sup> = ' + fmt(rRoot, 4) + '</div>' +
+        '<div class="hl3">n = ' + n + ' raízes:</div>';
+
+      var nShow = Math.max(0, Math.min(n, Math.ceil(rootReveal * n)));
+      for (var k = 0; k < n; k++) {
+        var ang = normDeg((thDeg + 360 * k) / n);
+        var x = rRoot * Math.cos(ang * Math.PI / 180);
+        var y = rRoot * Math.sin(ang * Math.PI / 180);
+        pts.push([x, y]);
+        var col = COLORS[k % COLORS.length];
+        if (k < nShow) {
+          drawVec(x, y, col);
+          drawPoint(x, y, col, 'w' + k);
+        }
+        var s = y >= 0 ? '+' : '−';
+        html += '<div style="color:' + col + ';opacity:' + (k < nShow ? 1 : 0.35) + '">w<sub>' + k + '</sub> = ' + fmt(rRoot, 3) + ' cis ' + fmt(ang, 1) +
+          '° = ' + fmt(x, 3) + ' ' + s + ' ' + fmt(Math.abs(y), 3) + 'i</div>';
+      }
+      if (nShow >= n) drawPolygon(pts, 'rgba(129,199,132,0.7)');
+      else if (nShow >= 2) drawPolygon(pts.slice(0, nShow), 'rgba(129,199,132,0.4)');
+      liveVals.innerHTML = html;
+    }
+  };
+
+  function animatePower() {
+    if (animating) return;
+    animating = true;
+    mode = 'pow';
+    document.getElementById('modePow').classList.add('on');
+    document.getElementById('modeRoot').classList.remove('on');
+    powAnimT = 0;
+    var t0 = null;
+    function ease(t){ return t<0.5 ? 2*t*t : -1+(4-2*t)*t; }
+    function step(ts){
+      if (t0===null) t0 = ts;
+      var u = Math.min(1, (ts - t0) / 1600);
+      powAnimT = ease(u);
+      compute();
+      if (u < 1) requestAnimationFrame(step);
+      else { powAnimT = 1; animating = false; compute(); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function animateRoots() {
+    if (animating) return;
+    animating = true;
+    mode = 'root';
+    document.getElementById('modeRoot').classList.add('on');
+    document.getElementById('modePow').classList.remove('on');
+    rootReveal = 0;
+    var t0 = null;
+    var dur = 400 * Math.max(2, n) + 600;
+    function step(ts){
+      if (t0===null) t0 = ts;
+      var u = Math.min(1, (ts - t0) / dur);
+      rootReveal = u;
+      compute();
+      if (u < 1) requestAnimationFrame(step);
+      else { rootReveal = 1; animating = false; compute(); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  document.getElementById('btnGo').addEventListener('click', function () {
+    if (mode === 'pow') animatePower();
+    else animateRoots();
+  });
+
+  compute();
+})();
+</script>
+
+<script>
+/* Modo treino — shared */
+(function () {
+  var KEY = 'nc-modo-treino';
+  function loadPref() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v === null) return true;
+      return v === 'true';
+    } catch (e) { return true; }
+  }
+  function savePref(on) {
+    try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {}
+  }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal');
+    var btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) {
+    ex.classList.remove('collapsed');
+    ex.dataset.userRevealed = '1';
+    syncButtons(ex);
+  }
+  function hide(ex) {
+    ex.classList.add('collapsed');
+    delete ex.dataset.userRevealed;
+    syncButtons(ex);
+  }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner');
+    var chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) {
+        if (!ex.dataset.userRevealed) ex.classList.add('collapsed');
+      } else {
+        ex.classList.remove('collapsed');
+      }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var q = ex.querySelector('.ex-q');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (q) {
+          q.parentNode.insertBefore(box, q.nextSibling);
+          q.parentNode.insertBefore(row, box.nextSibling);
+        } else {
+          ex.insertBefore(row, ex.firstChild);
+          ex.insertBefore(box, row);
+        }
+      }
+      var br = ex.querySelector('.btn-reveal');
+      var bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) {
+      chk.checked = on;
+      chk.addEventListener('change', function () { setMode(chk.checked); });
+    }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) {
+          if (all.checked) reveal(ex); else hide(ex);
+        });
+      });
+    }
+    setMode(on);
+  });
+})();
+</script>
+
+
+<script>
+/* Animações embutidas nos exercícios geométricos */
+(function () {
+  function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+  function makePlane(canvas, range) {
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height, CX = W/2, CY = H/2;
+    var SCALE = (Math.min(W,H)/2 - 28) / range;
+    function toC(x,y){ return [CX + x*SCALE, CY - y*SCALE]; }
+    function clear(){ ctx.clearRect(0,0,W,H); }
+    function grid(){
+      clear();
+      ctx.strokeStyle = '#1e2a3a'; ctx.lineWidth = 1;
+      for (var i=-range;i<=range;i++){
+        ctx.beginPath();
+        var a=toC(i,-range), b=toC(i,range); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]);
+        a=toC(-range,i); b=toC(range,i); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = '#5a6a80'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(16,CY); ctx.lineTo(W-16,CY); ctx.moveTo(CX,16); ctx.lineTo(CX,H-16); ctx.stroke();
+      ctx.fillStyle = '#8b9bb4'; ctx.font = '11px sans-serif';
+      ctx.fillText('Re', W-30, CY+14); ctx.fillText('Im', CX+6, 24);
+    }
+    function point(x,y,col,lab){
+      var p=toC(x,y);
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(p[0],p[1],6,0,Math.PI*2); ctx.fill();
+      if(lab){ ctx.fillStyle=col; ctx.font='bold 12px sans-serif'; ctx.fillText(lab,p[0]+8,p[1]-6); }
+    }
+    function vec(x,y,col){
+      var p=toC(x,y);
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(p[0],p[1]); ctx.stroke();
+    }
+    function circle(cx,cy,r,col,dash){
+      var p=toC(cx,cy);
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      if(dash) ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.arc(p[0],p[1],r*SCALE,0,Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    function line(x1,y1,x2,y2,col,w){
+      var a=toC(x1,y1), b=toC(x2,y2);
+      ctx.strokeStyle=col; ctx.lineWidth=w||2;
+      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+    }
+    function label(x,y,txt,col){
+      var p=toC(x,y); ctx.fillStyle=col||'#ffb74d'; ctx.font='11px sans-serif'; ctx.fillText(txt,p[0],p[1]);
+    }
+    function run(duration, frame){
+      var t0 = null;
+      function step(ts){
+        if(t0===null) t0=ts;
+        var u = Math.min(1, (ts-t0)/duration);
+        frame(ease(u), u);
+        if(u<1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    return {ctx:ctx,W:W,H:H,CX:CX,CY:CY,SCALE:SCALE,toC:toC,grid:grid,point:point,vec:vec,circle:circle,line:line,label:label,run:run,clear:clear};
+  }
+
+  // ---- B41 P04: |z|=3 ----
+  (function(){
+    var c = document.getElementById('anim-b41-p04');
+    var btn = document.getElementById('btn-anim-b41-p04');
+    if(!c||!btn) return;
+    var P = makePlane(c, 4);
+    function draw(r){ P.grid(); P.circle(0,0,r,'#81c784',true); P.point(0,0,'#8b9bb4','O'); if(r>0.05){ P.point(r,0,'#4fc3f7',''); P.label(r*0.55,0.35,'|z|='+r.toFixed(1),'#81c784'); } }
+    draw(0);
+    btn.addEventListener('click', function(){
+      P.run(1400, function(e){ draw(3*e); if(e>=1){ P.label(0,-3.5,'a² + b² = 9','#ffb74d'); } });
+    });
+  })();
+
+  // ---- B41 P05: rectangle ----
+  (function(){
+    var c = document.getElementById('anim-b41-p05');
+    var btn = document.getElementById('btn-anim-b41-p05');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    var pts = [[2,3],[2,-3],[-2,-3],[-2,3]];
+    var labs = ['z','z̄','−z','−z̄'];
+    var cols = ['#4fc3f7','#81c784','#ffb74d','#ce93d8'];
+    function draw(phase){
+      P.grid();
+      var nShow = Math.min(4, Math.floor(phase));
+      var frac = phase - nShow;
+      for(var i=0;i<nShow;i++){ P.vec(pts[i][0],pts[i][1],cols[i]); P.point(pts[i][0],pts[i][1],cols[i],labs[i]); }
+      if(nShow<4 && frac>0){
+        var p=pts[nShow]; P.vec(p[0],p[1],cols[nShow]); P.point(p[0],p[1],cols[nShow],labs[nShow]);
+      }
+      if(phase >= 4){
+        P.ctx.strokeStyle='rgba(79,195,247,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var a=P.toC(2,3); P.ctx.moveTo(a[0],a[1]);
+        [[-2,3],[-2,-3],[2,-3],[2,3]].forEach(function(q){ var t=P.toC(q[0],q[1]); P.ctx.lineTo(t[0],t[1]); });
+        P.ctx.stroke();
+      }
+      if(phase >= 5){
+        P.line(2,3,-2,3,'#ffb74d',3); P.label(0,3.5,'4','#ffb74d');
+        P.line(2,3,2,-3,'#ce93d8',3); P.label(2.4,0,'6','#ce93d8');
+      }
+      if(phase >= 6){ P.label(-1.5,-4.2,'Perímetro = 20','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){
+      P.run(3200, function(e){ draw(e*6.2); });
+    });
+  })();
+
+  // ---- B41 C02: rotate z to w, product ----
+  (function(){
+    var c = document.getElementById('anim-b41-c02');
+    var btn = document.getElementById('btn-anim-b41-c02');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    var z = [2,1], w = [-1,2], prod = [-4,3];
+    function rot(p, ang){
+      var c0=Math.cos(ang), s0=Math.sin(ang);
+      return [p[0]*c0 - p[1]*s0, p[0]*s0 + p[1]*c0];
+    }
+    function draw(t){
+      P.grid();
+      P.vec(z[0],z[1],'#4fc3f7'); P.point(z[0],z[1],'#4fc3f7','z');
+      if(t < 0.45){
+        var ang = (t/0.45) * Math.PI/2;
+        var cur = rot(z, ang);
+        P.vec(cur[0],cur[1],'#81c784'); P.point(cur[0],cur[1],'#81c784','w');
+        // angle arc
+        P.ctx.strokeStyle='rgba(255,183,77,0.8)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,28, -Math.atan2(z[1],z[0]), -Math.atan2(z[1],z[0])-ang, true); P.ctx.stroke();
+      } else {
+        P.vec(w[0],w[1],'#81c784'); P.point(w[0],w[1],'#81c784','w');
+        // flash right angle
+        if(t < 0.6){
+          var flash = (Math.sin(t*40)+1)/2;
+          P.ctx.strokeStyle='rgba(255,183,77,'+(0.4+0.6*flash)+')'; P.ctx.lineWidth=3;
+          var zz=P.toC(z[0]*0.25,z[1]*0.25), ww=P.toC(w[0]*0.25,w[1]*0.25);
+          var corner=P.toC(z[0]*0.25+w[0]*0.25, z[1]*0.25+w[1]*0.25);
+          P.ctx.beginPath(); P.ctx.moveTo(zz[0],zz[1]); P.ctx.lineTo(corner[0],corner[1]); P.ctx.lineTo(ww[0],ww[1]); P.ctx.stroke();
+          P.label(0.6,0.9,'90°','#ffb74d');
+        }
+        if(t >= 0.65){
+          var u = Math.min(1,(t-0.65)/0.35);
+          P.vec(prod[0]*u, prod[1]*u, '#ffb74d');
+          if(u>0.2) P.point(prod[0]*u, prod[1]*u, '#ffb74d', 'zw');
+        }
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2800, function(e){ draw(e); }); });
+  })();
+
+  // ---- B41 C04: circle center (2,1) r=5 ----
+  (function(){
+    var c = document.getElementById('anim-b41-c04');
+    var btn = document.getElementById('btn-anim-b41-c04');
+    if(!c||!btn) return;
+    var P = makePlane(c, 8);
+    function draw(r){
+      P.grid();
+      P.point(2,1,'#ce93d8','z₀');
+      P.circle(2,1,r,'#ce93d8',true);
+      if(r>0.1){ P.line(2,1,2+r,1,'#ffb74d',1.5); P.label(2+r*0.5,1.5,'r='+r.toFixed(1),'#ffb74d'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1400, function(e){ draw(5*e); }); });
+  })();
+
+  // ---- B41 C05: (1+i)^n ray to 16+16i ----
+  (function(){
+    var c = document.getElementById('anim-b41-c05');
+    var btn = document.getElementById('btn-anim-b41-c05');
+    if(!c||!btn) return;
+    var P = makePlane(c, 20);
+    function draw(nFrac){
+      P.grid();
+      var rho0 = Math.SQRT2, th0 = Math.PI/4;
+      var n = Math.max(0, nFrac);
+      var rho = Math.pow(rho0, n);
+      var th = th0 * n;
+      // show intermediate powers as dots
+      for(var k=1;k<=Math.min(9,Math.floor(n));k++){
+        var rk=Math.pow(rho0,k), tk=th0*k;
+        P.point(rk*Math.cos(tk), rk*Math.sin(tk), k===9?'#ffb74d':'#4fc3f7', k===1?'1+i':(k===9?'(1+i)⁹':''));
+      }
+      if(n>0){
+        P.vec(rho*Math.cos(th), rho*Math.sin(th), '#81c784');
+        P.point(rho*Math.cos(th), rho*Math.sin(th), '#81c784', '');
+      }
+      if(nFrac>=9){ P.label(10,18,'16+16i','#ffb74d'); P.label(8,16,'d=16√2','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2600, function(e){ draw(e*9); }); });
+  })();
+
+  // ---- B41 C06: circle (2,0) r=2 exclude O ----
+  (function(){
+    var c = document.getElementById('anim-b41-c06');
+    var btn = document.getElementById('btn-anim-b41-c06');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    function draw(r, showX){
+      P.grid();
+      P.point(2,0,'#ce93d8','(2,0)');
+      P.circle(2,0,r,'#81c784',true);
+      if(showX){
+        var o=P.toC(0,0);
+        P.ctx.strokeStyle='#ef5350'; P.ctx.lineWidth=3;
+        P.ctx.beginPath(); P.ctx.moveTo(o[0]-8,o[1]-8); P.ctx.lineTo(o[0]+8,o[1]+8);
+        P.ctx.moveTo(o[0]+8,o[1]-8); P.ctx.lineTo(o[0]-8,o[1]+8); P.ctx.stroke();
+        P.label(0.4,-0.7,'origem excluída','#ef5350');
+      }
+    }
+    draw(0,false);
+    btn.addEventListener('click', function(){
+      P.run(1600, function(e){ draw(2*Math.min(1,e/0.7), e>0.75); });
+    });
+  })();
+
+  // ---- B42 P1: polar −√3+i ----
+  (function(){
+    var c = document.getElementById('anim-b42-p1');
+    var btn = document.getElementById('btn-anim-b42-p1');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var a=-Math.sqrt(3), b=1, rho=2, th=150*Math.PI/180;
+    function draw(u){
+      P.grid();
+      P.circle(0,0,rho*u,'rgba(79,195,247,0.35)',true);
+      if(u>0.2){
+        var ang = th * Math.min(1,(u-0.2)/0.6);
+        P.ctx.strokeStyle='rgba(255,183,77,0.8)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,30,0,-ang,true); P.ctx.stroke();
+        P.vec(rho*Math.cos(ang), rho*Math.sin(ang), '#4fc3f7');
+        P.point(rho*Math.cos(ang), rho*Math.sin(ang), '#4fc3f7', 'z');
+      }
+      if(u>=1){ P.label(-1.2,2.2,'2 cis 150°','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1800, function(e){ draw(e); }); });
+  })();
+
+  // ---- B42 P3: product dilate+rotate ----
+  (function(){
+    var c = document.getElementById('anim-b42-p3');
+    var btn = document.getElementById('btn-anim-b42-p3');
+    if(!c||!btn) return;
+    var P = makePlane(c, 7);
+    // z1: rho=2 th=40; zw: rho=6 th=120
+    function draw(u){
+      P.grid();
+      var r0=2, t0=40*Math.PI/180, r1=6, t1=120*Math.PI/180;
+      P.vec(r0*Math.cos(t0), r0*Math.sin(t0), '#4fc3f7');
+      P.point(r0*Math.cos(t0), r0*Math.sin(t0), '#4fc3f7', 'z₁');
+      var r = r0 + (r1-r0)*u;
+      var t = t0 + (t1-t0)*u;
+      P.vec(r*Math.cos(t), r*Math.sin(t), '#81c784');
+      P.point(r*Math.cos(t), r*Math.sin(t), '#81c784', u>0.05?'z₁z₂':'');
+      P.circle(0,0,r,'rgba(129,199,132,0.25)',true);
+      if(u>=1) P.label(1,5.5,'×3 e +80°','#ffb74d');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2000, function(e){ draw(e); }); });
+  })();
+
+  // ---- B42 P6: clockwise rotation ----
+  (function(){
+    var c = document.getElementById('anim-b42-p6');
+    var btn = document.getElementById('btn-anim-b42-p6');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var r=2, t0=60*Math.PI/180, t1=-30*Math.PI/180;
+    function draw(u){
+      P.grid();
+      P.vec(r*Math.cos(t0), r*Math.sin(t0), '#4fc3f7');
+      P.point(r*Math.cos(t0), r*Math.sin(t0), '#4fc3f7', 'z');
+      var t = t0 + (t1-t0)*u;
+      P.vec(r*Math.cos(t), r*Math.sin(t), '#81c784');
+      P.point(r*Math.cos(t), r*Math.sin(t), '#81c784', '−i·z');
+      P.ctx.strokeStyle='rgba(255,183,77,0.7)'; P.ctx.lineWidth=2;
+      P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,36,-t0,-t,false); P.ctx.stroke();
+      if(u>=1) P.label(1.2,-1.5,'√3 − i','#ffb74d');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1600, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P1: (1+i)^6 ----
+  (function(){
+    var c = document.getElementById('anim-b43-p1');
+    var btn = document.getElementById('btn-anim-b43-p1');
+    if(!c||!btn) return;
+    var P = makePlane(c, 9);
+    function draw(u){
+      P.grid();
+      var rho0=Math.SQRT2, th0=Math.PI/4;
+      var n=6*u;
+      var rho=Math.pow(rho0,n), th=th0*n;
+      P.vec(rho0*Math.cos(th0), rho0*Math.sin(th0), '#4fc3f7');
+      P.point(rho0*Math.cos(th0), rho0*Math.sin(th0), '#4fc3f7', 'z');
+      P.circle(0,0,rho,'rgba(255,183,77,0.3)',true);
+      P.vec(rho*Math.cos(th), rho*Math.sin(th), '#ffb74d');
+      P.point(rho*Math.cos(th), rho*Math.sin(th), '#ffb74d', 'zⁿ');
+      // sweeping ray indicator
+      P.ctx.strokeStyle='rgba(255,183,77,0.5)'; P.ctx.lineWidth=1;
+      P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,40,0,-th,true); P.ctx.stroke();
+      if(u>=1) P.label(0.5,-7.5,'−8i','#81c784');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2200, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P3: cube roots of 8 ----
+  (function(){
+    var c = document.getElementById('anim-b43-p3');
+    var btn = document.getElementById('btn-anim-b43-p3');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var roots=[[2,0],[-1,Math.sqrt(3)],[-1,-Math.sqrt(3)]];
+    var cols=['#4fc3f7','#81c784','#ffb74d'];
+    function draw(u){
+      P.grid();
+      P.circle(0,0,2,'rgba(129,199,132,0.4)',true);
+      var nShow = Math.min(3, Math.floor(u*3.2));
+      for(var i=0;i<nShow;i++){
+        P.vec(roots[i][0],roots[i][1],cols[i]);
+        P.point(roots[i][0],roots[i][1],cols[i],'z'+i);
+      }
+      if(u>=0.85){
+        P.ctx.strokeStyle='rgba(129,199,132,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var p0=P.toC(roots[0][0],roots[0][1]); P.ctx.moveTo(p0[0],p0[1]);
+        for(var j=1;j<3;j++){ var p=P.toC(roots[j][0],roots[j][1]); P.ctx.lineTo(p[0],p[1]); }
+        P.ctx.closePath(); P.ctx.stroke();
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2400, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P5: roots of unity ----
+  (function(){
+    var c = document.getElementById('anim-b43-p5');
+    var btn = document.getElementById('btn-anim-b43-p5');
+    if(!c||!btn) return;
+    var P = makePlane(c, 2);
+    var roots=[[1,0],[-0.5,Math.sqrt(3)/2],[-0.5,-Math.sqrt(3)/2]];
+    var labs=['1','ω','ω²'];
+    var cols=['#4fc3f7','#81c784','#ffb74d'];
+    function draw(u){
+      P.grid();
+      P.circle(0,0,1,'rgba(129,199,132,0.45)',true);
+      var nShow=Math.min(3,Math.floor(u*3.5));
+      for(var i=0;i<nShow;i++){
+        P.vec(roots[i][0],roots[i][1],cols[i]);
+        P.point(roots[i][0],roots[i][1],cols[i],labs[i]);
+      }
+      if(u>=0.9){
+        P.ctx.strokeStyle='rgba(206,147,216,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var p0=P.toC(roots[0][0],roots[0][1]); P.ctx.moveTo(p0[0],p0[1]);
+        for(var j=1;j<3;j++){ var p=P.toC(roots[j][0],roots[j][1]); P.ctx.lineTo(p[0],p[1]); }
+        P.ctx.closePath(); P.ctx.stroke();
+        P.label(-0.3,-1.6,'1+ω+ω²=0','#ce93d8');
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2200, function(e){ draw(e); }); });
+  })();
+})();
+</script>
+
+</body>
+</html>
