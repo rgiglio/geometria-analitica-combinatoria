@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B41 — Representação Geométrica | Números Complexos</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --danger: #ef5350; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 320px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; cursor: crosshair; display: block; margin: 0 auto;
+  touch-action: none;
+}
+.controls { display: flex; flex-direction: column; gap: 0.75rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="text"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.4rem 0.6rem; border-radius: 8px; width: 80px; font-size: 0.95rem;
+}
+button, .btn {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: background .15s, border-color .15s;
+}
+button:hover, .btn:hover { background: #2d3f56; border-color: var(--accent); }
+button.primary { background: #1565c0; border-color: var(--accent); color: #fff; }
+button.primary:hover { background: #1976d2; }
+.toggle {
+  display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; cursor: pointer;
+  padding: 0.35rem 0.5rem; border-radius: 6px; background: var(--surface2);
+}
+.toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-family: "Cambria Math", "Times New Roman", serif; font-size: 0.95rem;
+}
+.live-vals div { margin: 0.3rem 0; }
+.live-vals .hl { color: var(--accent); }
+.live-vals .hl2 { color: var(--accent2); }
+.live-vals .hl3 { color: var(--accent3); }
+.live-vals .hl4 { color: var(--accent4); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow);
+}
+.theory-card h3 { margin-top: 0; color: var(--accent); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-family: "Cambria Math", "Times New Roman", serif;
+  font-size: 1.05rem;
+}
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem;
+}
+.ex-num {
+  background: var(--accent); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem;
+  border-radius: 6px; font-size: 0.85rem;
+}
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.ex-q { margin-bottom: 0.85rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong, .ans { color: var(--accent2); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.alt { color: var(--accent3); font-weight: 700; }
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.sub-play { margin-top: 1.5rem; }
+.sub-play h3 { color: var(--accent4); }
+
+
+.btn-anim-play { margin-bottom: 0.35rem; }
+.btn-anim-play.primary { background: #1565c0; border-color: var(--accent); color: #fff; }
+/* === Modo treino === */
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps,
+.ex.collapsed .ans-box,
+.ex.collapsed .ex-anim { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .ex.collapsed .ex-anim { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.ex-anim {
+  margin: 0.85rem 0; text-align: center;
+  background: var(--bg); border-radius: 10px; padding: 0.75rem; border: 1px solid var(--border);
+}
+.ex-anim canvas {
+  width: 100%; max-width: 360px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0.45rem auto;
+  cursor: default; touch-action: none;
+}
+.ex-anim .anim-cap { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+.play-anim-row { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 0.55rem; }
+.play-caption { text-align: center; color: var(--accent3); font-size: 0.85rem; margin-top: 0.4rem; font-weight: 600; }
+
+</style>
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">ℂ Números Complexos</span>
+  <a href="index.html">Início</a>
+  <a href="b41-representacao.html" class="active">B41 Representação</a>
+  <a href="b42-forma-trigonometrica.html">B42 Forma Trig.</a>
+  <a href="b43-moivre.html">B43 Moivre</a>
+</nav>
+
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+  <h1>B41 — Representação Geométrica</h1>
+  <p class="subtitle">Plano de Argand-Gauss · afixo · módulo · argumento · conjugado · Versa Vol. 11</p>
+
+  <!-- ===== PLAYGROUND ===== -->
+  <span class="section-label">(A) Playground interativo</span>
+  <div class="playground">
+    <div class="play-grid">
+      <div>
+        <canvas id="argand" width="560" height="560"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem">Clique ou arraste o ponto azul (z). Escala: 1 unidade = grade.</p>
+      </div>
+      <div class="controls">
+        <div class="ctrl-row">
+          <label>a (Re) =</label>
+          <input type="number" id="inpA" value="2" step="0.5">
+          <label>b (Im) =</label>
+          <input type="number" id="inpB" value="3" step="0.5">
+        </div>
+        <div class="ctrl-row">
+          <button class="primary" id="btnApply">Aplicar a, b</button>
+          <button id="btnEx">Exemplo z = 2 + 3i</button>
+        </div>
+
+        <div class="ctrl-row play-anim-row" style="justify-content:flex-start;margin-top:0.25rem">
+          <button type="button" id="btnAnimI">Animar ×i (90°)</button>
+          <button type="button" id="btnAnimConj">Animar conjugado</button>
+          <button type="button" id="btnAnimNeg">Animar −z (180°)</button>
+        </div>
+
+        <label class="toggle"><input type="checkbox" id="togConj"> Mostrar conjugado z̄</label>
+        <label class="toggle"><input type="checkbox" id="togNeg"> Mostrar −z</label>
+        <label class="toggle"><input type="checkbox" id="togNegConj"> Mostrar −z̄</label>
+        <label class="toggle"><input type="checkbox" id="togQuad"> Quadrilátero Q + perímetro</label>
+        <label class="toggle"><input type="checkbox" id="togCircO"> Círculo |z| = ρ (centro O)</label>
+        <label class="toggle"><input type="checkbox" id="togCircZ0"> Círculo |z − z₀| = r</label>
+        <div class="ctrl-row" id="z0Controls" style="display:none">
+          <label>z₀:</label>
+          <input type="number" id="z0a" value="2" step="0.5" style="width:60px"> +
+          <input type="number" id="z0b" value="1" step="0.5" style="width:60px"> i
+          <label>r=</label>
+          <input type="number" id="z0r" value="5" step="0.5" min="0.5" style="width:60px">
+        </div>
+        <div class="live-vals" id="liveVals"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== THEORY ===== -->
+  <span class="section-label">(B) Teoria</span>
+  <div class="theory-grid">
+    <div class="theory-card">
+      <h3>Plano complexo (Argand-Gauss)</h3>
+      <p>Cada número complexo z = a + bi corresponde a um ponto P(a, b) no plano cartesiano: eixo horizontal = parte real, eixo vertical = parte imaginária.</p>
+      <div class="formula">z = a + bi ↔ P(a, b)</div>
+    </div>
+    <div class="theory-card">
+      <h3>Afixo</h3>
+      <p>O <strong>afixo</strong> de z é o ponto (ou o vetor) que o representa no plano. Dizemos “o afixo de z” para o ponto P associado a z.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Módulo</h3>
+      <p>O módulo (ou valor absoluto) é a distância de O ao afixo:</p>
+      <div class="formula">ρ = |z| = √(a² + b²)</div>
+      <p>|z| ≥ 0 sempre. Geometricamente: comprimento do vetor OP.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Argumento</h3>
+      <p>O argumento θ é o ângulo que o vetor OP forma com o semieixo real positivo, medido no sentido anti-horário.</p>
+      <div class="formula">θ = arg(z), &nbsp; 0° ≤ θ &lt; 360°</div>
+      <p>Em radianos: θ_rad = θ_deg · π/180. Use atan2(b, a) e ajuste para [0, 360).</p>
+    </div>
+    <div class="theory-card">
+      <h3>Conjugação geométrica</h3>
+      <p>z̄ = a − bi é a reflexão de z pelo eixo real. −z = −a − bi é a reflexão pelo origem (rotação de 180°). −z̄ = −a + bi é a reflexão pelo eixo imaginário.</p>
+      <p>Os quatro pontos z, z̄, −z, −z̄ formam um retângulo (ou quadrado) centrado na origem.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Lugares geométricos</h3>
+      <ul>
+        <li>|z| = r → círculo de centro O e raio r</li>
+        <li>|z − z₀| = r → círculo de centro z₀ e raio r</li>
+        <li>arg(z) = α → semirreta partindo de O com ângulo α</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== EXERCISES ===== -->
+  <h2>📐 (C) Resolução dos exercícios</h2>
+  <p class="note" style="font-style:normal;margin-bottom:1rem">Cada resolução começa pela ideia e segue passo a passo.</p>
+
+  
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+<h3>Propostos — p. 732</h3>
+
+  <div class="ex" id="p01">
+    <div class="ex-header"><span class="ex-num">01</span><span class="ex-src">Propostos p.732</span></div>
+    <div class="ex-q">Dados os afixos no plano, escreva cada número complexo na forma algébrica a + bi.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> o <strong>afixo</strong> de um complexo z é o ponto P(a, b) no plano de Argand-Gauss; a abscissa a é a <strong>parte real</strong> e a ordenada b é a <strong>parte imaginária</strong>, logo z = a + bi.</p>
+      <ol>
+        <li><strong>Passo 1 — Ler z₁:</strong> o afixo está em (4, 2), logo a = 4 e b = 2.
+          <div class="formula">z₁ = 4 + 2i</div>
+        </li>
+        <li><strong>Passo 2 — Ler z₂:</strong> o afixo está em (0, 4): parte real nula (está sobre o eixo imaginário).
+          <div class="formula">z₂ = 0 + 4i = 4i</div>
+        </li>
+        <li><strong>Passo 3 — Ler z₃:</strong> o afixo está em (−4, 5), 2º quadrante.
+          <div class="formula">z₃ = −4 + 5i</div>
+        </li>
+        <li><strong>Passo 4 — Ler z₄:</strong> o afixo está em (−5, 0): imaginário nulo (número real puro, sobre o eixo real negativo).
+          <div class="formula">z₄ = −5 + 0i = −5</div>
+        </li>
+        <li><strong>Passo 5 — Ler z₅:</strong> o afixo está em (−2, −5), 3º quadrante.
+          <div class="formula">z₅ = −2 − 5i</div>
+        </li>
+        <li><strong>Passo 6 — Ler z₆:</strong> o afixo está em (0, −2): real nulo, imaginário negativo.
+          <div class="formula">z₆ = −2i</div>
+        </li>
+        <li><strong>Passo 7 — Ler z₇:</strong> o afixo está em (6, −4), 4º quadrante.
+          <div class="formula">z₇ = 6 − 4i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> z₁ = 4+2i; z₂ = 4i; z₃ = −4+5i; z₄ = −5; z₅ = −2−5i; z₆ = −2i; z₇ = 6−4i</p>
+      <p class="dica"><strong>Dica:</strong> não confunda abscissa com ordenada. O primeiro número do par (a, b) é sempre a parte real.</p>
+    </div>
+    <div class="ans-box">Resposta: z₁=4+2i; z₂=4i; z₃=−4+5i; z₄=−5; z₅=−2−5i; z₆=−2i; z₇=6−4i</div>
+  </div>
+
+  <div class="ex" id="p02">
+    <div class="ex-header"><span class="ex-num">02</span><span class="ex-src">Propostos p.732</span></div>
+    <div class="ex-q">Seja z = a + bi, com a, b ∈ ℝ. Sabendo que a − b = 1 e |z| = 5, determine z.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> temos duas condições — uma linear (a − b = 1) e o <strong>módulo</strong> |z| = √(a² + b²) = 5. Isolamos a, substituímos na equação do módulo e resolvemos a equação do 2º grau em b.</p>
+      <ol>
+        <li><strong>Passo 1 — Isolar a:</strong> de a − b = 1 vem
+          <div class="formula">a = 1 + b</div>
+        </li>
+        <li><strong>Passo 2 — Escrever o módulo:</strong> |z| = 5 significa √(a² + b²) = 5. Elevando ao quadrado (ambos os lados positivos):
+          <div class="formula">a² + b² = 25</div>
+        </li>
+        <li><strong>Passo 3 — Substituir a = 1 + b:</strong>
+          <div class="formula">(1 + b)² + b² = 25</div>
+        </li>
+        <li><strong>Passo 4 — Expandir completamente:</strong> (1 + b)² = 1 + 2b + b², logo
+          <div class="formula">1 + 2b + b² + b² = 25</div>
+          <div class="formula">2b² + 2b + 1 = 25</div>
+          <div class="formula">2b² + 2b − 24 = 0</div>
+          Dividindo por 2:
+          <div class="formula">b² + b − 12 = 0</div>
+        </li>
+        <li><strong>Passo 5 — Resolver por Bhaskara (ou fatoração):</strong> Δ = 1² − 4(1)(−12) = 1 + 48 = 49 = 7².
+          <div class="formula">b = (−1 ± 7) / 2</div>
+          Assim b = (−1 + 7)/2 = 3 &nbsp;ou&nbsp; b = (−1 − 7)/2 = −4.
+          (Fatorando: (b + 4)(b − 3) = 0 dá o mesmo.)
+        </li>
+        <li><strong>Passo 6 — Achar a e montar z:</strong>
+          <div class="formula">b = 3 ⇒ a = 1 + 3 = 4 ⇒ z = 4 + 3i</div>
+          <div class="formula">b = −4 ⇒ a = 1 + (−4) = −3 ⇒ z = −3 − 4i</div>
+        </li>
+        <li><strong>Passo 7 — Verificar |z| = 5 e a − b = 1:</strong>
+          <div class="formula">|4+3i| = √(16+9) = √25 = 5; &nbsp; 4 − 3 = 1 ✓</div>
+          <div class="formula">|−3−4i| = √(9+16) = √25 = 5; &nbsp; −3 − (−4) = 1 ✓</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> z = −3 − 4i &nbsp;ou&nbsp; z = 4 + 3i</p>
+      <p class="dica"><strong>Dica:</strong> não esqueça as duas raízes da equação do 2º grau — ambas são válidas neste problema.</p>
+    </div>
+    <div class="ans-box">Resposta: z = −3 − 4i &nbsp;ou&nbsp; z = 4 + 3i</div>
+  </div>
+
+  <div class="ex" id="p03">
+    <div class="ex-header"><span class="ex-num">03</span><span class="ex-src">Propostos p.732</span></div>
+    <div class="ex-q">Determine o complexo z tal que |z| = 4√2 e arg(z) = 135°.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> conhecemos o <strong>módulo</strong> ρ e o <strong>argumento</strong> θ. Usamos a forma trigonométrica z = ρ(cos θ + i sen θ), ou equivalentemente a = ρ cos θ e b = ρ sen θ.</p>
+      <ol>
+        <li><strong>Passo 1 — Identificar ρ e θ:</strong>
+          <div class="formula">ρ = 4√2, &nbsp; θ = 135°</div>
+          135° está no 2º quadrante (entre 90° e 180°).
+        </li>
+        <li><strong>Passo 2 — Valores de cosseno e seno:</strong> 135° = 180° − 45°, logo
+          <div class="formula">cos 135° = −cos 45° = −√2/2</div>
+          <div class="formula">sen 135° = sen 45° = √2/2</div>
+        </li>
+        <li><strong>Passo 3 — Parte real a = ρ cos θ:</strong>
+          <div class="formula">a = 4√2 · (−√2/2) = −4√2 · √2 / 2 = −4 · 2 / 2 = −4</div>
+        </li>
+        <li><strong>Passo 4 — Parte imaginária b = ρ sen θ:</strong>
+          <div class="formula">b = 4√2 · (√2/2) = 4√2 · √2 / 2 = 4 · 2 / 2 = 4</div>
+        </li>
+        <li><strong>Passo 5 — Montar z e conferir:</strong>
+          <div class="formula">z = −4 + 4i</div>
+          <div class="formula">|z| = √(16+16) = √32 = √(16·2) = 4√2; &nbsp; arg = 135° ✓</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> z = −4 + 4i</p>
+      <p class="dica"><strong>Dica:</strong> no 2º quadrante o cosseno é negativo e o seno é positivo — isso evita errar o sinal de a.</p>
+    </div>
+    <div class="ans-box">Resposta: z = −4 + 4i</div>
+  </div>
+
+  <div class="ex" id="p04">
+    <div class="ex-header"><span class="ex-num">04</span><span class="ex-src">Propostos p.732</span></div>
+    <div class="ex-q">Descreva geometricamente o conjunto A = { z ∈ ℂ : |z| = 3 } e dê a equação cartesiana.</div>
+    
+    <div class="ex-anim" id="wrap-anim-b41-p04">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b41-p04">▶ Animar</button>
+      <canvas id="anim-b41-p04" width="360" height="360"></canvas>
+      <p class="anim-cap">Círculo |z| = 3 (centro O)</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> o módulo |z| é a distância do afixo à origem O. Logo |z| = 3 descreve todos os pontos a distância 3 de O — uma circunferência.</p>
+      <ol>
+        <li><strong>Passo 1 — Interpretação geométrica:</strong> |z| = 3 significa “distância de P a O é 3”. Portanto A é a <strong>circunferência de centro O(0, 0) e raio 3</strong>.</li>
+        <li><strong>Passo 2 — Equação cartesiana:</strong> se z = a + bi, então
+          <div class="formula">√(a² + b²) = 3 ⇒ a² + b² = 9</div>
+        </li>
+        <li><strong>Passo 3 — Pontos notáveis:</strong> a circunferência corta os eixos em
+          <div class="formula">(3, 0) → 3; &nbsp; (−3, 0) → −3; &nbsp; (0, 3) → 3i; &nbsp; (0, −3) → −3i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> círculo de centro O e raio 3; equação a² + b² = 9</p>
+      <p class="dica"><strong>Dica:</strong> |z| = r (constante) sempre dá círculo centrado na origem; |z − z₀| = r dá círculo centrado em z₀.</p>
+    </div>
+    <div class="ans-box">Resposta: círculo centro O, raio 3; equação a² + b² = 9</div>
+  </div>
+
+  <div class="ex" id="p05">
+    <div class="ex-header"><span class="ex-num">05</span><span class="ex-src">Propostos p.732</span></div>
+    <div class="ex-q">Seja z = 2 + 3i. Os afixos de z, z̄, −z e −z̄ formam um quadrilátero Q. Calcule o perímetro de Q.</div>
+    
+    <div class="ex-anim" id="wrap-anim-b41-p05">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b41-p05">▶ Animar</button>
+      <canvas id="anim-b41-p05" width="360" height="360"></canvas>
+      <p class="anim-cap">Retângulo Q: z, z̄, −z, −z̄ · perímetro 20</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> o <strong>conjugado</strong> z̄ reflete z pelo eixo real; −z reflete pela origem; −z̄ reflete pelo eixo imaginário. Os quatro pontos formam um retângulo centrado em O; basta achar os lados e dobrar a soma.</p>
+      <ol>
+        <li><strong>Passo 1 — Listar os quatro pontos (afixos):</strong>
+          <div class="formula">z = 2 + 3i → (2, 3)</div>
+          <div class="formula">z̄ = 2 − 3i → (2, −3)</div>
+          <div class="formula">−z = −2 − 3i → (−2, −3)</div>
+          <div class="formula">−z̄ = −2 + 3i → (−2, 3)</div>
+        </li>
+        <li><strong>Passo 2 — Ordenar em torno do retângulo:</strong> por exemplo no sentido anti-horário a partir de z:
+          <div class="formula">(2,3) → (−2,3) → (−2,−3) → (2,−3) → de volta a (2,3)</div>
+          A figura é um retângulo com lados paralelos aos eixos, centrado na origem O.
+        </li>
+        <li><strong>Passo 3 — Comprimento dos lados horizontais:</strong> distância entre (2, 3) e (−2, 3):
+          <div class="formula">|2 − (−2)| = 4</div>
+          (Mesmo valor entre (2, −3) e (−2, −3).)
+        </li>
+        <li><strong>Passo 4 — Comprimento dos lados verticais:</strong> distância entre (2, 3) e (2, −3):
+          <div class="formula">|3 − (−3)| = 6</div>
+        </li>
+        <li><strong>Passo 5 — Perímetro:</strong>
+          <div class="formula">P = 2(4 + 6) = 2 · 10 = 20</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> perímetro = 20</p>
+      <p class="dica"><strong>Dica:</strong> em geral, para z = a + bi, os lados medem 2|a| e 2|b|, e o perímetro é 4(|a| + |b|). Aqui 4(2+3) = 20.</p>
+    </div>
+    <div class="ans-box">Resposta: perímetro = 20 &nbsp;(vértices: (2,3), (2,−3), (−2,−3), (−2,3); lados 4 e 6)</div>
+  </div>
+
+  <h3>Complementares — p. 733</h3>
+
+  <div class="ex" id="c01">
+    <div class="ex-header"><span class="ex-num">01</span><span class="ex-src">Complementares p.733 · UEPB</span></div>
+    <div class="ex-q">Considere z = (2 − i³⁵)/(3 + i). Em qual quadrante está o afixo de z?</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> reduzir a potência de i pelo ciclo de período 4, reescrever o numerador, dividir multiplicando pelo <strong>conjugado</strong> do denominador e olhar os sinais de Re(z) e Im(z).</p>
+      <ol>
+        <li><strong>Passo 1 — Ciclo das potências de i:</strong>
+          <div class="formula">i⁰ = 1, &nbsp; i¹ = i, &nbsp; i² = −1, &nbsp; i³ = −i, &nbsp; i⁴ = 1, …</div>
+          O resto da divisão do expoente por 4 decide o valor.
+        </li>
+        <li><strong>Passo 2 — Reduzir i³⁵:</strong> 35 ÷ 4 = 8 resto 3, pois 4·8 = 32 e 35 − 32 = 3. Logo
+          <div class="formula">i³⁵ = i³ = −i</div>
+        </li>
+        <li><strong>Passo 3 — Reescrever o numerador:</strong>
+          <div class="formula">2 − i³⁵ = 2 − (−i) = 2 + i</div>
+          Assim
+          <div class="formula">z = (2 + i)/(3 + i)</div>
+        </li>
+        <li><strong>Passo 4 — Multiplicar por conjugado do denominador:</strong> conjugado de 3 + i é 3 − i.
+          <div class="formula">z = (2 + i)(3 − i) / [(3 + i)(3 − i)]</div>
+        </li>
+        <li><strong>Passo 5 — Expandir o numerador (FOIL completo):</strong>
+          <div class="formula">(2+i)(3−i) = 2·3 + 2·(−i) + i·3 + i·(−i) = 6 − 2i + 3i − i²</div>
+          Como i² = −1: −i² = −(−1) = 1. Logo
+          <div class="formula">6 + (−2i + 3i) + 1 = 7 + i</div>
+        </li>
+        <li><strong>Passo 6 — Denominador:</strong>
+          <div class="formula">(3+i)(3−i) = 9 − i² = 9 − (−1) = 9 + 1 = 10</div>
+        </li>
+        <li><strong>Passo 7 — Forma algébrica e quadrante:</strong>
+          <div class="formula">z = (7 + i)/10 = 7/10 + (1/10)i</div>
+          Re(z) = 7/10 &gt; 0 e Im(z) = 1/10 &gt; 0 ⇒ afixo no <strong>1º quadrante</strong>.
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — 1º quadrante &nbsp;(z = 7/10 + i/10)</p>
+      <p class="dica"><strong>Dica:</strong> erro comum: escrever 2 − i³⁵ = 2 − i em vez de reduzir i³⁵ primeiro. Outro erro: esquecer que −i² = +1 ao expandir.</p>
+    </div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — 1º quadrante &nbsp;(z = 7/10 + i/10)</div>
+  </div>
+
+  <div class="ex" id="c02">
+    <div class="ex-header"><span class="ex-num">02</span><span class="ex-src">Complementares p.733 · Mackenzie</span></div>
+    <div class="ex-q">Na figura, z = 2 + i e |w| = |z|, com w obtido por rotação de 90° no sentido anti-horário a partir de z (marca de ângulo reto). Determine o produto zw.</div>
+    
+    <div class="ex-anim" id="wrap-anim-b41-c02">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b41-c02">▶ Animar</button>
+      <canvas id="anim-b41-c02" width="360" height="360"></canvas>
+      <p class="anim-cap">z → w = i·z (90°) e produto zw</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> a figura mostra o afixo de z = 2 + i e um vetor w de mesmo módulo, perpendicular a z no sentido anti-horário. Geometricamente, girar 90° anti-horário = multiplicar por i.</p>
+      <ol>
+        <li><strong>Passo 1 — Ler a figura:</strong> z = 2 + i tem afixo (2, 1). O vetor w parte de O, tem o mesmo comprimento |z| = √5, e forma 90° no sentido anti-horário com z.</li>
+        <li><strong>Passo 2 — Obter w multiplicando por i:</strong>
+          <div class="formula">w = i · z = i(2 + i) = 2i + i² = 2i + (−1) = −1 + 2i</div>
+        </li>
+        <li><strong>Passo 3 — Conferir módulo e perpendicularidade:</strong>
+          <div class="formula">|w| = √[(−1)² + 2²] = √5 = |z| ✓</div>
+          Produto escalar dos vetores (2, 1) e (−1, 2): 2·(−1) + 1·2 = 0 ⇒ perpendiculares ✓
+        </li>
+        <li><strong>Passo 4 — Produto zw com FOIL completo:</strong>
+          <div class="formula">zw = (2+i)(−1+2i) = 2·(−1) + 2·(2i) + i·(−1) + i·(2i)</div>
+          <div class="formula">= −2 + 4i − i + 2i² = −2 + 3i + 2(−1) = −2 + 3i − 2 = −4 + 3i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (e) — zw = −4 + 3i &nbsp;(com w = −1 + 2i)</p>
+      <p class="dica"><strong>Dica:</strong> rotação de 90° no sentido horário seria multiplicar por −i, não por i. Confira a setinha da figura.</p>
+    </div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (e)</span> — zw = −4 + 3i &nbsp;(com w = −1 + 2i)</div>
+  </div>
+
+  <div class="ex" id="c03">
+    <div class="ex-header"><span class="ex-num">03</span><span class="ex-src">Complementares p.733 · Fatec</span></div>
+    <div class="ex-q">O ponto P está no 3º quadrante, Re(z) = −2, e o ângulo que OP forma com o semieixo real negativo é 30°. Determine z̄.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> no 3º quadrante, Re &lt; 0 e Im &lt; 0. O ângulo de 30° é medido a partir do semieixo real <em>negativo</em>. Achamos Im pela tangente, montamos z e depois o <strong>conjugado</strong> z̄ (que é o que a questão pede).</p>
+      <ol>
+        <li><strong>Passo 1 — Situar o ponto:</strong> Re(z) = −2, 3º quadrante ⇒ o afixo está à esquerda do eixo imaginário e abaixo do eixo real. O segmento OP faz 30° com a parte negativa do eixo real.</li>
+        <li><strong>Passo 2 — Argumento a partir do semieixo positivo:</strong>
+          <div class="formula">arg(z) = 180° + 30° = 210°</div>
+          (ou equivalentemente −150°).
+        </li>
+        <li><strong>Passo 3 — Relacionar |Im| com tan 30°:</strong> no triângulo retângulo, o cateto adjacente ao ângulo de 30° (ao longo do eixo real negativo) tem comprimento |Re| = 2. O cateto oposto é |Im| = |b|. Logo
+          <div class="formula">|b| / 2 = tan 30° = 1/√3 = √3/3</div>
+          <div class="formula">|b| = 2 · (√3/3) = 2√3/3</div>
+        </li>
+        <li><strong>Passo 4 — Sinal de b no 3º quadrante:</strong> Im &lt; 0, portanto
+          <div class="formula">z = −2 − (2√3/3) i</div>
+        </li>
+        <li><strong>Passo 5 — Conjugado:</strong> o conjugado troca o sinal da parte imaginária:
+          <div class="formula">z̄ = −2 + (2√3/3) i</div>
+          Por isso a alternativa correta fala do conjugado, e não de z propriamente.
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — z̄ = −2 + (2√3/3) i</p>
+      <p class="dica"><strong>Dica:</strong> leia o enunciado até o fim — muitas alternativas dão z, mas a pergunta pede z̄. Também não use 30° como se fosse o argumento a partir do eixo positivo.</p>
+    </div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — z̄ = −2 + (2√3/3) i</div>
+  </div>
+
+  <div class="ex" id="c04">
+    <div class="ex-header"><span class="ex-num">04</span><span class="ex-src">Complementares p.733 · Cesesp</span></div>
+    <div class="ex-q">O conjunto dos z que satisfazem |z − 2 − i| = 5 representa geometricamente…</div>
+    
+    <div class="ex-anim" id="wrap-anim-b41-c04">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b41-c04">▶ Animar</button>
+      <canvas id="anim-b41-c04" width="360" height="360"></canvas>
+      <p class="anim-cap">Círculo centro (2,1), raio 5</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> |z − z₀| é a distância entre o afixo de z e o afixo de z₀. Aqui z₀ = 2 + i.</p>
+      <ol>
+        <li><strong>Passo 1 — Reescrever a condição:</strong>
+          <div class="formula">|z − 2 − i| = |z − (2 + i)| = 5</div>
+        </li>
+        <li><strong>Passo 2 — Interpretar:</strong> distância do afixo de z ao ponto (2, 1) é constante e igual a 5.</li>
+        <li><strong>Passo 3 — Conclusão geométrica:</strong> circunferência de centro (2, 1) e raio 5.</li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (c) — círculo centro (2, 1), raio 5</p>
+      <p class="dica"><strong>Dica:</strong> |z − 2 − i| não é |z| − |2 + i|. O centro é o ponto (2, 1), não a origem.</p>
+    </div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (c)</span> — círculo centro (2, 1), raio 5</div>
+  </div>
+
+  <div class="ex" id="c05">
+    <div class="ex-header"><span class="ex-num">05</span><span class="ex-src">Complementares p.733 · UERJ</span></div>
+    <div class="ex-q">Calcule (1+i)⁹ e a distância d da origem ao afixo do resultado.</div>
+    
+    <div class="ex-anim" id="wrap-anim-b41-c05">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b41-c05">▶ Animar</button>
+      <canvas id="anim-b41-c05" width="360" height="360"></canvas>
+      <p class="anim-cap">Potências de (1+i) até 16+16i</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> podemos usar a forma polar com De Moivre, ou um atalho binomial notando que (1+i)² = 2i. Os dois caminhos devem bater.</p>
+      <ol>
+        <li><strong>Passo 1 — Método polar:</strong> 1 + i tem módulo ρ = √(1²+1²) = √2 e argumento θ = 45°.
+          <div class="formula">(1+i)⁹ = (√2)⁹ [cos(9·45°) + i sen(9·45°)] = (√2)⁹ [cos 405° + i sen 405°]</div>
+        </li>
+        <li><strong>Passo 2 — Reduzir o ângulo:</strong> 405° = 360° + 45°, logo cos 405° = cos 45° = √2/2 e sen 405° = √2/2.</li>
+        <li><strong>Passo 3 — Calcular (√2)⁹:</strong>
+          <div class="formula">(√2)⁹ = (2^{1/2})⁹ = 2^{9/2} = 2^{4 + 1/2} = 2⁴ · √2 = 16√2</div>
+        </li>
+        <li><strong>Passo 4 — Forma algébrica:</strong>
+          <div class="formula">(1+i)⁹ = 16√2 · (√2/2)(1 + i) = 16√2 · √2/2 · (1+i) = 16 · 2/2 · (1+i) = 16(1+i) = 16 + 16i</div>
+        </li>
+        <li><strong>Passo 5 — Método alternativo (potências de 2i):</strong>
+          <div class="formula">(1+i)² = 1 + 2i + i² = 1 + 2i − 1 = 2i</div>
+          <div class="formula">(1+i)⁴ = (2i)² = 4i² = −4</div>
+          <div class="formula">(1+i)⁸ = (−4)² = 16</div>
+          <div class="formula">(1+i)⁹ = 16(1+i) = 16 + 16i ✓</div>
+        </li>
+        <li><strong>Passo 6 — Distância d ao afixo (16, 16):</strong>
+          <div class="formula">d = √(16² + 16²) = √(2 · 256) = 16√2</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> (1+i)⁹ = 16 + 16i; coordenadas (16, 16); d = 16√2</p>
+      <p class="dica"><strong>Dica:</strong> d = |(1+i)⁹| = |1+i|⁹ = (√2)⁹ = 16√2 — dá para achar a distância sem expandir a forma algébrica.</p>
+    </div>
+    <div class="ans-box">Resposta: (1+i)⁹ = 16 + 16i; coordenadas (16, 16); d = 16√2</div>
+  </div>
+
+  <div class="ex" id="c06">
+    <div class="ex-header"><span class="ex-num">06</span><span class="ex-src">Complementares p.733 · UFG</span></div>
+    <div class="ex-q">Se Re(1/z) = 1/4, descreva geometricamente o lugar dos afixos de z (z ≠ 0).</div>
+    
+    <div class="ex-anim" id="wrap-anim-b41-c06">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b41-c06">▶ Animar</button>
+      <canvas id="anim-b41-c06" width="360" height="360"></canvas>
+      <p class="anim-cap">Círculo centro (2,0), r=2 · origem excluída</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> escrever 1/z em forma algébrica, impor que a parte real vale 1/4, e completar o quadrado para reconhecer uma circunferência — lembrando de excluir z = 0.</p>
+      <ol>
+        <li><strong>Passo 1 — Escrever 1/z:</strong> seja z = x + yi, com z ≠ 0. Então
+          <div class="formula">1/z = z̄ / |z|² = (x − yi)/(x² + y²)</div>
+          Logo
+          <div class="formula">Re(1/z) = x / (x² + y²)</div>
+        </li>
+        <li><strong>Passo 2 — Impor a condição:</strong>
+          <div class="formula">x / (x² + y²) = 1/4</div>
+          Como x² + y² ≠ 0 (z ≠ 0), multiplicamos ambos os lados por 4(x² + y²):
+          <div class="formula">4x = x² + y²</div>
+        </li>
+        <li><strong>Passo 3 — Completar o quadrado:</strong>
+          <div class="formula">x² − 4x + y² = 0</div>
+          <div class="formula">x² − 4x + 4 + y² = 4</div>
+          <div class="formula">(x − 2)² + y² = 4</div>
+        </li>
+        <li><strong>Passo 4 — Interpretação:</strong> circunferência de centro (2, 0) e raio 2.</li>
+        <li><strong>Passo 5 — Excluir a origem:</strong> a origem (0, 0) satisfaz (0−2)² + 0² = 4, ou seja, está sobre a circunferência. Mas z = 0 torna 1/z indefinido. Nenhum outro ponto da circunferência tem x = 0 (pois 4 + y² = 4 ⇒ y = 0). Portanto o lugar geométrico é essa circunferência <strong>excluindo a origem</strong>.</li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> círculo centro (2, 0), raio 2, excluindo a origem</p>
+      <p class="dica"><strong>Dica:</strong> sempre verifique se a origem (ou outro ponto que anule um denominador) precisa ser excluída do lugar geométrico.</p>
+    </div>
+    <div class="ans-box">Resposta: círculo centro (2, 0), raio 2, excluindo a origem</div>
+  </div>
+
+  <div class="ex" id="c07">
+    <div class="ex-header"><span class="ex-num">07</span><span class="ex-src">Complementares p.733 · PUC</span></div>
+    <div class="ex-q">Seja z = i⁸⁷(i¹⁰⁵ + √3). Determine a alternativa correta sobre z (argumento, módulo, quadrante).</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> reduzir as potências de i, expandir o produto, obter a forma algébrica de z e comparar módulo/argumento/quadrante com as alternativas — em particular com v = ½ − (√3/2)i.</p>
+      <ol>
+        <li><strong>Passo 1 — Reduzir i⁸⁷:</strong> 87 ÷ 4 = 21 resto 3 (4·21 = 84; 87 − 84 = 3).
+          <div class="formula">i⁸⁷ = i³ = −i</div>
+        </li>
+        <li><strong>Passo 2 — Reduzir i¹⁰⁵:</strong> 105 ÷ 4 = 26 resto 1 (4·26 = 104; 105 − 104 = 1).
+          <div class="formula">i¹⁰⁵ = i¹ = i</div>
+        </li>
+        <li><strong>Passo 3 — Substituir e expandir:</strong>
+          <div class="formula">z = (−i)(i + √3) = (−i)(√3) + (−i)(i) = −√3 i − i²</div>
+          <div class="formula">−i² = −(−1) = 1 ⇒ z = 1 − √3 i</div>
+        </li>
+        <li><strong>Passo 4 — Módulo e quadrante:</strong>
+          <div class="formula">|z| = √(1² + (√3)²) = √(1+3) = √4 = 2</div>
+          Re &gt; 0, Im &lt; 0 ⇒ 4º quadrante.
+        </li>
+        <li><strong>Passo 5 — Argumento:</strong> cos θ = Re/|z| = 1/2, sen θ = Im/|z| = −√3/2 ⇒ θ = −60° = 300°.</li>
+        <li><strong>Passo 6 — Comparar com v = ½ − (√3/2)i:</strong>
+          <div class="formula">v = z/|z| = z/2 = 1/2 − (√3/2)i</div>
+          Portanto v e z têm o <strong>mesmo argumento</strong> (v é a “versão unitária” de z). A alternativa (d) afirma justamente arg(z) = arg(v).
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (d) — arg(z) = arg(v) com v = ½ − (√3/2)i &nbsp;(também: |z|=2, 4º quadrante; z = 1 − √3 i)</p>
+      <p class="dica"><strong>Dica:</strong> dois complexos não nulos têm o mesmo argumento se, e só se, um é múltiplo real positivo do outro.</p>
+    </div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (d)</span> — arg(z) = arg(v) com v = ½ − (√3/2)i &nbsp;(também: |z|=2, 4º quadrante; z = 1 − √3 i)</div>
+  </div>
+
+  <div class="ex" id="c08">
+    <div class="ex-header"><span class="ex-num">08</span><span class="ex-src">Complementares p.733 · UEL</span></div>
+    <div class="ex-q">Calcule o produto (−3 + 4i)(2 − 3i).</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> multiplicação na forma algébrica pelo método FOIL (First, Outer, Inner, Last), lembrando que i² = −1.</p>
+      <ol>
+        <li><strong>Passo 1 — Expandir termo a termo:</strong>
+          <div class="formula">(−3)(2) + (−3)(−3i) + (4i)(2) + (4i)(−3i)</div>
+          <div class="formula">= −6 + 9i + 8i − 12i²</div>
+        </li>
+        <li><strong>Passo 2 — Trocar i² por −1:</strong>
+          <div class="formula">−12i² = −12(−1) = 12</div>
+        </li>
+        <li><strong>Passo 3 — Juntar real e imaginário:</strong>
+          <div class="formula">Parte real: −6 + 12 = 6</div>
+          <div class="formula">Parte imaginária: 9i + 8i = 17i</div>
+          <div class="formula">Produto = 6 + 17i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> alternativa (e) — 6 + 17i</p>
+      <p class="dica"><strong>Dica:</strong> o termo com i² “vira” parte real. Esquecer o sinal de −12i² = +12 é o erro mais comum.</p>
+    </div>
+    <div class="ans-box">Resposta: <span class="alt">alternativa (e)</span> — 6 + 17i</div>
+  </div>
+
+</div>
+
+<footer>B41 · Representação Geométrica · Pack Números Complexos · Versa Vol. 11</footer>
+
+<script>
+(function () {
+  const canvas = document.getElementById('argand');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const CX = W / 2, CY = H / 2;
+  const SCALE = 40; // pixels per unit
+  const RANGE = Math.floor((Math.min(W, H) / 2 - 20) / SCALE);
+
+  let a = 2, b = 3;
+  let dragging = false;
+
+  const inpA = document.getElementById('inpA');
+  const inpB = document.getElementById('inpB');
+  const liveVals = document.getElementById('liveVals');
+  const z0Controls = document.getElementById('z0Controls');
+
+  function toCanvas(x, y) { return [CX + x * SCALE, CY - y * SCALE]; }
+  function fromCanvas(px, py) {
+    return [(px - CX) / SCALE, (CY - py) / SCALE];
+  }
+
+  function mod(x, y) { return Math.sqrt(x * x + y * y); }
+  function argDeg(x, y) {
+    if (x === 0 && y === 0) return 0;
+    let th = Math.atan2(y, x) * 180 / Math.PI;
+    if (th < 0) th += 360;
+    return th;
+  }
+  function fmt(n, d) {
+    if (d === undefined) d = 3;
+    const r = Math.round(n * Math.pow(10, d)) / Math.pow(10, d);
+    return Object.is(r, -0) ? 0 : r;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // grid
+    ctx.strokeStyle = '#1e2a3a';
+    ctx.lineWidth = 1;
+    for (let i = -RANGE; i <= RANGE; i++) {
+      ctx.beginPath();
+      const [gx1, gy1] = toCanvas(i, -RANGE);
+      const [gx2, gy2] = toCanvas(i, RANGE);
+      ctx.moveTo(gx1, gy1); ctx.lineTo(gx2, gy2);
+      const [hx1, hy1] = toCanvas(-RANGE, i);
+      const [hx2, hy2] = toCanvas(RANGE, i);
+      ctx.moveTo(hx1, hy1); ctx.lineTo(hx2, hy2);
+      ctx.stroke();
+    }
+    // axes
+    ctx.strokeStyle = '#5a6a80';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(20, CY); ctx.lineTo(W - 20, CY);
+    ctx.moveTo(CX, 20); ctx.lineTo(CX, H - 20);
+    ctx.stroke();
+    // arrow tips
+    ctx.fillStyle = '#5a6a80';
+    ctx.beginPath(); ctx.moveTo(W - 20, CY); ctx.lineTo(W - 30, CY - 5); ctx.lineTo(W - 30, CY + 5); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(CX, 20); ctx.lineTo(CX - 5, 30); ctx.lineTo(CX + 5, 30); ctx.fill();
+    ctx.fillStyle = '#8b9bb4';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('Re', W - 38, CY + 18);
+    ctx.fillText('Im', CX + 8, 28);
+    // ticks
+    ctx.fillStyle = '#6a7a90';
+    ctx.font = '11px sans-serif';
+    for (let i = -RANGE; i <= RANGE; i++) {
+      if (i === 0) continue;
+      const [tx] = toCanvas(i, 0);
+      ctx.fillText(String(i), tx - 4, CY + 14);
+      const [, ty] = toCanvas(0, i);
+      ctx.fillText(String(i), CX + 6, ty + 4);
+    }
+
+    const showConj = document.getElementById('togConj').checked;
+    const showNeg = document.getElementById('togNeg').checked;
+    const showNegConj = document.getElementById('togNegConj').checked;
+    const showQuad = document.getElementById('togQuad').checked;
+    const showCircO = document.getElementById('togCircO').checked;
+    const showCircZ0 = document.getElementById('togCircZ0').checked;
+
+    const rho = mod(a, b);
+
+    if (showCircO && rho > 0.01) {
+      ctx.strokeStyle = 'rgba(129,199,132,0.5)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.arc(CX, CY, rho * SCALE, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    if (showCircZ0) {
+      const z0a = parseFloat(document.getElementById('z0a').value) || 0;
+      const z0b = parseFloat(document.getElementById('z0b').value) || 0;
+      const z0r = parseFloat(document.getElementById('z0r').value) || 1;
+      const [cpx, cpy] = toCanvas(z0a, z0b);
+      ctx.strokeStyle = 'rgba(206,147,216,0.55)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.arc(cpx, cpy, z0r * SCALE, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      drawPoint(z0a, z0b, '#ce93d8', 'z₀');
+    }
+
+    const pts = {
+      z: [a, b],
+      conj: [a, -b],
+      neg: [-a, -b],
+      negConj: [-a, b]
+    };
+
+    if (showQuad || (showConj && showNeg && showNegConj)) {
+      const order = [pts.z, pts.conj, pts.neg, pts.negConj];
+      if (showQuad) {
+        ctx.fillStyle = 'rgba(79,195,247,0.08)';
+        ctx.strokeStyle = 'rgba(79,195,247,0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        const [x0, y0] = toCanvas(order[0][0], order[0][1]);
+        ctx.moveTo(x0, y0);
+        for (let i = 1; i < 4; i++) {
+          const [xi, yi] = toCanvas(order[i][0], order[i][1]);
+          ctx.lineTo(xi, yi);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+    }
+
+    // vector to z
+    drawVector(0, 0, a, b, '#4fc3f7');
+    drawPoint(a, b, '#4fc3f7', 'z');
+
+    if (showConj) { drawVector(0, 0, a, -b, '#81c784'); drawPoint(a, -b, '#81c784', 'z̄'); }
+    if (showNeg) { drawVector(0, 0, -a, -b, '#ffb74d'); drawPoint(-a, -b, '#ffb74d', '−z'); }
+    if (showNegConj) { drawVector(0, 0, -a, b, '#ce93d8'); drawPoint(-a, b, '#ce93d8', '−z̄'); }
+
+    updateLive();
+  }
+
+  function drawVector(x0, y0, x1, y1, color) {
+    const [p0x, p0y] = toCanvas(x0, y0);
+    const [p1x, p1y] = toCanvas(x1, y1);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(p0x, p0y);
+    ctx.lineTo(p1x, p1y);
+    ctx.stroke();
+  }
+
+  function drawPoint(x, y, color, label) {
+    const [px, py] = toCanvas(x, y);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(px, py, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#0a0e14';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(label, px + 10, py - 8);
+  }
+
+  function updateLive() {
+    const rho = mod(a, b);
+    const th = argDeg(a, b);
+    const thRad = th * Math.PI / 180;
+    let peri = '';
+    if (document.getElementById('togQuad').checked) {
+      const sideH = 2 * Math.abs(a);
+      const sideV = 2 * Math.abs(b);
+      peri = '<div class="hl3">Perímetro Q = ' + fmt(2 * (sideH + sideV), 2) +
+        ' &nbsp;(lados ' + fmt(sideH, 2) + ' e ' + fmt(sideV, 2) + ')</div>';
+    }
+    const sign = b >= 0 ? '+' : '−';
+    const bAbs = Math.abs(b);
+    liveVals.innerHTML =
+      '<div class="hl">z = ' + fmt(a, 3) + ' ' + sign + ' ' + fmt(bAbs, 3) + 'i</div>' +
+      '<div>Re(z) = <span class="hl">' + fmt(a, 3) + '</span> &nbsp; Im(z) = <span class="hl">' + fmt(b, 3) + '</span></div>' +
+      '<div class="hl2">ρ = |z| = √(a²+b²) = ' + fmt(rho, 4) + '</div>' +
+      '<div class="hl3">arg θ = ' + fmt(th, 2) + '° = ' + fmt(thRad, 4) + ' rad</div>' +
+      '<div class="hl4">z̄ = ' + fmt(a, 3) + ' ' + (b >= 0 ? '−' : '+') + ' ' + fmt(bAbs, 3) + 'i</div>' +
+      peri;
+  }
+
+  function setAB(na, nb) {
+    a = na; b = nb;
+    inpA.value = fmt(a, 3);
+    inpB.value = fmt(b, 3);
+    draw();
+  }
+
+  document.getElementById('btnApply').addEventListener('click', function () {
+    setAB(parseFloat(inpA.value) || 0, parseFloat(inpB.value) || 0);
+  });
+  document.getElementById('btnEx').addEventListener('click', function () { setAB(2, 3); });
+
+  ['togConj', 'togNeg', 'togNegConj', 'togQuad', 'togCircO'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', draw);
+  });
+  document.getElementById('togCircZ0').addEventListener('change', function () {
+    z0Controls.style.display = this.checked ? 'flex' : 'none';
+    draw();
+  });
+  ['z0a', 'z0b', 'z0r'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', draw);
+  });
+
+  function pointerPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return [(clientX - rect.left) * scaleX, (clientY - rect.top) * scaleY];
+  }
+
+  function nearZ(px, py) {
+    const [zx, zy] = toCanvas(a, b);
+    return (px - zx) * (px - zx) + (py - zy) * (py - zy) < 20 * 20;
+  }
+
+  canvas.addEventListener('mousedown', function (e) {
+    const [px, py] = pointerPos(e);
+    dragging = true;
+    const [nx, ny] = fromCanvas(px, py);
+    setAB(Math.round(nx * 2) / 2, Math.round(ny * 2) / 2);
+  });
+  canvas.addEventListener('mousemove', function (e) {
+    if (!dragging) return;
+    const [px, py] = pointerPos(e);
+    const [nx, ny] = fromCanvas(px, py);
+    setAB(Math.round(nx * 4) / 4, Math.round(ny * 4) / 4);
+  });
+  window.addEventListener('mouseup', function () { dragging = false; });
+
+  canvas.addEventListener('touchstart', function (e) {
+    e.preventDefault();
+    dragging = true;
+    const [px, py] = pointerPos(e);
+    const [nx, ny] = fromCanvas(px, py);
+    setAB(Math.round(nx * 2) / 2, Math.round(ny * 2) / 2);
+  }, { passive: false });
+  canvas.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+    if (!dragging) return;
+    const [px, py] = pointerPos(e);
+    const [nx, ny] = fromCanvas(px, py);
+    setAB(Math.round(nx * 4) / 4, Math.round(ny * 4) / 4);
+  }, { passive: false });
+  canvas.addEventListener('touchend', function () { dragging = false; });
+
+
+  // --- geometric animations (×i, conjugado, −z) ---
+  var animating = false;
+  function animateTo(targetA, targetB, duration, onDone) {
+    if (animating) return;
+    animating = true;
+    var a0 = a, b0 = b;
+    var t0 = null;
+    function ease(t){ return t<0.5 ? 2*t*t : -1+(4-2*t)*t; }
+    function step(ts){
+      if (t0===null) t0 = ts;
+      var u = Math.min(1, (ts - t0) / duration);
+      var e = ease(u);
+      a = a0 + (targetA - a0) * e;
+      b = b0 + (targetB - b0) * e;
+      inpA.value = fmt(a, 3);
+      inpB.value = fmt(b, 3);
+      draw();
+      if (u < 1) requestAnimationFrame(step);
+      else { animating = false; a = targetA; b = targetB; setAB(a,b); if(onDone) onDone(); }
+    }
+    requestAnimationFrame(step);
+  }
+  document.getElementById('btnAnimI').addEventListener('click', function () {
+    // multiply by i: (a,b) -> (-b, a)
+    animateTo(-b, a, 1200);
+  });
+  document.getElementById('btnAnimConj').addEventListener('click', function () {
+    animateTo(a, -b, 1000, function(){ document.getElementById('togConj').checked = true; draw(); });
+  });
+  document.getElementById('btnAnimNeg').addEventListener('click', function () {
+    animateTo(-a, -b, 1200, function(){ document.getElementById('togNeg').checked = true; draw(); });
+  });
+
+  draw();
+})();
+</script>
+
+<script>
+/* Modo treino — shared */
+(function () {
+  var KEY = 'nc-modo-treino';
+  function loadPref() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v === null) return true;
+      return v === 'true';
+    } catch (e) { return true; }
+  }
+  function savePref(on) {
+    try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {}
+  }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal');
+    var btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) {
+    ex.classList.remove('collapsed');
+    ex.dataset.userRevealed = '1';
+    syncButtons(ex);
+  }
+  function hide(ex) {
+    ex.classList.add('collapsed');
+    delete ex.dataset.userRevealed;
+    syncButtons(ex);
+  }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner');
+    var chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) {
+        if (!ex.dataset.userRevealed) ex.classList.add('collapsed');
+      } else {
+        ex.classList.remove('collapsed');
+      }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var q = ex.querySelector('.ex-q');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (q) {
+          q.parentNode.insertBefore(box, q.nextSibling);
+          q.parentNode.insertBefore(row, box.nextSibling);
+        } else {
+          ex.insertBefore(row, ex.firstChild);
+          ex.insertBefore(box, row);
+        }
+      }
+      var br = ex.querySelector('.btn-reveal');
+      var bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) {
+      chk.checked = on;
+      chk.addEventListener('change', function () { setMode(chk.checked); });
+    }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) {
+          if (all.checked) reveal(ex); else hide(ex);
+        });
+      });
+    }
+    setMode(on);
+  });
+})();
+</script>
+
+
+<script>
+/* Animações embutidas nos exercícios geométricos */
+(function () {
+  function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+  function makePlane(canvas, range) {
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height, CX = W/2, CY = H/2;
+    var SCALE = (Math.min(W,H)/2 - 28) / range;
+    function toC(x,y){ return [CX + x*SCALE, CY - y*SCALE]; }
+    function clear(){ ctx.clearRect(0,0,W,H); }
+    function grid(){
+      clear();
+      ctx.strokeStyle = '#1e2a3a'; ctx.lineWidth = 1;
+      for (var i=-range;i<=range;i++){
+        ctx.beginPath();
+        var a=toC(i,-range), b=toC(i,range); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]);
+        a=toC(-range,i); b=toC(range,i); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = '#5a6a80'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(16,CY); ctx.lineTo(W-16,CY); ctx.moveTo(CX,16); ctx.lineTo(CX,H-16); ctx.stroke();
+      ctx.fillStyle = '#8b9bb4'; ctx.font = '11px sans-serif';
+      ctx.fillText('Re', W-30, CY+14); ctx.fillText('Im', CX+6, 24);
+    }
+    function point(x,y,col,lab){
+      var p=toC(x,y);
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(p[0],p[1],6,0,Math.PI*2); ctx.fill();
+      if(lab){ ctx.fillStyle=col; ctx.font='bold 12px sans-serif'; ctx.fillText(lab,p[0]+8,p[1]-6); }
+    }
+    function vec(x,y,col){
+      var p=toC(x,y);
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(p[0],p[1]); ctx.stroke();
+    }
+    function circle(cx,cy,r,col,dash){
+      var p=toC(cx,cy);
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      if(dash) ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.arc(p[0],p[1],r*SCALE,0,Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    function line(x1,y1,x2,y2,col,w){
+      var a=toC(x1,y1), b=toC(x2,y2);
+      ctx.strokeStyle=col; ctx.lineWidth=w||2;
+      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+    }
+    function label(x,y,txt,col){
+      var p=toC(x,y); ctx.fillStyle=col||'#ffb74d'; ctx.font='11px sans-serif'; ctx.fillText(txt,p[0],p[1]);
+    }
+    function run(duration, frame){
+      var t0 = null;
+      function step(ts){
+        if(t0===null) t0=ts;
+        var u = Math.min(1, (ts-t0)/duration);
+        frame(ease(u), u);
+        if(u<1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    return {ctx:ctx,W:W,H:H,CX:CX,CY:CY,SCALE:SCALE,toC:toC,grid:grid,point:point,vec:vec,circle:circle,line:line,label:label,run:run,clear:clear};
+  }
+
+  // ---- B41 P04: |z|=3 ----
+  (function(){
+    var c = document.getElementById('anim-b41-p04');
+    var btn = document.getElementById('btn-anim-b41-p04');
+    if(!c||!btn) return;
+    var P = makePlane(c, 4);
+    function draw(r){ P.grid(); P.circle(0,0,r,'#81c784',true); P.point(0,0,'#8b9bb4','O'); if(r>0.05){ P.point(r,0,'#4fc3f7',''); P.label(r*0.55,0.35,'|z|='+r.toFixed(1),'#81c784'); } }
+    draw(0);
+    btn.addEventListener('click', function(){
+      P.run(1400, function(e){ draw(3*e); if(e>=1){ P.label(0,-3.5,'a² + b² = 9','#ffb74d'); } });
+    });
+  })();
+
+  // ---- B41 P05: rectangle ----
+  (function(){
+    var c = document.getElementById('anim-b41-p05');
+    var btn = document.getElementById('btn-anim-b41-p05');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    var pts = [[2,3],[2,-3],[-2,-3],[-2,3]];
+    var labs = ['z','z̄','−z','−z̄'];
+    var cols = ['#4fc3f7','#81c784','#ffb74d','#ce93d8'];
+    function draw(phase){
+      P.grid();
+      var nShow = Math.min(4, Math.floor(phase));
+      var frac = phase - nShow;
+      for(var i=0;i<nShow;i++){ P.vec(pts[i][0],pts[i][1],cols[i]); P.point(pts[i][0],pts[i][1],cols[i],labs[i]); }
+      if(nShow<4 && frac>0){
+        var p=pts[nShow]; P.vec(p[0],p[1],cols[nShow]); P.point(p[0],p[1],cols[nShow],labs[nShow]);
+      }
+      if(phase >= 4){
+        P.ctx.strokeStyle='rgba(79,195,247,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var a=P.toC(2,3); P.ctx.moveTo(a[0],a[1]);
+        [[-2,3],[-2,-3],[2,-3],[2,3]].forEach(function(q){ var t=P.toC(q[0],q[1]); P.ctx.lineTo(t[0],t[1]); });
+        P.ctx.stroke();
+      }
+      if(phase >= 5){
+        P.line(2,3,-2,3,'#ffb74d',3); P.label(0,3.5,'4','#ffb74d');
+        P.line(2,3,2,-3,'#ce93d8',3); P.label(2.4,0,'6','#ce93d8');
+      }
+      if(phase >= 6){ P.label(-1.5,-4.2,'Perímetro = 20','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){
+      P.run(3200, function(e){ draw(e*6.2); });
+    });
+  })();
+
+  // ---- B41 C02: rotate z to w, product ----
+  (function(){
+    var c = document.getElementById('anim-b41-c02');
+    var btn = document.getElementById('btn-anim-b41-c02');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    var z = [2,1], w = [-1,2], prod = [-4,3];
+    function rot(p, ang){
+      var c0=Math.cos(ang), s0=Math.sin(ang);
+      return [p[0]*c0 - p[1]*s0, p[0]*s0 + p[1]*c0];
+    }
+    function draw(t){
+      P.grid();
+      P.vec(z[0],z[1],'#4fc3f7'); P.point(z[0],z[1],'#4fc3f7','z');
+      if(t < 0.45){
+        var ang = (t/0.45) * Math.PI/2;
+        var cur = rot(z, ang);
+        P.vec(cur[0],cur[1],'#81c784'); P.point(cur[0],cur[1],'#81c784','w');
+        // angle arc
+        P.ctx.strokeStyle='rgba(255,183,77,0.8)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,28, -Math.atan2(z[1],z[0]), -Math.atan2(z[1],z[0])-ang, true); P.ctx.stroke();
+      } else {
+        P.vec(w[0],w[1],'#81c784'); P.point(w[0],w[1],'#81c784','w');
+        // flash right angle
+        if(t < 0.6){
+          var flash = (Math.sin(t*40)+1)/2;
+          P.ctx.strokeStyle='rgba(255,183,77,'+(0.4+0.6*flash)+')'; P.ctx.lineWidth=3;
+          var zz=P.toC(z[0]*0.25,z[1]*0.25), ww=P.toC(w[0]*0.25,w[1]*0.25);
+          var corner=P.toC(z[0]*0.25+w[0]*0.25, z[1]*0.25+w[1]*0.25);
+          P.ctx.beginPath(); P.ctx.moveTo(zz[0],zz[1]); P.ctx.lineTo(corner[0],corner[1]); P.ctx.lineTo(ww[0],ww[1]); P.ctx.stroke();
+          P.label(0.6,0.9,'90°','#ffb74d');
+        }
+        if(t >= 0.65){
+          var u = Math.min(1,(t-0.65)/0.35);
+          P.vec(prod[0]*u, prod[1]*u, '#ffb74d');
+          if(u>0.2) P.point(prod[0]*u, prod[1]*u, '#ffb74d', 'zw');
+        }
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2800, function(e){ draw(e); }); });
+  })();
+
+  // ---- B41 C04: circle center (2,1) r=5 ----
+  (function(){
+    var c = document.getElementById('anim-b41-c04');
+    var btn = document.getElementById('btn-anim-b41-c04');
+    if(!c||!btn) return;
+    var P = makePlane(c, 8);
+    function draw(r){
+      P.grid();
+      P.point(2,1,'#ce93d8','z₀');
+      P.circle(2,1,r,'#ce93d8',true);
+      if(r>0.1){ P.line(2,1,2+r,1,'#ffb74d',1.5); P.label(2+r*0.5,1.5,'r='+r.toFixed(1),'#ffb74d'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1400, function(e){ draw(5*e); }); });
+  })();
+
+  // ---- B41 C05: (1+i)^n ray to 16+16i ----
+  (function(){
+    var c = document.getElementById('anim-b41-c05');
+    var btn = document.getElementById('btn-anim-b41-c05');
+    if(!c||!btn) return;
+    var P = makePlane(c, 20);
+    function draw(nFrac){
+      P.grid();
+      var rho0 = Math.SQRT2, th0 = Math.PI/4;
+      var n = Math.max(0, nFrac);
+      var rho = Math.pow(rho0, n);
+      var th = th0 * n;
+      // show intermediate powers as dots
+      for(var k=1;k<=Math.min(9,Math.floor(n));k++){
+        var rk=Math.pow(rho0,k), tk=th0*k;
+        P.point(rk*Math.cos(tk), rk*Math.sin(tk), k===9?'#ffb74d':'#4fc3f7', k===1?'1+i':(k===9?'(1+i)⁹':''));
+      }
+      if(n>0){
+        P.vec(rho*Math.cos(th), rho*Math.sin(th), '#81c784');
+        P.point(rho*Math.cos(th), rho*Math.sin(th), '#81c784', '');
+      }
+      if(nFrac>=9){ P.label(10,18,'16+16i','#ffb74d'); P.label(8,16,'d=16√2','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2600, function(e){ draw(e*9); }); });
+  })();
+
+  // ---- B41 C06: circle (2,0) r=2 exclude O ----
+  (function(){
+    var c = document.getElementById('anim-b41-c06');
+    var btn = document.getElementById('btn-anim-b41-c06');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    function draw(r, showX){
+      P.grid();
+      P.point(2,0,'#ce93d8','(2,0)');
+      P.circle(2,0,r,'#81c784',true);
+      if(showX){
+        var o=P.toC(0,0);
+        P.ctx.strokeStyle='#ef5350'; P.ctx.lineWidth=3;
+        P.ctx.beginPath(); P.ctx.moveTo(o[0]-8,o[1]-8); P.ctx.lineTo(o[0]+8,o[1]+8);
+        P.ctx.moveTo(o[0]+8,o[1]-8); P.ctx.lineTo(o[0]-8,o[1]+8); P.ctx.stroke();
+        P.label(0.4,-0.7,'origem excluída','#ef5350');
+      }
+    }
+    draw(0,false);
+    btn.addEventListener('click', function(){
+      P.run(1600, function(e){ draw(2*Math.min(1,e/0.7), e>0.75); });
+    });
+  })();
+
+  // ---- B42 P1: polar −√3+i ----
+  (function(){
+    var c = document.getElementById('anim-b42-p1');
+    var btn = document.getElementById('btn-anim-b42-p1');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var a=-Math.sqrt(3), b=1, rho=2, th=150*Math.PI/180;
+    function draw(u){
+      P.grid();
+      P.circle(0,0,rho*u,'rgba(79,195,247,0.35)',true);
+      if(u>0.2){
+        var ang = th * Math.min(1,(u-0.2)/0.6);
+        P.ctx.strokeStyle='rgba(255,183,77,0.8)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,30,0,-ang,true); P.ctx.stroke();
+        P.vec(rho*Math.cos(ang), rho*Math.sin(ang), '#4fc3f7');
+        P.point(rho*Math.cos(ang), rho*Math.sin(ang), '#4fc3f7', 'z');
+      }
+      if(u>=1){ P.label(-1.2,2.2,'2 cis 150°','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1800, function(e){ draw(e); }); });
+  })();
+
+  // ---- B42 P3: product dilate+rotate ----
+  (function(){
+    var c = document.getElementById('anim-b42-p3');
+    var btn = document.getElementById('btn-anim-b42-p3');
+    if(!c||!btn) return;
+    var P = makePlane(c, 7);
+    // z1: rho=2 th=40; zw: rho=6 th=120
+    function draw(u){
+      P.grid();
+      var r0=2, t0=40*Math.PI/180, r1=6, t1=120*Math.PI/180;
+      P.vec(r0*Math.cos(t0), r0*Math.sin(t0), '#4fc3f7');
+      P.point(r0*Math.cos(t0), r0*Math.sin(t0), '#4fc3f7', 'z₁');
+      var r = r0 + (r1-r0)*u;
+      var t = t0 + (t1-t0)*u;
+      P.vec(r*Math.cos(t), r*Math.sin(t), '#81c784');
+      P.point(r*Math.cos(t), r*Math.sin(t), '#81c784', u>0.05?'z₁z₂':'');
+      P.circle(0,0,r,'rgba(129,199,132,0.25)',true);
+      if(u>=1) P.label(1,5.5,'×3 e +80°','#ffb74d');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2000, function(e){ draw(e); }); });
+  })();
+
+  // ---- B42 P6: clockwise rotation ----
+  (function(){
+    var c = document.getElementById('anim-b42-p6');
+    var btn = document.getElementById('btn-anim-b42-p6');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var r=2, t0=60*Math.PI/180, t1=-30*Math.PI/180;
+    function draw(u){
+      P.grid();
+      P.vec(r*Math.cos(t0), r*Math.sin(t0), '#4fc3f7');
+      P.point(r*Math.cos(t0), r*Math.sin(t0), '#4fc3f7', 'z');
+      var t = t0 + (t1-t0)*u;
+      P.vec(r*Math.cos(t), r*Math.sin(t), '#81c784');
+      P.point(r*Math.cos(t), r*Math.sin(t), '#81c784', '−i·z');
+      P.ctx.strokeStyle='rgba(255,183,77,0.7)'; P.ctx.lineWidth=2;
+      P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,36,-t0,-t,false); P.ctx.stroke();
+      if(u>=1) P.label(1.2,-1.5,'√3 − i','#ffb74d');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1600, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P1: (1+i)^6 ----
+  (function(){
+    var c = document.getElementById('anim-b43-p1');
+    var btn = document.getElementById('btn-anim-b43-p1');
+    if(!c||!btn) return;
+    var P = makePlane(c, 9);
+    function draw(u){
+      P.grid();
+      var rho0=Math.SQRT2, th0=Math.PI/4;
+      var n=6*u;
+      var rho=Math.pow(rho0,n), th=th0*n;
+      P.vec(rho0*Math.cos(th0), rho0*Math.sin(th0), '#4fc3f7');
+      P.point(rho0*Math.cos(th0), rho0*Math.sin(th0), '#4fc3f7', 'z');
+      P.circle(0,0,rho,'rgba(255,183,77,0.3)',true);
+      P.vec(rho*Math.cos(th), rho*Math.sin(th), '#ffb74d');
+      P.point(rho*Math.cos(th), rho*Math.sin(th), '#ffb74d', 'zⁿ');
+      // sweeping ray indicator
+      P.ctx.strokeStyle='rgba(255,183,77,0.5)'; P.ctx.lineWidth=1;
+      P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,40,0,-th,true); P.ctx.stroke();
+      if(u>=1) P.label(0.5,-7.5,'−8i','#81c784');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2200, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P3: cube roots of 8 ----
+  (function(){
+    var c = document.getElementById('anim-b43-p3');
+    var btn = document.getElementById('btn-anim-b43-p3');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var roots=[[2,0],[-1,Math.sqrt(3)],[-1,-Math.sqrt(3)]];
+    var cols=['#4fc3f7','#81c784','#ffb74d'];
+    function draw(u){
+      P.grid();
+      P.circle(0,0,2,'rgba(129,199,132,0.4)',true);
+      var nShow = Math.min(3, Math.floor(u*3.2));
+      for(var i=0;i<nShow;i++){
+        P.vec(roots[i][0],roots[i][1],cols[i]);
+        P.point(roots[i][0],roots[i][1],cols[i],'z'+i);
+      }
+      if(u>=0.85){
+        P.ctx.strokeStyle='rgba(129,199,132,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var p0=P.toC(roots[0][0],roots[0][1]); P.ctx.moveTo(p0[0],p0[1]);
+        for(var j=1;j<3;j++){ var p=P.toC(roots[j][0],roots[j][1]); P.ctx.lineTo(p[0],p[1]); }
+        P.ctx.closePath(); P.ctx.stroke();
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2400, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P5: roots of unity ----
+  (function(){
+    var c = document.getElementById('anim-b43-p5');
+    var btn = document.getElementById('btn-anim-b43-p5');
+    if(!c||!btn) return;
+    var P = makePlane(c, 2);
+    var roots=[[1,0],[-0.5,Math.sqrt(3)/2],[-0.5,-Math.sqrt(3)/2]];
+    var labs=['1','ω','ω²'];
+    var cols=['#4fc3f7','#81c784','#ffb74d'];
+    function draw(u){
+      P.grid();
+      P.circle(0,0,1,'rgba(129,199,132,0.45)',true);
+      var nShow=Math.min(3,Math.floor(u*3.5));
+      for(var i=0;i<nShow;i++){
+        P.vec(roots[i][0],roots[i][1],cols[i]);
+        P.point(roots[i][0],roots[i][1],cols[i],labs[i]);
+      }
+      if(u>=0.9){
+        P.ctx.strokeStyle='rgba(206,147,216,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var p0=P.toC(roots[0][0],roots[0][1]); P.ctx.moveTo(p0[0],p0[1]);
+        for(var j=1;j<3;j++){ var p=P.toC(roots[j][0],roots[j][1]); P.ctx.lineTo(p[0],p[1]); }
+        P.ctx.closePath(); P.ctx.stroke();
+        P.label(-0.3,-1.6,'1+ω+ω²=0','#ce93d8');
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2200, function(e){ draw(e); }); });
+  })();
+})();
+</script>
+
+</body>
+</html>

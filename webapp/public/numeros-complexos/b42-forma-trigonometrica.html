@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B42 — Forma Trigonométrica | Números Complexos</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent2); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent2); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent2); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent2); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+}
+.controls { display: flex; flex-direction: column; gap: 0.7rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent2); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent2); }
+button.primary { background: #2e7d32; border-color: var(--accent2); color: #fff; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-family: "Cambria Math", "Times New Roman", serif; font-size: 0.92rem;
+}
+.live-vals div { margin: 0.25rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow);
+}
+.theory-card h3 { margin-top: 0; color: var(--accent2); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent2); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-family: "Cambria Math", "Times New Roman", serif; font-size: 1.05rem;
+}
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent2); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent2); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans { color: var(--accent2); }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(255,183,77,.15); color: var(--accent3);
+  border: 1px solid rgba(255,183,77,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+
+
+.btn-anim-play { margin-bottom: 0.35rem; }
+.btn-anim-play.primary { background: #1565c0; border-color: var(--accent); color: #fff; }
+/* === Modo treino === */
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps,
+.ex.collapsed .ans-box,
+.ex.collapsed .ex-anim { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .ex.collapsed .ex-anim { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.ex-anim {
+  margin: 0.85rem 0; text-align: center;
+  background: var(--bg); border-radius: 10px; padding: 0.75rem; border: 1px solid var(--border);
+}
+.ex-anim canvas {
+  width: 100%; max-width: 360px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0.45rem auto;
+  cursor: default; touch-action: none;
+}
+.ex-anim .anim-cap { color: var(--muted); font-size: 0.8rem; margin-top: 0.25rem; }
+.play-anim-row { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 0.55rem; }
+.play-caption { text-align: center; color: var(--accent3); font-size: 0.85rem; margin-top: 0.4rem; font-weight: 600; }
+
+</style>
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">ℂ Números Complexos</span>
+  <a href="index.html">Início</a>
+  <a href="b41-representacao.html">B41 Representação</a>
+  <a href="b42-forma-trigonometrica.html" class="active">B42 Forma Trig.</a>
+  <a href="b43-moivre.html">B43 Moivre</a>
+</nav>
+
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+  <h1>B42 — Forma Trigonométrica</h1>
+  <p class="subtitle">Forma polar · conversões · produto e quociente · rotação e dilatação · Versa Vol. 11</p>
+
+  <span class="section-label">(A) Playground interativo</span>
+  <div class="playground">
+    <div class="play-grid">
+      <div>
+        <canvas id="polar" width="560" height="560"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem">Azul = z &nbsp;|&nbsp; Verde = resultado da operação &nbsp;|&nbsp; Ângulo em destaque no arco</p>
+      </div>
+      <div class="controls">
+        <label>ρ (módulo) = <span id="rhoLabel" class="hl2">2</span></label>
+        <input type="range" id="slRho" min="0.5" max="6" step="0.1" value="2">
+        <label>θ (graus) = <span id="thLabel" class="hl3">45</span>°</label>
+        <input type="range" id="slTh" min="0" max="359" step="1" value="45">
+        <div class="ctrl-row">
+          <label>ou a=</label>
+          <input type="number" id="inpA" value="1.414" step="0.1" style="width:70px">
+          <label>b=</label>
+          <input type="number" id="inpB" value="1.414" step="0.1" style="width:70px">
+          <button id="btnFromAlg">Alg → Trig</button>
+        </div>
+        <div class="ctrl-row">
+          <button class="primary" id="btnRotI">Multiplicar por i (90°)</button>
+          <button id="btnReset">Reset</button>
+        </div>
+
+        <div class="ctrl-row play-anim-row" style="justify-content:flex-start">
+          <button type="button" id="btnAnimI">Animar ×i (90°)</button>
+          <button type="button" id="btnAnimProd">Animar produto z·w</button>
+        </div>
+
+        <label>Multiplicar por w: ρ<sub>w</sub>=</label>
+        <div class="ctrl-row">
+          <input type="number" id="wRho" value="1.5" step="0.1" min="0.1" style="width:70px">
+          <label>θ<sub>w</sub>°</label>
+          <input type="number" id="wTh" value="30" step="5" style="width:70px">
+          <button id="btnMulW">z · w</button>
+        </div>
+        <div class="ctrl-row">
+          <button id="btnDivW">z / w</button>
+          <button id="btnClearOp">Limpar operação</button>
+        </div>
+        <div class="live-vals" id="liveVals"></div>
+      </div>
+    </div>
+  </div>
+
+  <span class="section-label">(B) Teoria</span>
+  <div class="theory-grid">
+    <div class="theory-card">
+      <h3>Forma trigonométrica</h3>
+      <p>Todo z ≠ 0 pode ser escrito:</p>
+      <div class="formula">z = ρ (cos θ + i sen θ)</div>
+      <p>Notação abreviada: z = ρ cis θ. Aqui ρ = |z| e θ = arg(z).</p>
+    </div>
+    <div class="theory-card">
+      <h3>Algébrica → trigonométrica</h3>
+      <ul>
+        <li>ρ = √(a² + b²)</li>
+        <li>cos θ = a/ρ &nbsp; sen θ = b/ρ</li>
+        <li>θ = atan2(b, a), ajustado a [0°, 360°)</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>Trigonométrica → algébrica</h3>
+      <div class="formula">a = ρ cos θ &nbsp;&nbsp; b = ρ sen θ</div>
+      <p>z = a + bi.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Produto</h3>
+      <div class="formula">z₁z₂ = ρ₁ρ₂ [cos(θ₁+θ₂) + i sen(θ₁+θ₂)]</div>
+      <p><strong>Geometria:</strong> dilatação por ρ₂ e rotação de θ₂ (sentido anti-horário se θ₂ &gt; 0).</p>
+    </div>
+    <div class="theory-card">
+      <h3>Quociente</h3>
+      <div class="formula">z₁/z₂ = (ρ₁/ρ₂) [cos(θ₁−θ₂) + i sen(θ₁−θ₂)]</div>
+      <p>(z₂ ≠ 0). Rotação de −θ₂ e dilatação por 1/ρ₂.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Casos especiais</h3>
+      <ul>
+        <li>Multiplicar por i = cis 90° → rotação de 90° anti-horário</li>
+        <li>Multiplicar por −1 = cis 180° → rotação de 180°</li>
+        <li>Multiplicar por −i = cis 270° → rotação de 270° (ou −90°)</li>
+        <li>|z₁z₂| = |z₁||z₂| &nbsp; e &nbsp; |z₁/z₂| = |z₁|/|z₂|</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>📐 (C) Exercícios de prática (B42)</h2>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.9rem">Exercícios inventados no estilo vestibular brasileiro, com resolução completa. <span class="badge-pratica">Prática B42</span></p>
+  <p class="note" style="font-style:normal;margin-bottom:1rem">Cada resolução começa pela ideia e segue passo a passo.</p>
+
+  
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+<div class="ex" id="b42-p1">
+    <div class="ex-header"><span class="ex-num">P1</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">forma trig.</span></div>
+    <div class="ex-q">Escreva z = −√3 + i na forma trigonométrica (θ em graus, 0° ≤ θ &lt; 360°).</div>
+    
+    <div class="ex-anim" id="wrap-anim-b42-p1">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b42-p1">▶ Animar</button>
+      <canvas id="anim-b42-p1" width="360" height="360"></canvas>
+      <p class="anim-cap">−√3+i → 2 cis 150°</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> a <strong>forma trigonométrica</strong> (ou polar) é z = ρ(cos θ + i sen θ), onde ρ = |z| é o <strong>módulo</strong> e θ = arg(z) é o <strong>argumento</strong>. Calculamos ρ e identificamos o quadrante para achar θ.</p>
+      <ol>
+        <li><strong>Passo 1 — Calcular o módulo ρ:</strong>
+          <div class="formula">ρ = √[(−√3)² + 1²] = √(3 + 1) = √4 = 2</div>
+        </li>
+        <li><strong>Passo 2 — Identificar o quadrante:</strong> Re = −√3 &lt; 0 e Im = 1 &gt; 0 ⇒ 2º quadrante.</li>
+        <li><strong>Passo 3 — Achar cos θ e sen θ:</strong>
+          <div class="formula">cos θ = a/ρ = (−√3)/2 = −√3/2</div>
+          <div class="formula">sen θ = b/ρ = 1/2</div>
+          O ângulo no 2º quadrante com esses valores é θ = 150° (pois cos 150° = −√3/2 e sen 150° = 1/2).
+        </li>
+        <li><strong>Passo 4 — Escrever a forma trigonométrica:</strong>
+          <div class="formula">z = 2 (cos 150° + i sen 150°)</div>
+          (Também se escreve z = 2 cis 150°.)
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> z = 2 (cos 150° + i sen 150°)</p>
+      <p class="dica"><strong>Dica:</strong> não diga θ = 30° só porque |cos| = √3/2 — no 2º quadrante o ângulo correspondente é 180° − 30° = 150°.</p>
+    </div>
+    <div class="ans-box">Resposta: z = 2 (cos 150° + i sen 150°)</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P2</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">conversão</span></div>
+    <div class="ex-q">Converta w = 4 (cos 240° + i sen 240°) para a forma algébrica a + bi.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> da forma trigonométrica para a algébrica usamos a = ρ cos θ e b = ρ sen θ. Precisamos dos valores exatos de cos 240° e sen 240°.</p>
+      <ol>
+        <li><strong>Passo 1 — Localizar 240°:</strong> 240° = 180° + 60°, 3º quadrante (cosseno e seno negativos).</li>
+        <li><strong>Passo 2 — Valores trigonométricos:</strong>
+          <div class="formula">cos 240° = −cos 60° = −1/2</div>
+          <div class="formula">sen 240° = −sen 60° = −√3/2</div>
+        </li>
+        <li><strong>Passo 3 — Calcular a e b:</strong>
+          <div class="formula">a = 4 · (−1/2) = −2</div>
+          <div class="formula">b = 4 · (−√3/2) = −2√3</div>
+        </li>
+        <li><strong>Passo 4 — Forma algébrica:</strong>
+          <div class="formula">w = −2 − 2√3 i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> w = −2 − 2√3 i</p>
+      <p class="dica"><strong>Dica:</strong> no 3º quadrante ambos os sinais são negativos — um erro frequente é colocar só um deles negativo.</p>
+    </div>
+    <div class="ans-box">Resposta: w = −2 − 2√3 i</div>
+  </div>
+
+  <div class="ex" id="b42-p3">
+    <div class="ex-header"><span class="ex-num">P3</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">produto</span></div>
+    <div class="ex-q">Sejam z₁ = 2 (cos 40° + i sen 40°) e z₂ = 3 (cos 80° + i sen 80°). Calcule z₁z₂ na forma trigonométrica e algébrica.</div>
+    
+    <div class="ex-anim" id="wrap-anim-b42-p3">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b42-p3">▶ Animar</button>
+      <canvas id="anim-b42-p3" width="360" height="360"></canvas>
+      <p class="anim-cap">Produto: dilatar ×3 e girar +80°</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> no produto em forma trigonométrica, os módulos se multiplicam e os argumentos se somam: z₁z₂ = ρ₁ρ₂ [cos(θ₁+θ₂) + i sen(θ₁+θ₂)]. Depois convertemos para a + bi.</p>
+      <ol>
+        <li><strong>Passo 1 — Módulo do produto:</strong>
+          <div class="formula">ρ = ρ₁ · ρ₂ = 2 · 3 = 6</div>
+        </li>
+        <li><strong>Passo 2 — Argumento do produto:</strong>
+          <div class="formula">θ = θ₁ + θ₂ = 40° + 80° = 120°</div>
+        </li>
+        <li><strong>Passo 3 — Forma trigonométrica:</strong>
+          <div class="formula">z₁z₂ = 6 (cos 120° + i sen 120°)</div>
+        </li>
+        <li><strong>Passo 4 — Valores de cos e sen de 120°:</strong> 120° = 180° − 60°, 2º quadrante.
+          <div class="formula">cos 120° = −1/2; &nbsp; sen 120° = √3/2</div>
+        </li>
+        <li><strong>Passo 5 — Forma algébrica:</strong>
+          <div class="formula">a = 6 · (−1/2) = −3; &nbsp; b = 6 · (√3/2) = 3√3</div>
+          <div class="formula">z₁z₂ = −3 + 3√3 i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> 6 (cos 120° + i sen 120°) = −3 + 3√3 i</p>
+      <p class="dica"><strong>Dica:</strong> geometricamente, multiplicar por z₂ dilata o vetor por 3 e gira 80° no sentido anti-horário.</p>
+    </div>
+    <div class="ans-box">Resposta: 6 (cos 120° + i sen 120°) = −3 + 3√3 i</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P4</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">quociente</span></div>
+    <div class="ex-q">Calcule z₁/z₂ com z₁ = √2 (cos 75° + i sen 75°) e z₂ = √8 (cos 30° + i sen 30°).</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> no quociente, os módulos se dividem e os argumentos se subtraem: z₁/z₂ = (ρ₁/ρ₂)[cos(θ₁−θ₂) + i sen(θ₁−θ₂)].</p>
+      <ol>
+        <li><strong>Passo 1 — Simplificar ρ₂:</strong>
+          <div class="formula">√8 = √(4·2) = 2√2</div>
+        </li>
+        <li><strong>Passo 2 — Razão dos módulos:</strong>
+          <div class="formula">ρ₁/ρ₂ = √2 / (2√2) = 1/2</div>
+        </li>
+        <li><strong>Passo 3 — Diferença dos argumentos:</strong>
+          <div class="formula">θ = 75° − 30° = 45°</div>
+        </li>
+        <li><strong>Passo 4 — Forma trigonométrica:</strong>
+          <div class="formula">z₁/z₂ = (1/2)(cos 45° + i sen 45°)</div>
+        </li>
+        <li><strong>Passo 5 — Forma algébrica:</strong> cos 45° = sen 45° = √2/2, logo
+          <div class="formula">(1/2)(√2/2) + i(1/2)(√2/2) = √2/4 + (√2/4)i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> (1/2)(cos 45° + i sen 45°) = √2/4 + (√2/4)i</p>
+      <p class="dica"><strong>Dica:</strong> simplifique √8 = 2√2 antes de dividir — evita confusão com raízes no denominador.</p>
+    </div>
+    <div class="ans-box">Resposta: (1/2)(cos 45° + i sen 45°) = √2/4 + (√2/4)i</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P5</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">módulo e arg</span></div>
+    <div class="ex-q">Dado z = 5√2/2 + (5√2/2)i, determine |z| e arg(z) em graus.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> a e b são iguais e positivos ⇒ o afixo está na bissetriz do 1º quadrante (θ = 45°). O módulo é √(a² + b²).</p>
+      <ol>
+        <li><strong>Passo 1 — Identificar a e b:</strong>
+          <div class="formula">a = b = 5√2/2 &gt; 0 ⇒ 1º quadrante</div>
+        </li>
+        <li><strong>Passo 2 — Calcular |z|:</strong>
+          <div class="formula">|z| = √(a² + b²) = √(2a²) = |a|√2 = (5√2/2) · √2 = 5 · 2 / 2 = 5</div>
+          (Conferência: a² = (5√2/2)² = 25·2/4 = 25/2; 2a² = 25; √25 = 5.)
+        </li>
+        <li><strong>Passo 3 — Calcular o argumento:</strong>
+          <div class="formula">cos θ = a/ρ = (5√2/2)/5 = √2/2; &nbsp; sen θ = √2/2</div>
+          <div class="formula">θ = 45°</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> |z| = 5; arg(z) = 45°</p>
+      <p class="dica"><strong>Dica:</strong> quando a = b &gt; 0, o argumento é sempre 45° — não precisa da calculadora.</p>
+    </div>
+    <div class="ans-box">Resposta: |z| = 5; arg(z) = 45°</div>
+  </div>
+
+  <div class="ex" id="b42-p6">
+    <div class="ex-header"><span class="ex-num">P6</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">rotação</span></div>
+    <div class="ex-q">O número z = 1 + √3 i é rotacionado 90° no sentido horário em torno da origem. Qual o complexo resultante?</div>
+    
+    <div class="ex-anim" id="wrap-anim-b42-p6">
+      <button type="button" class="btn-anim-play primary" id="btn-anim-b42-p6">▶ Animar</button>
+      <canvas id="anim-b42-p6" width="360" height="360"></canvas>
+      <p class="anim-cap">Rotação horária 90° (−i)</p>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> girar 90° no sentido horário = multiplicar por −i (pois −i = cis(−90°) = cis 270°). Podemos fazer isso na forma trigonométrica ou diretamente na algébrica.</p>
+      <ol>
+        <li><strong>Passo 1 — Forma trigonométrica de z:</strong>
+          <div class="formula">ρ = √(1² + (√3)²) = √(1+3) = 2</div>
+          <div class="formula">cos θ = 1/2, sen θ = √3/2 ⇒ θ = 60°</div>
+          <div class="formula">z = 2 (cos 60° + i sen 60°)</div>
+        </li>
+        <li><strong>Passo 2 — Aplicar a rotação de −90°:</strong>
+          <div class="formula">resultado = 2 cis(60° − 90°) = 2 cis(−30°) = 2 cis 330°</div>
+        </li>
+        <li><strong>Passo 3 — Converter para algébrica:</strong>
+          <div class="formula">cos(−30°) = √3/2; &nbsp; sen(−30°) = −1/2</div>
+          <div class="formula">2(√3/2 − i·1/2) = √3 − i</div>
+        </li>
+        <li><strong>Passo 4 — Checagem algébrica direta:</strong>
+          <div class="formula">(−i)(1 + √3 i) = −i · 1 + (−i)(√3 i) = −i − √3 i² = −i − √3(−1) = √3 − i ✓</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> √3 − i</p>
+      <p class="dica"><strong>Dica:</strong> horário → −i; anti-horário → +i. Confundir o sentido é o erro mais comum em rotações.</p>
+    </div>
+    <div class="ans-box">Resposta: √3 − i</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P7</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">produto geométrico</span></div>
+    <div class="ex-q">(Vestibular-estilo) Se |z| = 3 e arg(z) = 20°, e w = 2i, então |zw| e arg(zw) são:</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> |zw| = |z||w| e arg(zw) = arg(z) + arg(w). Basta escrever w em forma trigonométrica.</p>
+      <ol>
+        <li><strong>Passo 1 — Forma trigonométrica de w:</strong> w = 2i = 0 + 2i.
+          <div class="formula">|w| = 2; &nbsp; arg(w) = 90° (eixo imaginário positivo)</div>
+          <div class="formula">w = 2 (cos 90° + i sen 90°) = 2 cis 90°</div>
+        </li>
+        <li><strong>Passo 2 — Módulo do produto:</strong>
+          <div class="formula">|zw| = |z| · |w| = 3 · 2 = 6</div>
+        </li>
+        <li><strong>Passo 3 — Argumento do produto:</strong>
+          <div class="formula">arg(zw) = 20° + 90° = 110°</div>
+        </li>
+        <li><strong>Passo 4 — (Opcional) Forma trigonométrica de zw:</strong>
+          <div class="formula">zw = 6 (cos 110° + i sen 110°)</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> |zw| = 6; arg(zw) = 110°</p>
+      <p class="dica"><strong>Dica:</strong> multiplicar por i (ou por múltiplo positivo de i) sempre adiciona 90° ao argumento e multiplica o módulo por |w|.</p>
+    </div>
+    <div class="ans-box">Resposta: |zw| = 6; arg(zw) = 110°</div>
+  </div>
+
+  <div class="ex">
+    <div class="ex-header"><span class="ex-num">P8</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">conversão completa</span></div>
+    <div class="ex-q">Escreva z = −4i na forma trigonométrica e depois calcule z · (1/2 cis 45°) na forma algébrica.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> −4i está no semieixo imaginário negativo. Escrevemos a forma trigonométrica e usamos a regra do produto (módulos ×, argumentos +).</p>
+      <ol>
+        <li><strong>Passo 1 — Forma trigonométrica de z = −4i:</strong>
+          <div class="formula">ρ = |−4i| = 4; &nbsp; θ = 270° (ou −90°)</div>
+          <div class="formula">z = 4 (cos 270° + i sen 270°) = 4 cis 270°</div>
+          (Conferência: cos 270° = 0, sen 270° = −1 ⇒ 4(0 − i) = −4i ✓)
+        </li>
+        <li><strong>Passo 2 — Produto com (1/2) cis 45°:</strong>
+          <div class="formula">ρ_prod = 4 · (1/2) = 2</div>
+          <div class="formula">θ_prod = 270° + 45° = 315°</div>
+          <div class="formula">produto = 2 (cos 315° + i sen 315°)</div>
+        </li>
+        <li><strong>Passo 3 — Converter 315°:</strong> 315° = 360° − 45°, 4º quadrante.
+          <div class="formula">cos 315° = √2/2; &nbsp; sen 315° = −√2/2</div>
+        </li>
+        <li><strong>Passo 4 — Forma algébrica:</strong>
+          <div class="formula">2(√2/2 − i √2/2) = √2 − √2 i</div>
+        </li>
+      </ol>
+      <p class="ans"><strong>Resposta final:</strong> z = 4 cis 270°; produto = √2 − √2 i</p>
+      <p class="dica"><strong>Dica:</strong> após somar ângulos, se passar de 360°, reduza (mod 360°). Aqui 315° já está no intervalo [0°, 360°).</p>
+    </div>
+    <div class="ans-box">Resposta: z = 4 cis 270°; produto = √2 − √2 i</div>
+  </div>
+
+</div>
+
+<footer>B42 · Forma Trigonométrica · Pack Números Complexos · Versa Vol. 11</footer>
+
+<script>
+(function () {
+  const canvas = document.getElementById('polar');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const CX = W / 2, CY = H / 2;
+  const SCALE = 40;
+  const RANGE = 6;
+
+  let rho = 2, thDeg = 45;
+  let opRho = null, opTh = null, opLabel = '';
+
+  const slRho = document.getElementById('slRho');
+  const slTh = document.getElementById('slTh');
+  const liveVals = document.getElementById('liveVals');
+
+  function toC(x, y) { return [CX + x * SCALE, CY - y * SCALE]; }
+  function fmt(n, d) {
+    d = d === undefined ? 3 : d;
+    const r = Math.round(n * Math.pow(10, d)) / Math.pow(10, d);
+    return Object.is(r, -0) ? 0 : r;
+  }
+  function normDeg(t) {
+    t = t % 360;
+    if (t < 0) t += 360;
+    return t;
+  }
+  function aFrom() { return rho * Math.cos(thDeg * Math.PI / 180); }
+  function bFrom() { return rho * Math.sin(thDeg * Math.PI / 180); }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = '#1e2a3a';
+    ctx.lineWidth = 1;
+    for (let i = -RANGE; i <= RANGE; i++) {
+      ctx.beginPath();
+      let p = toC(i, -RANGE); ctx.moveTo(p[0], p[1]);
+      p = toC(i, RANGE); ctx.lineTo(p[0], p[1]);
+      p = toC(-RANGE, i); ctx.moveTo(p[0], p[1]);
+      p = toC(RANGE, i); ctx.lineTo(p[0], p[1]);
+      ctx.stroke();
+    }
+    // unit circles guide
+    ctx.strokeStyle = '#1a2838';
+    ctx.setLineDash([3, 3]);
+    for (let r = 1; r <= 5; r++) {
+      ctx.beginPath();
+      ctx.arc(CX, CY, r * SCALE, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    ctx.strokeStyle = '#5a6a80';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(20, CY); ctx.lineTo(W - 20, CY);
+    ctx.moveTo(CX, 20); ctx.lineTo(CX, H - 20);
+    ctx.stroke();
+    ctx.fillStyle = '#8b9bb4';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('Re', W - 38, CY + 18);
+    ctx.fillText('Im', CX + 8, 28);
+
+    // angle arc for z
+    if (rho > 0.05) {
+      ctx.strokeStyle = 'rgba(255,183,77,0.7)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const arcR = Math.min(rho * SCALE * 0.45, 50);
+      ctx.arc(CX, CY, arcR, 0, -thDeg * Math.PI / 180, true);
+      ctx.stroke();
+    }
+
+    // circle |z|=rho
+    ctx.strokeStyle = 'rgba(79,195,247,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(CX, CY, rho * SCALE, 0, Math.PI * 2);
+    ctx.stroke();
+
+    const ax = aFrom(), by = bFrom();
+    drawVec(0, 0, ax, by, '#4fc3f7', 'z');
+
+    if (opRho !== null) {
+      const ox = opRho * Math.cos(opTh * Math.PI / 180);
+      const oy = opRho * Math.sin(opTh * Math.PI / 180);
+      ctx.strokeStyle = 'rgba(129,199,132,0.3)';
+      ctx.beginPath();
+      ctx.arc(CX, CY, opRho * SCALE, 0, Math.PI * 2);
+      ctx.stroke();
+      drawVec(0, 0, ox, oy, '#81c784', opLabel || 'result');
+    }
+
+    document.getElementById('rhoLabel').textContent = fmt(rho, 2);
+    document.getElementById('thLabel').textContent = fmt(thDeg, 0);
+    document.getElementById('inpA').value = fmt(ax, 3);
+    document.getElementById('inpB').value = fmt(by, 3);
+    updateLive(ax, by);
+  }
+
+  function drawVec(x0, y0, x1, y1, color, label) {
+    const p0 = toC(x0, y0), p1 = toC(x1, y1);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(p0[0], p0[1]);
+    ctx.lineTo(p1[0], p1[1]);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(p1[0], p1[1], 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = color;
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(label, p1[0] + 10, p1[1] - 8);
+  }
+
+  function updateLive(ax, by) {
+    const sign = by >= 0 ? '+' : '−';
+    let opHtml = '';
+    if (opRho !== null) {
+      const ox = opRho * Math.cos(opTh * Math.PI / 180);
+      const oy = opRho * Math.sin(opTh * Math.PI / 180);
+      const os = oy >= 0 ? '+' : '−';
+      opHtml = '<div class="hl2">' + (opLabel || 'resultado') + ' = ' + fmt(opRho, 3) + ' cis ' + fmt(normDeg(opTh), 1) + '°</div>' +
+        '<div class="hl2">= ' + fmt(ox, 3) + ' ' + os + ' ' + fmt(Math.abs(oy), 3) + 'i</div>';
+    }
+    liveVals.innerHTML =
+      '<div class="hl2">z = ' + fmt(rho, 3) + ' (cos ' + fmt(thDeg, 1) + '° + i sen ' + fmt(thDeg, 1) + '°)</div>' +
+      '<div class="hl">z = ' + fmt(ax, 3) + ' ' + sign + ' ' + fmt(Math.abs(by), 3) + 'i</div>' +
+      '<div class="hl3">ρ = ' + fmt(rho, 3) + ' &nbsp; θ = ' + fmt(thDeg, 1) + '° = ' + fmt(thDeg * Math.PI / 180, 4) + ' rad</div>' +
+      opHtml;
+  }
+
+  function setPolar(r, t) {
+    rho = Math.max(0.1, r);
+    thDeg = normDeg(t);
+    slRho.value = Math.min(6, Math.max(0.5, rho));
+    slTh.value = Math.round(thDeg) % 360;
+    draw();
+  }
+
+  slRho.addEventListener('input', function () { rho = parseFloat(this.value); draw(); });
+  slTh.addEventListener('input', function () { thDeg = parseFloat(this.value); draw(); });
+
+  document.getElementById('btnFromAlg').addEventListener('click', function () {
+    const a = parseFloat(document.getElementById('inpA').value) || 0;
+    const b = parseFloat(document.getElementById('inpB').value) || 0;
+    const r = Math.sqrt(a * a + b * b);
+    let t = Math.atan2(b, a) * 180 / Math.PI;
+    if (t < 0) t += 360;
+    opRho = null;
+    setPolar(r || 0.1, t);
+  });
+
+  document.getElementById('btnRotI').addEventListener('click', function () {
+    animatePolar(rho, normDeg(thDeg + 90), 1200, function(){
+      opRho = rho; opTh = thDeg; opLabel = 'z (após ×i)';
+      draw();
+    });
+  });
+
+  document.getElementById('btnMulW').addEventListener('click', function () {
+    const wr = parseFloat(document.getElementById('wRho').value) || 1;
+    const wt = parseFloat(document.getElementById('wTh').value) || 0;
+    opRho = rho * wr;
+    opTh = normDeg(thDeg + wt);
+    opLabel = 'z·w';
+    draw();
+  });
+
+  document.getElementById('btnDivW').addEventListener('click', function () {
+    const wr = parseFloat(document.getElementById('wRho').value) || 1;
+    const wt = parseFloat(document.getElementById('wTh').value) || 0;
+    opRho = rho / wr;
+    opTh = normDeg(thDeg - wt);
+    opLabel = 'z/w';
+    draw();
+  });
+
+  document.getElementById('btnClearOp').addEventListener('click', function () {
+    opRho = null; opLabel = '';
+    draw();
+  });
+
+  document.getElementById('btnReset').addEventListener('click', function () {
+    opRho = null; opLabel = '';
+    setPolar(2, 45);
+  });
+
+
+  var animating = false;
+  function animatePolar(toRho, toTh, duration, onDone) {
+    if (animating) return;
+    animating = true;
+    var r0 = rho, t0 = thDeg;
+    // shortest angle path
+    var dTh = toTh - t0;
+    while (dTh > 180) dTh -= 360;
+    while (dTh < -180) dTh += 360;
+    var tStart = null;
+    function ease(t){ return t<0.5 ? 2*t*t : -1+(4-2*t)*t; }
+    function step(ts){
+      if (tStart===null) tStart = ts;
+      var u = Math.min(1, (ts - tStart) / duration);
+      var e = ease(u);
+      rho = r0 + (toRho - r0) * e;
+      thDeg = normDeg(t0 + dTh * e);
+      slRho.value = Math.min(6, Math.max(0.5, rho));
+      slTh.value = Math.round(thDeg) % 360;
+      draw();
+      if (u < 1) requestAnimationFrame(step);
+      else { animating = false; setPolar(toRho, toTh); if (onDone) onDone(); }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function animateProductMorph(wr, wt, duration) {
+    if (animating) return;
+    animating = true;
+    var r0 = rho, t0 = thDeg;
+    var targetR = rho * wr;
+    var targetT = normDeg(thDeg + wt);
+    var dTh = (thDeg + wt) - t0;
+    // keep continuous rotation
+    var tStart = null;
+    opLabel = 'z·w';
+    function ease(t){ return t<0.5 ? 2*t*t : -1+(4-2*t)*t; }
+    function step(ts){
+      if (tStart===null) tStart = ts;
+      var u = Math.min(1, (ts - tStart) / duration);
+      var e = ease(u);
+      opRho = r0 + (targetR - r0) * e;
+      opTh = normDeg(t0 + dTh * e);
+      draw();
+      if (u < 1) requestAnimationFrame(step);
+      else {
+        animating = false;
+        opRho = targetR; opTh = targetT; opLabel = 'z·w';
+        draw();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  document.getElementById('btnAnimI').addEventListener('click', function () {
+    animatePolar(rho, normDeg(thDeg + 90), 1200);
+  });
+  document.getElementById('btnAnimProd').addEventListener('click', function () {
+    var wr = parseFloat(document.getElementById('wRho').value);
+    var wt = parseFloat(document.getElementById('wTh').value);
+    if (!wr || isNaN(wr)) { wr = 1; wt = 90; document.getElementById('wRho').value = 1; document.getElementById('wTh').value = 90; }
+    if (isNaN(wt)) wt = 90;
+    animateProductMorph(wr, wt, 1600);
+  });
+
+
+  draw();
+})();
+</script>
+
+<script>
+/* Modo treino — shared */
+(function () {
+  var KEY = 'nc-modo-treino';
+  function loadPref() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v === null) return true;
+      return v === 'true';
+    } catch (e) { return true; }
+  }
+  function savePref(on) {
+    try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {}
+  }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal');
+    var btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) {
+    ex.classList.remove('collapsed');
+    ex.dataset.userRevealed = '1';
+    syncButtons(ex);
+  }
+  function hide(ex) {
+    ex.classList.add('collapsed');
+    delete ex.dataset.userRevealed;
+    syncButtons(ex);
+  }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner');
+    var chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) {
+        if (!ex.dataset.userRevealed) ex.classList.add('collapsed');
+      } else {
+        ex.classList.remove('collapsed');
+      }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var q = ex.querySelector('.ex-q');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (q) {
+          q.parentNode.insertBefore(box, q.nextSibling);
+          q.parentNode.insertBefore(row, box.nextSibling);
+        } else {
+          ex.insertBefore(row, ex.firstChild);
+          ex.insertBefore(box, row);
+        }
+      }
+      var br = ex.querySelector('.btn-reveal');
+      var bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) {
+      chk.checked = on;
+      chk.addEventListener('change', function () { setMode(chk.checked); });
+    }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) {
+          if (all.checked) reveal(ex); else hide(ex);
+        });
+      });
+    }
+    setMode(on);
+  });
+})();
+</script>
+
+
+<script>
+/* Animações embutidas nos exercícios geométricos */
+(function () {
+  function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+  function makePlane(canvas, range) {
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height, CX = W/2, CY = H/2;
+    var SCALE = (Math.min(W,H)/2 - 28) / range;
+    function toC(x,y){ return [CX + x*SCALE, CY - y*SCALE]; }
+    function clear(){ ctx.clearRect(0,0,W,H); }
+    function grid(){
+      clear();
+      ctx.strokeStyle = '#1e2a3a'; ctx.lineWidth = 1;
+      for (var i=-range;i<=range;i++){
+        ctx.beginPath();
+        var a=toC(i,-range), b=toC(i,range); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]);
+        a=toC(-range,i); b=toC(range,i); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = '#5a6a80'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(16,CY); ctx.lineTo(W-16,CY); ctx.moveTo(CX,16); ctx.lineTo(CX,H-16); ctx.stroke();
+      ctx.fillStyle = '#8b9bb4'; ctx.font = '11px sans-serif';
+      ctx.fillText('Re', W-30, CY+14); ctx.fillText('Im', CX+6, 24);
+    }
+    function point(x,y,col,lab){
+      var p=toC(x,y);
+      ctx.fillStyle=col; ctx.beginPath(); ctx.arc(p[0],p[1],6,0,Math.PI*2); ctx.fill();
+      if(lab){ ctx.fillStyle=col; ctx.font='bold 12px sans-serif'; ctx.fillText(lab,p[0]+8,p[1]-6); }
+    }
+    function vec(x,y,col){
+      var p=toC(x,y);
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(p[0],p[1]); ctx.stroke();
+    }
+    function circle(cx,cy,r,col,dash){
+      var p=toC(cx,cy);
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      if(dash) ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.arc(p[0],p[1],r*SCALE,0,Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    function line(x1,y1,x2,y2,col,w){
+      var a=toC(x1,y1), b=toC(x2,y2);
+      ctx.strokeStyle=col; ctx.lineWidth=w||2;
+      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+    }
+    function label(x,y,txt,col){
+      var p=toC(x,y); ctx.fillStyle=col||'#ffb74d'; ctx.font='11px sans-serif'; ctx.fillText(txt,p[0],p[1]);
+    }
+    function run(duration, frame){
+      var t0 = null;
+      function step(ts){
+        if(t0===null) t0=ts;
+        var u = Math.min(1, (ts-t0)/duration);
+        frame(ease(u), u);
+        if(u<1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    return {ctx:ctx,W:W,H:H,CX:CX,CY:CY,SCALE:SCALE,toC:toC,grid:grid,point:point,vec:vec,circle:circle,line:line,label:label,run:run,clear:clear};
+  }
+
+  // ---- B41 P04: |z|=3 ----
+  (function(){
+    var c = document.getElementById('anim-b41-p04');
+    var btn = document.getElementById('btn-anim-b41-p04');
+    if(!c||!btn) return;
+    var P = makePlane(c, 4);
+    function draw(r){ P.grid(); P.circle(0,0,r,'#81c784',true); P.point(0,0,'#8b9bb4','O'); if(r>0.05){ P.point(r,0,'#4fc3f7',''); P.label(r*0.55,0.35,'|z|='+r.toFixed(1),'#81c784'); } }
+    draw(0);
+    btn.addEventListener('click', function(){
+      P.run(1400, function(e){ draw(3*e); if(e>=1){ P.label(0,-3.5,'a² + b² = 9','#ffb74d'); } });
+    });
+  })();
+
+  // ---- B41 P05: rectangle ----
+  (function(){
+    var c = document.getElementById('anim-b41-p05');
+    var btn = document.getElementById('btn-anim-b41-p05');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    var pts = [[2,3],[2,-3],[-2,-3],[-2,3]];
+    var labs = ['z','z̄','−z','−z̄'];
+    var cols = ['#4fc3f7','#81c784','#ffb74d','#ce93d8'];
+    function draw(phase){
+      P.grid();
+      var nShow = Math.min(4, Math.floor(phase));
+      var frac = phase - nShow;
+      for(var i=0;i<nShow;i++){ P.vec(pts[i][0],pts[i][1],cols[i]); P.point(pts[i][0],pts[i][1],cols[i],labs[i]); }
+      if(nShow<4 && frac>0){
+        var p=pts[nShow]; P.vec(p[0],p[1],cols[nShow]); P.point(p[0],p[1],cols[nShow],labs[nShow]);
+      }
+      if(phase >= 4){
+        P.ctx.strokeStyle='rgba(79,195,247,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var a=P.toC(2,3); P.ctx.moveTo(a[0],a[1]);
+        [[-2,3],[-2,-3],[2,-3],[2,3]].forEach(function(q){ var t=P.toC(q[0],q[1]); P.ctx.lineTo(t[0],t[1]); });
+        P.ctx.stroke();
+      }
+      if(phase >= 5){
+        P.line(2,3,-2,3,'#ffb74d',3); P.label(0,3.5,'4','#ffb74d');
+        P.line(2,3,2,-3,'#ce93d8',3); P.label(2.4,0,'6','#ce93d8');
+      }
+      if(phase >= 6){ P.label(-1.5,-4.2,'Perímetro = 20','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){
+      P.run(3200, function(e){ draw(e*6.2); });
+    });
+  })();
+
+  // ---- B41 C02: rotate z to w, product ----
+  (function(){
+    var c = document.getElementById('anim-b41-c02');
+    var btn = document.getElementById('btn-anim-b41-c02');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    var z = [2,1], w = [-1,2], prod = [-4,3];
+    function rot(p, ang){
+      var c0=Math.cos(ang), s0=Math.sin(ang);
+      return [p[0]*c0 - p[1]*s0, p[0]*s0 + p[1]*c0];
+    }
+    function draw(t){
+      P.grid();
+      P.vec(z[0],z[1],'#4fc3f7'); P.point(z[0],z[1],'#4fc3f7','z');
+      if(t < 0.45){
+        var ang = (t/0.45) * Math.PI/2;
+        var cur = rot(z, ang);
+        P.vec(cur[0],cur[1],'#81c784'); P.point(cur[0],cur[1],'#81c784','w');
+        // angle arc
+        P.ctx.strokeStyle='rgba(255,183,77,0.8)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,28, -Math.atan2(z[1],z[0]), -Math.atan2(z[1],z[0])-ang, true); P.ctx.stroke();
+      } else {
+        P.vec(w[0],w[1],'#81c784'); P.point(w[0],w[1],'#81c784','w');
+        // flash right angle
+        if(t < 0.6){
+          var flash = (Math.sin(t*40)+1)/2;
+          P.ctx.strokeStyle='rgba(255,183,77,'+(0.4+0.6*flash)+')'; P.ctx.lineWidth=3;
+          var zz=P.toC(z[0]*0.25,z[1]*0.25), ww=P.toC(w[0]*0.25,w[1]*0.25);
+          var corner=P.toC(z[0]*0.25+w[0]*0.25, z[1]*0.25+w[1]*0.25);
+          P.ctx.beginPath(); P.ctx.moveTo(zz[0],zz[1]); P.ctx.lineTo(corner[0],corner[1]); P.ctx.lineTo(ww[0],ww[1]); P.ctx.stroke();
+          P.label(0.6,0.9,'90°','#ffb74d');
+        }
+        if(t >= 0.65){
+          var u = Math.min(1,(t-0.65)/0.35);
+          P.vec(prod[0]*u, prod[1]*u, '#ffb74d');
+          if(u>0.2) P.point(prod[0]*u, prod[1]*u, '#ffb74d', 'zw');
+        }
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2800, function(e){ draw(e); }); });
+  })();
+
+  // ---- B41 C04: circle center (2,1) r=5 ----
+  (function(){
+    var c = document.getElementById('anim-b41-c04');
+    var btn = document.getElementById('btn-anim-b41-c04');
+    if(!c||!btn) return;
+    var P = makePlane(c, 8);
+    function draw(r){
+      P.grid();
+      P.point(2,1,'#ce93d8','z₀');
+      P.circle(2,1,r,'#ce93d8',true);
+      if(r>0.1){ P.line(2,1,2+r,1,'#ffb74d',1.5); P.label(2+r*0.5,1.5,'r='+r.toFixed(1),'#ffb74d'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1400, function(e){ draw(5*e); }); });
+  })();
+
+  // ---- B41 C05: (1+i)^n ray to 16+16i ----
+  (function(){
+    var c = document.getElementById('anim-b41-c05');
+    var btn = document.getElementById('btn-anim-b41-c05');
+    if(!c||!btn) return;
+    var P = makePlane(c, 20);
+    function draw(nFrac){
+      P.grid();
+      var rho0 = Math.SQRT2, th0 = Math.PI/4;
+      var n = Math.max(0, nFrac);
+      var rho = Math.pow(rho0, n);
+      var th = th0 * n;
+      // show intermediate powers as dots
+      for(var k=1;k<=Math.min(9,Math.floor(n));k++){
+        var rk=Math.pow(rho0,k), tk=th0*k;
+        P.point(rk*Math.cos(tk), rk*Math.sin(tk), k===9?'#ffb74d':'#4fc3f7', k===1?'1+i':(k===9?'(1+i)⁹':''));
+      }
+      if(n>0){
+        P.vec(rho*Math.cos(th), rho*Math.sin(th), '#81c784');
+        P.point(rho*Math.cos(th), rho*Math.sin(th), '#81c784', '');
+      }
+      if(nFrac>=9){ P.label(10,18,'16+16i','#ffb74d'); P.label(8,16,'d=16√2','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2600, function(e){ draw(e*9); }); });
+  })();
+
+  // ---- B41 C06: circle (2,0) r=2 exclude O ----
+  (function(){
+    var c = document.getElementById('anim-b41-c06');
+    var btn = document.getElementById('btn-anim-b41-c06');
+    if(!c||!btn) return;
+    var P = makePlane(c, 5);
+    function draw(r, showX){
+      P.grid();
+      P.point(2,0,'#ce93d8','(2,0)');
+      P.circle(2,0,r,'#81c784',true);
+      if(showX){
+        var o=P.toC(0,0);
+        P.ctx.strokeStyle='#ef5350'; P.ctx.lineWidth=3;
+        P.ctx.beginPath(); P.ctx.moveTo(o[0]-8,o[1]-8); P.ctx.lineTo(o[0]+8,o[1]+8);
+        P.ctx.moveTo(o[0]+8,o[1]-8); P.ctx.lineTo(o[0]-8,o[1]+8); P.ctx.stroke();
+        P.label(0.4,-0.7,'origem excluída','#ef5350');
+      }
+    }
+    draw(0,false);
+    btn.addEventListener('click', function(){
+      P.run(1600, function(e){ draw(2*Math.min(1,e/0.7), e>0.75); });
+    });
+  })();
+
+  // ---- B42 P1: polar −√3+i ----
+  (function(){
+    var c = document.getElementById('anim-b42-p1');
+    var btn = document.getElementById('btn-anim-b42-p1');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var a=-Math.sqrt(3), b=1, rho=2, th=150*Math.PI/180;
+    function draw(u){
+      P.grid();
+      P.circle(0,0,rho*u,'rgba(79,195,247,0.35)',true);
+      if(u>0.2){
+        var ang = th * Math.min(1,(u-0.2)/0.6);
+        P.ctx.strokeStyle='rgba(255,183,77,0.8)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,30,0,-ang,true); P.ctx.stroke();
+        P.vec(rho*Math.cos(ang), rho*Math.sin(ang), '#4fc3f7');
+        P.point(rho*Math.cos(ang), rho*Math.sin(ang), '#4fc3f7', 'z');
+      }
+      if(u>=1){ P.label(-1.2,2.2,'2 cis 150°','#81c784'); }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1800, function(e){ draw(e); }); });
+  })();
+
+  // ---- B42 P3: product dilate+rotate ----
+  (function(){
+    var c = document.getElementById('anim-b42-p3');
+    var btn = document.getElementById('btn-anim-b42-p3');
+    if(!c||!btn) return;
+    var P = makePlane(c, 7);
+    // z1: rho=2 th=40; zw: rho=6 th=120
+    function draw(u){
+      P.grid();
+      var r0=2, t0=40*Math.PI/180, r1=6, t1=120*Math.PI/180;
+      P.vec(r0*Math.cos(t0), r0*Math.sin(t0), '#4fc3f7');
+      P.point(r0*Math.cos(t0), r0*Math.sin(t0), '#4fc3f7', 'z₁');
+      var r = r0 + (r1-r0)*u;
+      var t = t0 + (t1-t0)*u;
+      P.vec(r*Math.cos(t), r*Math.sin(t), '#81c784');
+      P.point(r*Math.cos(t), r*Math.sin(t), '#81c784', u>0.05?'z₁z₂':'');
+      P.circle(0,0,r,'rgba(129,199,132,0.25)',true);
+      if(u>=1) P.label(1,5.5,'×3 e +80°','#ffb74d');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2000, function(e){ draw(e); }); });
+  })();
+
+  // ---- B42 P6: clockwise rotation ----
+  (function(){
+    var c = document.getElementById('anim-b42-p6');
+    var btn = document.getElementById('btn-anim-b42-p6');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var r=2, t0=60*Math.PI/180, t1=-30*Math.PI/180;
+    function draw(u){
+      P.grid();
+      P.vec(r*Math.cos(t0), r*Math.sin(t0), '#4fc3f7');
+      P.point(r*Math.cos(t0), r*Math.sin(t0), '#4fc3f7', 'z');
+      var t = t0 + (t1-t0)*u;
+      P.vec(r*Math.cos(t), r*Math.sin(t), '#81c784');
+      P.point(r*Math.cos(t), r*Math.sin(t), '#81c784', '−i·z');
+      P.ctx.strokeStyle='rgba(255,183,77,0.7)'; P.ctx.lineWidth=2;
+      P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,36,-t0,-t,false); P.ctx.stroke();
+      if(u>=1) P.label(1.2,-1.5,'√3 − i','#ffb74d');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(1600, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P1: (1+i)^6 ----
+  (function(){
+    var c = document.getElementById('anim-b43-p1');
+    var btn = document.getElementById('btn-anim-b43-p1');
+    if(!c||!btn) return;
+    var P = makePlane(c, 9);
+    function draw(u){
+      P.grid();
+      var rho0=Math.SQRT2, th0=Math.PI/4;
+      var n=6*u;
+      var rho=Math.pow(rho0,n), th=th0*n;
+      P.vec(rho0*Math.cos(th0), rho0*Math.sin(th0), '#4fc3f7');
+      P.point(rho0*Math.cos(th0), rho0*Math.sin(th0), '#4fc3f7', 'z');
+      P.circle(0,0,rho,'rgba(255,183,77,0.3)',true);
+      P.vec(rho*Math.cos(th), rho*Math.sin(th), '#ffb74d');
+      P.point(rho*Math.cos(th), rho*Math.sin(th), '#ffb74d', 'zⁿ');
+      // sweeping ray indicator
+      P.ctx.strokeStyle='rgba(255,183,77,0.5)'; P.ctx.lineWidth=1;
+      P.ctx.beginPath(); P.ctx.arc(P.CX,P.CY,40,0,-th,true); P.ctx.stroke();
+      if(u>=1) P.label(0.5,-7.5,'−8i','#81c784');
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2200, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P3: cube roots of 8 ----
+  (function(){
+    var c = document.getElementById('anim-b43-p3');
+    var btn = document.getElementById('btn-anim-b43-p3');
+    if(!c||!btn) return;
+    var P = makePlane(c, 3);
+    var roots=[[2,0],[-1,Math.sqrt(3)],[-1,-Math.sqrt(3)]];
+    var cols=['#4fc3f7','#81c784','#ffb74d'];
+    function draw(u){
+      P.grid();
+      P.circle(0,0,2,'rgba(129,199,132,0.4)',true);
+      var nShow = Math.min(3, Math.floor(u*3.2));
+      for(var i=0;i<nShow;i++){
+        P.vec(roots[i][0],roots[i][1],cols[i]);
+        P.point(roots[i][0],roots[i][1],cols[i],'z'+i);
+      }
+      if(u>=0.85){
+        P.ctx.strokeStyle='rgba(129,199,132,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var p0=P.toC(roots[0][0],roots[0][1]); P.ctx.moveTo(p0[0],p0[1]);
+        for(var j=1;j<3;j++){ var p=P.toC(roots[j][0],roots[j][1]); P.ctx.lineTo(p[0],p[1]); }
+        P.ctx.closePath(); P.ctx.stroke();
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2400, function(e){ draw(e); }); });
+  })();
+
+  // ---- B43 P5: roots of unity ----
+  (function(){
+    var c = document.getElementById('anim-b43-p5');
+    var btn = document.getElementById('btn-anim-b43-p5');
+    if(!c||!btn) return;
+    var P = makePlane(c, 2);
+    var roots=[[1,0],[-0.5,Math.sqrt(3)/2],[-0.5,-Math.sqrt(3)/2]];
+    var labs=['1','ω','ω²'];
+    var cols=['#4fc3f7','#81c784','#ffb74d'];
+    function draw(u){
+      P.grid();
+      P.circle(0,0,1,'rgba(129,199,132,0.45)',true);
+      var nShow=Math.min(3,Math.floor(u*3.5));
+      for(var i=0;i<nShow;i++){
+        P.vec(roots[i][0],roots[i][1],cols[i]);
+        P.point(roots[i][0],roots[i][1],cols[i],labs[i]);
+      }
+      if(u>=0.9){
+        P.ctx.strokeStyle='rgba(206,147,216,0.7)'; P.ctx.lineWidth=2;
+        P.ctx.beginPath();
+        var p0=P.toC(roots[0][0],roots[0][1]); P.ctx.moveTo(p0[0],p0[1]);
+        for(var j=1;j<3;j++){ var p=P.toC(roots[j][0],roots[j][1]); P.ctx.lineTo(p[0],p[1]); }
+        P.ctx.closePath(); P.ctx.stroke();
+        P.label(-0.3,-1.6,'1+ω+ω²=0','#ce93d8');
+      }
+    }
+    draw(0);
+    btn.addEventListener('click', function(){ P.run(2200, function(e){ draw(e); }); });
+  })();
+})();
+</script>
+
+</body>
+</html>
