@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revisão — Seno, cosseno e tangente | Números Complexos</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --danger: #ef5350; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent4); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent4); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent4); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent4); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+  cursor: crosshair; touch-action: none;
+}
+.controls { display: flex; flex-direction: column; gap: 0.7rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent4); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent4); }
+button.primary { background: #6a1b9a; border-color: var(--accent4); color: #fff; }
+button.angle-btn { padding: 0.3rem 0.55rem; font-size: 0.78rem; }
+button.angle-btn.active-angle { border-color: var(--accent4); background: rgba(206,147,216,.2); color: var(--accent4); }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-size: 0.92rem;
+}
+.live-vals div { margin: 0.25rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow); overflow: hidden;
+}
+.theory-card h3 { margin-top: 0; color: var(--accent4); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent4); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
+}
+.explain {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 0 0 1.5rem; box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent4); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent4); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans { color: var(--accent2); }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(206,147,216,.15); color: var(--accent4);
+  border: 1px solid rgba(206,147,216,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps,
+.ex.collapsed .ans-box { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+table.values {
+  width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 0.5rem;
+}
+table.values th, table.values td {
+  border: 1px solid var(--border); padding: 0.45rem 0.55rem; text-align: center;
+}
+table.values th { background: var(--surface2); color: var(--accent3); }
+table.values td { color: var(--muted); }
+.quad-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;
+}
+.quad-cell {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.55rem 0.7rem; font-size: 0.85rem; color: var(--muted);
+}
+.quad-cell strong { color: var(--text); display: block; margin-bottom: 0.2rem; }
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ans .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+.hl .katex, .hl2 .katex, .hl3 .katex, .hl4 .katex { color: inherit; }
+</style>
+
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">ℂ Números Complexos</span>
+  <a href="index.html">Início</a>
+  <a href="revisao-trigonometria.html" class="active">Revisão trig.</a>
+  <a href="b41-representacao.html">B41 Representação</a>
+  <a href="b42-forma-trigonometrica.html">B42 Forma Trig.</a>
+  <a href="b43-moivre.html">B43 Moivre</a>
+</nav>
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+  <h1>Revisão — Seno, cosseno e tangente</h1>
+  <p class="subtitle">Prep antes de B41–B43 · círculo unitário · valores exatos · sinais por quadrante · graus ↔ radianos · ponte para a forma polar</p>
+
+  <!-- ===== (A) PLAYGROUND ===== -->
+  <span class="section-label">(A) Playground interativo</span>
+  <div class="playground">
+    <div class="play-grid">
+      <div>
+        <canvas id="unitCircle" width="560" height="560" aria-label="Círculo unitário interativo: arraste para escolher o ângulo"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem;font-style:normal">
+          <span class="hl">azul = cos</span> &nbsp;|&nbsp; <span class="hl2">verde = sen</span> &nbsp;|&nbsp; <span class="hl3">âmbar = raio</span> &nbsp;|&nbsp; clique/arraste no canvas
+        </p>
+      </div>
+      <div class="controls">
+        <label for="slTh">$\theta$ (graus) = <span id="thLabel" class="hl4">45</span>°</label>
+        <input type="range" id="slTh" min="0" max="360" step="1" value="45" aria-label="Ângulo em graus">
+        <div class="ctrl-row">
+          <label for="inpTh">ou</label>
+          <input type="number" id="inpTh" value="45" min="0" max="360" step="1" style="width:80px" aria-label="Ângulo numérico em graus">
+          <label><input type="checkbox" id="chkRad" style="width:14px;height:14px;accent-color:var(--accent4)"> mostrar radianos</label>
+        </div>
+        <div class="ctrl-row" id="angleBtns" style="gap:0.35rem" role="group" aria-label="Ângulos especiais"></div>
+        <div class="live-vals" id="liveVals" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== (B) EM PALAVRAS ===== -->
+  <span class="section-label">(B) Em palavras</span>
+  <div class="explain">
+    <p class="lead">Antes de escrever um complexo na forma polar, você precisa dominar seno, cosseno e tangente — no triângulo retângulo e no círculo unitário. Este módulo é a preparação para B41–B43.</p>
+    <p><strong>No triângulo retângulo:</strong> se $\theta$ é um ângulo agudo, o cateto <em>oposto</em> a $\theta$, o cateto <em>adjacente</em> e a hipotenusa definem
+    $$\operatorname{sen}\theta = \dfrac{\text{oposto}}{\text{hipotenusa}},\quad
+      \cos\theta = \dfrac{\text{adjacente}}{\text{hipotenusa}},\quad
+      \tan\theta = \dfrac{\text{oposto}}{\text{adjacente}}.$$</p>
+    <p><strong>No círculo unitário</strong> (raio $1$, centro na origem): o ponto $P$ na extremidade do raio que forma ângulo $\theta$ com o eixo real positivo (sentido anti-horário) tem coordenadas
+    $$P = \bigl(\cos\theta,\;\operatorname{sen}\theta\bigr).$$
+    A projeção horizontal é o cosseno; a vertical é o seno. Assim, seno e cosseno passam a fazer sentido para <em>qualquer</em> ângulo — não só os agudos.</p>
+    <p><strong>Sinais por quadrante:</strong> no 1º todos são positivos; no 2º só o seno; no 3º só a tangente; no 4º só o cosseno. Um mnemônico brasileiro: <em>“todos os senhores comem tatu”</em> (Todos · Sen · Cos · Tan), lendo os quadrantes no sentido anti-horário a partir do 1º.</p>
+    <p><strong>Identidade fundamental:</strong> $\operatorname{sen}^{2}\theta + \cos^{2}\theta = 1$ (Pitágoras no círculo unitário). E $\tan\theta = \operatorname{sen}\theta / \cos\theta$, indefinida quando $\cos\theta = 0$ (isto é, $\theta = 90^{\circ}$ ou $270^{\circ}$, etc.).</p>
+    <p><strong>Ponte para complexos:</strong> no plano de Argand-Gauss, se $z = \rho\bigl(\cos\theta + i\operatorname{sen}\theta\bigr)$, então a parte real é $\rho\cos\theta$ e a imaginária é $\rho\operatorname{sen}\theta$. Você vai encontrar isso no B42; aqui o objetivo é deixar seno e cosseno “na ponta da língua”.</p>
+  </div>
+
+  <!-- ===== (C) FÓRMULAS / TABELAS ===== -->
+  <span class="section-label">(C) Fórmulas / tabelas</span>
+  <div class="theory-grid">
+    <div class="theory-card">
+      <h3>Definições no triângulo</h3>
+      <div class="formula">$$\operatorname{sen}\theta = \dfrac{\mathrm{op}}{\mathrm{hip}}$$</div>
+      <div class="formula">$$\cos\theta = \dfrac{\mathrm{adj}}{\mathrm{hip}}$$</div>
+      <div class="formula">$$\tan\theta = \dfrac{\mathrm{op}}{\mathrm{adj}} = \dfrac{\operatorname{sen}\theta}{\cos\theta}$$</div>
+    </div>
+    <div class="theory-card">
+      <h3>Círculo unitário</h3>
+      <p>Raio $1$, $\theta$ a partir do eixo $x$ positivo, anti-horário:</p>
+      <div class="formula">$$P(\theta) = \bigl(\cos\theta,\;\operatorname{sen}\theta\bigr)$$</div>
+      <div class="formula">$$\operatorname{sen}^{2}\theta + \cos^{2}\theta = 1$$</div>
+    </div>
+    <div class="theory-card">
+      <h3>Valores exatos (0°–90°)</h3>
+      <table class="values" aria-label="Tabela de valores exatos">
+        <thead>
+          <tr><th>$\theta$</th><th>$\operatorname{sen}$</th><th>$\cos$</th><th>$\tan$</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>$0^{\circ}$</td><td>$0$</td><td>$1$</td><td>$0$</td></tr>
+          <tr><td>$30^{\circ}$</td><td>$\tfrac{1}{2}$</td><td>$\tfrac{\sqrt{3}}{2}$</td><td>$\tfrac{1}{\sqrt{3}}$</td></tr>
+          <tr><td>$45^{\circ}$</td><td>$\tfrac{\sqrt{2}}{2}$</td><td>$\tfrac{\sqrt{2}}{2}$</td><td>$1$</td></tr>
+          <tr><td>$60^{\circ}$</td><td>$\tfrac{\sqrt{3}}{2}$</td><td>$\tfrac{1}{2}$</td><td>$\sqrt{3}$</td></tr>
+          <tr><td>$90^{\circ}$</td><td>$1$</td><td>$0$</td><td>indef.</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:0.5rem">Nos outros quadrantes, use o ângulo de referência e o sinal ASTC.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Sinais por quadrante (ASTC)</h3>
+      <div class="quad-grid">
+        <div class="quad-cell"><strong>II · Sen</strong>$\operatorname{sen}>0$ · $\cos&lt;0$ · $\tan&lt;0$</div>
+        <div class="quad-cell"><strong>I · Todos</strong>$\operatorname{sen}>0$ · $\cos>0$ · $\tan>0$</div>
+        <div class="quad-cell"><strong>III · Tan</strong>$\operatorname{sen}&lt;0$ · $\cos&lt;0$ · $\tan>0$</div>
+        <div class="quad-cell"><strong>IV · Cos</strong>$\operatorname{sen}&lt;0$ · $\cos>0$ · $\tan&lt;0$</div>
+      </div>
+      <p style="margin-top:0.55rem"><em>Todos os senhores comem tatu</em> (I→II→III→IV).</p>
+    </div>
+    <div class="theory-card">
+      <h3>Graus ↔ radianos</h3>
+      <table class="values" aria-label="Conversão graus radianos">
+        <thead><tr><th>graus</th><th>radianos</th></tr></thead>
+        <tbody>
+          <tr><td>$0^{\circ}$</td><td>$0$</td></tr>
+          <tr><td>$30^{\circ}$</td><td>$\pi/6$</td></tr>
+          <tr><td>$45^{\circ}$</td><td>$\pi/4$</td></tr>
+          <tr><td>$60^{\circ}$</td><td>$\pi/3$</td></tr>
+          <tr><td>$90^{\circ}$</td><td>$\pi/2$</td></tr>
+          <tr><td>$180^{\circ}$</td><td>$\pi$</td></tr>
+          <tr><td>$270^{\circ}$</td><td>$3\pi/2$</td></tr>
+          <tr><td>$360^{\circ}$</td><td>$2\pi$</td></tr>
+        </tbody>
+      </table>
+      <div class="formula">$$\theta_{\mathrm{rad}} = \theta_{\mathrm{grau}}\cdot\dfrac{\pi}{180}$$</div>
+    </div>
+    <div class="theory-card">
+      <h3>Ponte para $z$ polar</h3>
+      <p>No Argand-Gauss, com módulo $\rho$ e argumento $\theta$:</p>
+      <div class="formula">$$z = \rho\bigl(\cos\theta + i\operatorname{sen}\theta\bigr)$$</div>
+      <div class="formula">$$\mathrm{Re}(z)=\rho\cos\theta,\quad \mathrm{Im}(z)=\rho\operatorname{sen}\theta$$</div>
+      <p>Isso é o coração do <strong>B42</strong>. Aqui você só revisa $\operatorname{sen}$ e $\cos$.</p>
+    </div>
+  </div>
+
+  <!-- ===== (D) EXERCÍCIOS ===== -->
+  <h2>📐 (D) Exercícios curtos de prática</h2>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.9rem">Sete exercícios rápidos para fixar o que o B42 vai usar. <span class="badge-pratica">Revisão trig.</span></p>
+  <p class="note" style="font-style:normal;margin-bottom:1rem">Cada resolução começa pela ideia e segue passo a passo.</p>
+
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+  <div class="ex" id="rev-p1">
+    <div class="ex-header"><span class="ex-num">P1</span><span class="ex-src">Triângulo retângulo</span><span class="badge-pratica">def.</span></div>
+    <p class="ex-q">Num triângulo retângulo, o cateto oposto a $\theta$ mede $3$ e a hipotenusa mede $5$. Calcule $\operatorname{sen}\theta$, $\cos\theta$ e $\tan\theta$.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> aplicar as definições; achar o adjacente por Pitágoras.</p>
+      <ol>
+        <li>$\operatorname{sen}\theta = \dfrac{\mathrm{op}}{\mathrm{hip}} = \dfrac{3}{5}$.</li>
+        <li>Adjacente: $\sqrt{5^{2}-3^{2}} = \sqrt{16} = 4$.</li>
+        <li>$\cos\theta = \dfrac{4}{5}$ e $\tan\theta = \dfrac{3}{4}$.</li>
+      </ol>
+    </div>
+    <div class="ans-box">$\operatorname{sen}\theta=\dfrac{3}{5}$, $\cos\theta=\dfrac{4}{5}$, $\tan\theta=\dfrac{3}{4}$</div>
+  </div>
+
+  <div class="ex" id="rev-p2">
+    <div class="ex-header"><span class="ex-num">P2</span><span class="ex-src">Valores exatos</span><span class="badge-pratica">tabela</span></div>
+    <p class="ex-q">Escreva os valores exatos de $\operatorname{sen}30^{\circ}$, $\cos 45^{\circ}$ e $\tan 60^{\circ}$.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> consultar (ou decorar) a tabela clássica $0^{\circ}$–$90^{\circ}$.</p>
+      <ol>
+        <li>$\operatorname{sen}30^{\circ} = \dfrac{1}{2}$.</li>
+        <li>$\cos 45^{\circ} = \dfrac{\sqrt{2}}{2}$.</li>
+        <li>$\tan 60^{\circ} = \sqrt{3}$.</li>
+      </ol>
+    </div>
+    <div class="ans-box">$\dfrac{1}{2}$, $\dfrac{\sqrt{2}}{2}$, $\sqrt{3}$</div>
+  </div>
+
+  <div class="ex" id="rev-p3">
+    <div class="ex-header"><span class="ex-num">P3</span><span class="ex-src">Sinais / quadrantes</span><span class="badge-pratica">ASTC</span></div>
+    <p class="ex-q">Determine o sinal de $\operatorname{sen}150^{\circ}$, $\cos 150^{\circ}$ e $\tan 150^{\circ}$. Em seguida, dê os valores exatos.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> $150^{\circ}$ está no 2º quadrante (só seno positivo). Ângulo de referência: $180^{\circ}-150^{\circ}=30^{\circ}$.</p>
+      <ol>
+        <li>Sinais: $\operatorname{sen}>0$, $\cos&lt;0$, $\tan&lt;0$.</li>
+        <li>$\operatorname{sen}150^{\circ} = \operatorname{sen}30^{\circ} = \dfrac{1}{2}$.</li>
+        <li>$\cos 150^{\circ} = -\cos 30^{\circ} = -\dfrac{\sqrt{3}}{2}$.</li>
+        <li>$\tan 150^{\circ} = -\tan 30^{\circ} = -\dfrac{1}{\sqrt{3}}$.</li>
+      </ol>
+    </div>
+    <div class="ans-box">$\dfrac{1}{2}$, $-\dfrac{\sqrt{3}}{2}$, $-\dfrac{1}{\sqrt{3}}$</div>
+  </div>
+
+  <div class="ex" id="rev-p4">
+    <div class="ex-header"><span class="ex-num">P4</span><span class="ex-src">Identidade</span><span class="badge-pratica">Pitágoras</span></div>
+    <p class="ex-q">Sabendo que $\cos\theta = -\dfrac{3}{5}$ e que $\theta$ está no 3º quadrante, calcule $\operatorname{sen}\theta$ e $\tan\theta$.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> usar $\operatorname{sen}^{2}+\cos^{2}=1$ e o sinal do 3º quadrante.</p>
+      <ol>
+        <li>$\operatorname{sen}^{2}\theta = 1 - \left(-\dfrac{3}{5}\right)^{2} = 1 - \dfrac{9}{25} = \dfrac{16}{25}$.</li>
+        <li>No 3º quadrante, $\operatorname{sen}&lt;0$, logo $\operatorname{sen}\theta = -\dfrac{4}{5}$.</li>
+        <li>$\tan\theta = \dfrac{\operatorname{sen}}{\cos} = \dfrac{-4/5}{-3/5} = \dfrac{4}{3}$ (positivo, como esperado no 3º).</li>
+      </ol>
+    </div>
+    <div class="ans-box">$\operatorname{sen}\theta=-\dfrac{4}{5}$, $\tan\theta=\dfrac{4}{3}$</div>
+  </div>
+
+  <div class="ex" id="rev-p5">
+    <div class="ex-header"><span class="ex-num">P5</span><span class="ex-src">Tangente indefinida</span><span class="badge-pratica">cuidado</span></div>
+    <p class="ex-q">Para quais dos ângulos $0^{\circ}$, $90^{\circ}$, $180^{\circ}$, $270^{\circ}$ a tangente é indefinida? Justifique.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> $\tan\theta=\operatorname{sen}\theta/\cos\theta$ falha quando $\cos\theta=0$.</p>
+      <ol>
+        <li>$\cos 0^{\circ}=1$, $\cos 180^{\circ}=-1$ → $\tan$ definida ($0$ e $0$).</li>
+        <li>$\cos 90^{\circ}=0$ e $\cos 270^{\circ}=0$ → $\tan$ indefinida.</li>
+      </ol>
+      <div class="dica">No playground, leve o slider a $90^{\circ}$ ou $270^{\circ}$ e veja a leitura “indefinida”.</div>
+    </div>
+    <div class="ans-box">Indefinida em $90^{\circ}$ e $270^{\circ}$</div>
+  </div>
+
+  <div class="ex" id="rev-p6">
+    <div class="ex-header"><span class="ex-num">P6</span><span class="ex-src">Graus ↔ radianos</span><span class="badge-pratica">conversão</span></div>
+    <p class="ex-q">Converta $120^{\circ}$ para radianos e $\dfrac{3\pi}{2}$ para graus.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> multiplicar/dividir por $\pi/180$.</p>
+      <ol>
+        <li>$120^{\circ}\cdot\dfrac{\pi}{180} = \dfrac{2\pi}{3}$.</li>
+        <li>$\dfrac{3\pi}{2}\cdot\dfrac{180}{\pi} = 270^{\circ}$.</li>
+      </ol>
+    </div>
+    <div class="ans-box">$\dfrac{2\pi}{3}$ e $270^{\circ}$</div>
+  </div>
+
+  <div class="ex" id="rev-p7">
+    <div class="ex-header"><span class="ex-num">P7</span><span class="ex-src">Ponte para complexos</span><span class="badge-pratica">B42 prep</span></div>
+    <p class="ex-q">Para $z = 2\bigl(\cos 60^{\circ} + i\operatorname{sen}60^{\circ}\bigr)$, calcule $\mathrm{Re}(z)$ e $\mathrm{Im}(z)$. Escreva também $z$ na forma $a+bi$.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> $\mathrm{Re}=\rho\cos\theta$, $\mathrm{Im}=\rho\operatorname{sen}\theta$ com $\rho=2$ e $\theta=60^{\circ}$.</p>
+      <ol>
+        <li>$\cos 60^{\circ}=\dfrac{1}{2}$ → $\mathrm{Re}(z)=2\cdot\dfrac{1}{2}=1$.</li>
+        <li>$\operatorname{sen}60^{\circ}=\dfrac{\sqrt{3}}{2}$ → $\mathrm{Im}(z)=2\cdot\dfrac{\sqrt{3}}{2}=\sqrt{3}$.</li>
+        <li>Logo $z = 1 + i\sqrt{3}$.</li>
+      </ol>
+      <div class="dica">No B42 você fará o caminho inverso (algébrica → polar) o tempo todo.</div>
+    </div>
+    <div class="ans-box">$\mathrm{Re}=1$, $\mathrm{Im}=\sqrt{3}$, $z=1+i\sqrt{3}$</div>
+  </div>
+
+</div>
+
+<footer>
+  Pack didático offline · Revisão trig. · prep B41–B43 · Versa Vol. 11 · Colégio Stella Maris · 3º EM
+</footer>
+
+<script>
+/* ===== Playground: círculo unitário ===== */
+(function () {
+  var canvas = document.getElementById('unitCircle');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var CX = W / 2, CY = H / 2;
+  var R = Math.min(W, H) * 0.38;
+  var thetaDeg = 45;
+  var dragging = false;
+  var showRad = false;
+
+  var SPECIAL = [0, 30, 45, 60, 90, 120, 135, 150, 180, 270, 360];
+  var btnBox = document.getElementById('angleBtns');
+  SPECIAL.forEach(function (a) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'angle-btn';
+    b.textContent = a + '°';
+    b.setAttribute('aria-label', 'Definir ângulo ' + a + ' graus');
+    b.addEventListener('click', function () { setTheta(a); });
+    btnBox.appendChild(b);
+  });
+
+  function toCanvas(x, y) {
+    return [CX + x * R, CY - y * R];
+  }
+  function fromEvent(e) {
+    var rect = canvas.getBoundingClientRect();
+    var sx = (e.clientX - rect.left) * (W / rect.width);
+    var sy = (e.clientY - rect.top) * (H / rect.height);
+    var x = (sx - CX) / R;
+    var y = (CY - sy) / R;
+    var ang = Math.atan2(y, x); // [-pi, pi], math convention
+    var deg = ang * 180 / Math.PI;
+    if (deg < 0) deg += 360;
+    return deg;
+  }
+  function normDeg(d) {
+    d = d % 360;
+    if (d < 0) d += 360;
+    return d;
+  }
+  function quadrant(d) {
+    d = normDeg(d);
+    if (d === 0 || d === 360) return 'eixo +x (limite I/IV)';
+    if (d === 90) return 'eixo +y (limite I/II)';
+    if (d === 180) return 'eixo −x (limite II/III)';
+    if (d === 270) return 'eixo −y (limite III/IV)';
+    if (d > 0 && d < 90) return '1º quadrante';
+    if (d > 90 && d < 180) return '2º quadrante';
+    if (d > 180 && d < 270) return '3º quadrante';
+    return '4º quadrante';
+  }
+  function refAngle(d) {
+    d = normDeg(d);
+    if (d <= 90) return d;
+    if (d <= 180) return 180 - d;
+    if (d <= 270) return d - 180;
+    return 360 - d;
+  }
+  function fmt(n) {
+    if (Math.abs(n) < 1e-10) return '0';
+    var r = Math.round(n * 1000) / 1000;
+    return String(r);
+  }
+  function exactOrNum(deg, kind) {
+    // kind: 'cos' | 'sen' | 'tan'
+    var table = {
+      0:   { cos: '1', sen: '0', tan: '0' },
+      30:  { cos: '\\dfrac{\\sqrt{3}}{2}', sen: '\\dfrac{1}{2}', tan: '\\dfrac{1}{\\sqrt{3}}' },
+      45:  { cos: '\\dfrac{\\sqrt{2}}{2}', sen: '\\dfrac{\\sqrt{2}}{2}', tan: '1' },
+      60:  { cos: '\\dfrac{1}{2}', sen: '\\dfrac{\\sqrt{3}}{2}', tan: '\\sqrt{3}' },
+      90:  { cos: '0', sen: '1', tan: null },
+      120: { cos: '-\\dfrac{1}{2}', sen: '\\dfrac{\\sqrt{3}}{2}', tan: '-\\sqrt{3}' },
+      135: { cos: '-\\dfrac{\\sqrt{2}}{2}', sen: '\\dfrac{\\sqrt{2}}{2}', tan: '-1' },
+      150: { cos: '-\\dfrac{\\sqrt{3}}{2}', sen: '\\dfrac{1}{2}', tan: '-\\dfrac{1}{\\sqrt{3}}' },
+      180: { cos: '-1', sen: '0', tan: '0' },
+      270: { cos: '0', sen: '-1', tan: null },
+      360: { cos: '1', sen: '0', tan: '0' }
+    };
+    var key = Math.round(normDeg(deg));
+    if (table[key] !== undefined) {
+      var v = table[key][kind];
+      if (v === null) return null;
+      return v;
+    }
+    var rad = deg * Math.PI / 180;
+    var n = kind === 'cos' ? Math.cos(rad) : kind === 'sen' ? Math.sin(rad) : Math.tan(rad);
+    if (kind === 'tan' && Math.abs(Math.cos(rad)) < 1e-10) return null;
+    return fmt(n);
+  }
+
+  function setTheta(d) {
+    thetaDeg = Math.round(normDeg(d) * 1000) / 1000;
+    if (thetaDeg === 360) thetaDeg = 360; // allow 360 display
+    document.getElementById('slTh').value = Math.min(360, Math.max(0, Math.round(thetaDeg)));
+    document.getElementById('inpTh').value = Math.round(thetaDeg);
+    document.getElementById('thLabel').textContent = String(Math.round(thetaDeg));
+    document.querySelectorAll('.angle-btn').forEach(function (b) {
+      b.classList.toggle('active-angle', parseInt(b.textContent, 10) === Math.round(thetaDeg));
+    });
+    draw();
+    updateLive();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // grid faint
+    ctx.strokeStyle = '#1a2332';
+    ctx.lineWidth = 1;
+    for (var g = -2; g <= 2; g++) {
+      var p1 = toCanvas(g * 0.5, -1.3), p2 = toCanvas(g * 0.5, 1.3);
+      ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+      p1 = toCanvas(-1.3, g * 0.5); p2 = toCanvas(1.3, g * 0.5);
+      ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+    }
+    // axes
+    ctx.strokeStyle = '#3a5070';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(toCanvas(-1.25, 0)[0], CY); ctx.lineTo(toCanvas(1.25, 0)[0], CY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(CX, toCanvas(0, -1.25)[1]); ctx.lineTo(CX, toCanvas(0, 1.25)[1]); ctx.stroke();
+    // unit circle
+    ctx.strokeStyle = '#5c6bc0';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2); ctx.stroke();
+    // labels axes
+    ctx.fillStyle = '#8b9bb4';
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.fillText('1', toCanvas(1.05, 0.08)[0], toCanvas(1.05, 0.08)[1]);
+    ctx.fillText('−1', toCanvas(-1.2, 0.08)[0], toCanvas(-1.2, 0.08)[1]);
+    ctx.fillText('1', toCanvas(0.08, 1.08)[0], toCanvas(0.08, 1.08)[1]);
+    ctx.fillText('−1', toCanvas(0.08, -1.12)[0], toCanvas(0.08, -1.12)[1]);
+
+    var rad = thetaDeg * Math.PI / 180;
+    var c = Math.cos(rad), s = Math.sin(rad);
+    var P = toCanvas(c, s);
+    var O = toCanvas(0, 0);
+    var Px = toCanvas(c, 0);
+    var Py = toCanvas(0, s);
+
+    // angle arc
+    ctx.strokeStyle = 'rgba(206,147,216,0.85)';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(CX, CY, R * 0.22, 0, -rad, true);
+    ctx.stroke();
+
+    // radius
+    ctx.strokeStyle = '#ffb74d';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(O[0], O[1]); ctx.lineTo(P[0], P[1]); ctx.stroke();
+
+    // cos projection (horizontal)
+    ctx.strokeStyle = '#4fc3f7';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(O[0], O[1]); ctx.lineTo(Px[0], Px[1]); ctx.stroke();
+    // dashed vertical drop
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = 'rgba(79,195,247,0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(P[0], P[1]); ctx.lineTo(Px[0], Px[1]); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // sen projection (vertical)
+    ctx.strokeStyle = '#81c784';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(O[0], O[1]); ctx.lineTo(Py[0], Py[1]); ctx.stroke();
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = 'rgba(129,199,132,0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(P[0], P[1]); ctx.lineTo(Py[0], Py[1]); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // point P
+    ctx.fillStyle = '#ce93d8';
+    ctx.beginPath(); ctx.arc(P[0], P[1], 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#e8eef7';
+    ctx.font = 'bold 13px Segoe UI, sans-serif';
+    ctx.fillText('P', P[0] + 10, P[1] - 10);
+
+    // small origin
+    ctx.fillStyle = '#8b9bb4';
+    ctx.beginPath(); ctx.arc(O[0], O[1], 3.5, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function updateLive() {
+    var rad = thetaDeg * Math.PI / 180;
+    var c = Math.cos(rad), s = Math.sin(rad);
+    var cosStr = exactOrNum(thetaDeg, 'cos');
+    var senStr = exactOrNum(thetaDeg, 'sen');
+    var tanStr = exactOrNum(thetaDeg, 'tan');
+    var q = quadrant(thetaDeg);
+    var ref = refAngle(thetaDeg);
+    var thDisp = showRad
+      ? ('$\\theta = ' + Math.round(thetaDeg) + '^{\\circ} = ' + fmt(rad) + '\\ \\mathrm{rad}$')
+      : ('$\\theta = ' + Math.round(thetaDeg) + '^{\\circ}$');
+    var tanDisp = tanStr === null
+      ? '<span class="hl3">indefinida</span> ($\\cos\\theta \\approx 0$)'
+      : ('$\\tan\\theta = ' + tanStr + '$');
+    var html =
+      '<div class="hl4">' + thDisp + '</div>' +
+      '<div class="hl">$\\cos\\theta = ' + cosStr + '$</div>' +
+      '<div class="hl2">$\\operatorname{sen}\\theta = ' + senStr + '$</div>' +
+      '<div>' + tanDisp + '</div>' +
+      '<div style="margin-top:0.45rem;color:var(--muted);font-size:0.85rem">' +
+        'Quadrante: <strong style="color:var(--text)">' + q + '</strong><br>' +
+        'Ângulo de referência: $' + Math.round(ref) + '^{\\circ}$' +
+      '</div>' +
+      '<div style="margin-top:0.35rem;color:var(--muted);font-size:0.82rem">' +
+        '$P = (\\cos\\theta,\\,\\operatorname{sen}\\theta) \\approx (' + fmt(c) + ',\\,' + fmt(s) + ')$' +
+      '</div>';
+    var el = document.getElementById('liveVals');
+    el.innerHTML = html;
+    if (window.renderKatex) window.renderKatex(el);
+  }
+
+  document.getElementById('slTh').addEventListener('input', function (e) {
+    setTheta(parseFloat(e.target.value));
+  });
+  document.getElementById('inpTh').addEventListener('change', function (e) {
+    var v = parseFloat(e.target.value);
+    if (isNaN(v)) return;
+    setTheta(v);
+  });
+  document.getElementById('chkRad').addEventListener('change', function (e) {
+    showRad = e.target.checked;
+    updateLive();
+  });
+
+  function pointerDown(e) {
+    dragging = true;
+    setTheta(fromEvent(e));
+    e.preventDefault();
+  }
+  function pointerMove(e) {
+    if (!dragging) return;
+    setTheta(fromEvent(e));
+    e.preventDefault();
+  }
+  function pointerUp() { dragging = false; }
+  canvas.addEventListener('pointerdown', pointerDown);
+  canvas.addEventListener('pointermove', pointerMove);
+  window.addEventListener('pointerup', pointerUp);
+
+  setTheta(45);
+})();
+</script>
+
+<script>
+/* Modo treino — shared */
+(function () {
+  var KEY = 'nc-modo-treino';
+  function loadPref() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v === null) return true;
+      return v === 'true';
+    } catch (e) { return true; }
+  }
+  function savePref(on) {
+    try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {}
+  }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal');
+    var btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) {
+    ex.classList.remove('collapsed');
+    ex.dataset.userRevealed = '1';
+    syncButtons(ex);
+  }
+  function hide(ex) {
+    ex.classList.add('collapsed');
+    delete ex.dataset.userRevealed;
+    syncButtons(ex);
+  }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner');
+    var chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) {
+        if (!ex.dataset.userRevealed) ex.classList.add('collapsed');
+      } else {
+        ex.classList.remove('collapsed');
+      }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var q = ex.querySelector('.ex-q');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (q) {
+          q.parentNode.insertBefore(box, q.nextSibling);
+          q.parentNode.insertBefore(row, box.nextSibling);
+        } else {
+          ex.insertBefore(row, ex.firstChild);
+          ex.insertBefore(box, row);
+        }
+      }
+      var br = ex.querySelector('.btn-reveal');
+      var bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) {
+      chk.checked = on;
+      chk.addEventListener('change', function () { setMode(chk.checked); });
+    }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) {
+          if (all.checked) reveal(ex); else hide(ex);
+        });
+      });
+    }
+    setMode(on);
+  });
+})();
+</script>
+</body>
+</html>
