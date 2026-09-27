@@ -296,6 +296,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <p>O número $z = a + bi$ fica no ponto $P(a,b)$: a abscissa $a$ é a <strong>parte real</strong> (eixo horizontal) e a ordenada $b$ é a <strong>parte imaginária</strong> (eixo vertical). O vetor que vai da origem $O$ até $P$ também representa $z$; esse ponto (ou vetor) se chama <strong>afixo</strong> de $z$.</p>
     <p>Duas grandezas geométricas saltam aos olhos. O <strong>módulo</strong> $\rho = |z| = \sqrt{a^{2}+b^{2}}$ é a distância de $O$ até $P$ — o “tamanho” do número. O <strong>argumento</strong> $\theta = \arg(z)$ é o ângulo orientado do semieixo real positivo até o vetor $OP$, no sentido anti-horário. No 1º quadrante $\theta$ fica entre $0^{\circ}$ e $90^{\circ}$; no 2º, entre $90^{\circ}$ e $180^{\circ}$; e assim por diante até completar a volta em $[0^{\circ}, 360^{\circ})$.</p>
     <p>Operações simples viram reflexões e rotações: o conjugado $\bar{z} = a - bi$ é o espelho de $z$ pelo eixo real; $-z$ é a rotação de $180^{\circ}$ (antípoda pela origem). Já a equação $|z - z_{0}| = r$ descreve um círculo de centro $z_{0}$ e raio $r$ — a distância até $z_{0}$ é constante.</p>
+    <p>Ainda na forma algébrica $a+bi$, o <strong>produto</strong> usa a distributiva (FOIL) com $i^{2}=-1$: $(a+bi)(c+di)=(ac-bd)+(ad+bc)i$. A <strong>divisão</strong> multiplica numerador e denominador pelo conjugado do denominador, para o denominador virar um real positivo $c^{2}+d^{2}$. No B42 você verá o atalho polar (módulos e argumentos); aqui o cálculo é “à mão” com $a$ e $b$.</p>
     <p>Por que essa figura importa? Porque, antes de escrever a forma trigonométrica, você precisa “enxergar” o número como ponto e vetor. Módulo e argumento são exatamente as coordenadas polares desse ponto — e é delas que nasce a forma $\rho(\cos\theta + i\operatorname{sen}\theta)$ no módulo seguinte.</p>
   </div>
 
@@ -326,6 +327,22 @@ document.addEventListener("DOMContentLoaded", function() {
       <h3>Conjugação geométrica</h3>
       <p>$\bar{z} = a - bi$ é a reflexão de z pelo eixo real. $-z = -a - bi$ é a reflexão pela origem (rotação de $180^{\circ}$). $-\bar{z} = -a + bi$ é a reflexão pelo eixo imaginário.</p>
       <p>Os quatro pontos $z$, $\bar{z}$, $-z$, $-\bar{z}$ formam um retângulo (ou quadrado) centrado na origem.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Produto (forma algébrica)</h3>
+      <p>Distributiva (FOIL) com $i^{2}=-1$:</p>
+      <div class="formula">$$(a+bi)(c+di)=(ac-bd)+(ad+bc)i$$</div>
+      <p>Parte real: $ac-bd$. Parte imaginária: $ad+bc$.</p>
+    </div>
+    <div class="theory-card">
+      <h3>Quociente (forma algébrica)</h3>
+      <p>Multiplique numerador e denominador pelo conjugado do denominador ($c+di\ne 0$):</p>
+      <div class="formula">$$\begin{aligned}
+\dfrac{a+bi}{c+di}
+&= \dfrac{(a+bi)(c-di)}{c^{2}+d^{2}} \\
+&= \dfrac{ac+bd}{c^{2}+d^{2}}+\dfrac{bc-ad}{c^{2}+d^{2}}i
+\end{aligned}$$</div>
+      <p>O denominador $c^{2}+d^{2}=|c+di|^{2}$ é real e positivo.</p>
     </div>
     <div class="theory-card">
       <h3>Lugares geométricos</h3>
