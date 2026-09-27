@@ -245,7 +245,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <label>Multiplicar por w: \(\rho_w\)=</label>
         <div class="ctrl-row">
           <input type="number" id="wRho" value="1.5" step="0.1" min="0.1" style="width:70px">
-          <label>θ_{\mathrm{w}}^{\circ}</label>
+          <label>$\theta_{\mathrm{w}}^{\circ}$</label>
           <input type="number" id="wTh" value="30" step="5" style="width:70px">
           <button id="btnMulW">z · w</button>
         </div>
@@ -264,14 +264,14 @@ document.addEventListener("DOMContentLoaded", function() {
       <h3>Forma trigonométrica</h3>
       <p>Todo z \(\ne\) 0 pode ser escrito:</p>
       <div class="formula">$$z = \rho (\cos \theta + i \operatorname{sen} \theta)$$</div>
-      <p>Notação abreviada: z = \(\rho \mathrm{cis} \theta\). Aqui \(\rho\) = \(|z|\) e \(\theta\) = \\\(\arg(z)\).</p>
+      <p>Notação abreviada: $z = \rho \mathrm{cis} \theta$. Aqui $\rho = |z|$ e $\theta = \arg(z)$.</p>
     </div>
     <div class="theory-card">
       <h3>Algébrica → trigonométrica</h3>
       <ul>
-        <li>\(\rho\) = \sqrt{\(a^{2} + b^{2}\)}</li>
-        <li>cos \(\theta\) = a/\(\rho\) &nbsp; sen \(\theta\) = b/\(\rho\)</li>
-        <li>\(\theta\) = \mathrm{atan2}(b, a), ajustado a \([0^{\circ}, 360^{\circ})\)</li>
+        <li>\(\rho = \sqrt{a^{2} + b^{2}}\)</li>
+        <li>\(\cos\theta = a/\rho\) &nbsp; \(\operatorname{sen}\theta = b/\rho\)</li>
+        <li>\(\theta = \mathrm{atan2}(b, a)\), ajustado a \([0^{\circ}, 360^{\circ})\)</li>
       </ul>
     </div>
     <div class="theory-card">
@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="theory-card">
       <h3>Quociente</h3>
       <div class="formula">$$z_{1}/z_{2} = (\rho_{1}/\rho_{2}) [\cos(\theta_{1}-\theta_{2}) + i \operatorname{sen}(\theta_{1}-\theta_{2})]$$</div>
-      <p>(z_{2} \(\ne\) 0). Rotação de −θ_{2} e dilatação por 1/ρ_{2}.</p>
+      <p>($z_{2} \ne 0$). Rotação de $-\theta_{2}$ e dilatação por $1/\rho_{2}$.</p>
     </div>
     <div class="theory-card">
       <h3>Casos especiais</h3>
@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <li>Multiplicar por i = \(\mathrm{cis} 90^{\circ}\) → rotação de \(90^{\circ}\) anti-horário</li>
         <li>Multiplicar por -1 = \(\mathrm{cis} 180^{\circ}\) → rotação de \(180^{\circ}\)</li>
         <li>Multiplicar por -i = \(\mathrm{cis} 270^{\circ}\) → rotação de \(270^{\circ}\) (ou \(-90^{\circ}\))</li>
-        <li>|z_{1}z_{2}| = |z_{1}||z_{2}| &nbsp; e &nbsp; |z_{1}/z_{2}| = |z_{1}|/|z_{2}|</li>
+        <li>$|z_{1}z_{2}| = |z_{1}||z_{2}|$ &nbsp; e &nbsp; $|z_{1}/z_{2}| = |z_{1}|/|z_{2}|$</li>
       </ul>
     </div>
   </div>
@@ -320,7 +320,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <p class="anim-cap">-\(\sqrt{3}\)+i → 2 \(\mathrm{cis} 150^{\circ}\)</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> a <strong>forma trigonométrica</strong> (ou polar) é z = \(\rho\)(cosθ + isenθ), onde \(\rho\) = \(|z|\) é o <strong>módulo</strong> e \(\theta\) = \\\(\arg(z)\) é o <strong>argumento</strong>. Calculamos \(\rho\) e identificamos o quadrante para achar \(\theta\).</p>
+      <p class="step-intro"><strong>Ideia:</strong> a <strong>forma trigonométrica</strong> (ou polar) é $z = \rho(\cos\theta + i\operatorname{sen}\theta)$, onde \(\rho\) = \(|z|\) é o <strong>módulo</strong> e \(\theta\) = \(\arg(z)\) é o <strong>argumento</strong>. Calculamos \(\rho\) e identificamos o quadrante para achar \(\theta\).</p>
       <ol>
         <li><strong>Passo 1 — Calcular o módulo \(\rho\):</strong>
           <div class="formula">$$\rho = \sqrt{(-\sqrt{3})^{2} + 1^{2}} = \sqrt{3 + 1} = \sqrt{4} = 2$$</div>
@@ -369,7 +369,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   <div class="ex" id="b42-p3">
     <div class="ex-header"><span class="ex-num">P3</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">produto</span></div>
-    <div class="ex-q">Sejam z_{1} = 2 (cos \(40^{\circ}\) + i sen \(40^{\circ}\)) e z_{2} = 3 (cos \(80^{\circ}\) + i sen \(80^{\circ}\)). Calcule z_{1}z_{2} na forma trigonométrica e algébrica.</div>
+    <div class="ex-q">Sejam $z_{1} = 2 (\cos 40^{\circ} + i \operatorname{sen} 40^{\circ})$ e $z_{2} = 3 (\cos 80^{\circ} + i \operatorname{sen} 80^{\circ})$. Calcule $z_{1}z_{2}$ na forma trigonométrica e algébrica.</div>
     
     <div class="ex-anim" id="wrap-anim-b42-p3">
       <button type="button" class="btn-anim-play primary" id="btn-anim-b42-p3">▶ Animar</button>
@@ -377,7 +377,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <p class="anim-cap">Produto: dilatar ×3 e girar +\(80^{\circ}\)</p>
     </div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> no produto em forma trigonométrica, os módulos se multiplicam e os argumentos se somam: z_{1}z_{2} = ρ_{1}ρ_{2} [cos(θ_{1}+θ_{2}) + i sen(θ_{1}+θ_{2})]. Depois convertemos para \(a + bi\).</p>
+      <p class="step-intro"><strong>Ideia:</strong> no produto em forma trigonométrica, os módulos se multiplicam e os argumentos se somam: $z_{1}z_{2} = \rho_{1}\rho_{2} [\cos(\theta_{1}+\theta_{2}) + i \operatorname{sen}(\theta_{1}+\theta_{2})]$. Depois convertemos para \(a + bi\).</p>
       <ol>
         <li><strong>Passo 1 — Módulo do produto:</strong>
           <div class="formula">$$\rho = \rho_{1} \cdot \rho_{2} = 2 \cdot 3 = 6$$</div>
@@ -397,16 +397,16 @@ document.addEventListener("DOMContentLoaded", function() {
         </li>
       </ol>
       <p class="ans"><strong>Resposta final:</strong> 6 (cos \(120^{\circ}\) + i sen \(120^{\circ}\)) = −3 + \(3\sqrt{3}\) i</p>
-      <p class="dica"><strong>Dica:</strong> geometricamente, multiplicar por z_{2} dilata o vetor por 3 e gira \(80^{\circ}\) no sentido anti-horário.</p>
+      <p class="dica"><strong>Dica:</strong> geometricamente, multiplicar por $z_{2}$ dilata o vetor por 3 e gira \(80^{\circ}\) no sentido anti-horário.</p>
     </div>
     <div class="ans-box">Resposta: 6 (cos \(120^{\circ}\) + i sen \(120^{\circ}\)) = −3 + \(3\sqrt{3}\) i</div>
   </div>
 
   <div class="ex">
     <div class="ex-header"><span class="ex-num">P4</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">quociente</span></div>
-    <div class="ex-q">Calcule z_{1}/z_{2} com z_{1} = \(\sqrt{2}\) (cos \(75^{\circ}\) + i sen \(75^{\circ}\)) e z_{2} = \(\sqrt{8}\) (cos \(30^{\circ}\) + i sen \(30^{\circ}\)).</div>
+    <div class="ex-q">Calcule $z_{1}/z_{2}$ com $z_{1} = \sqrt{2}\,(\cos 75^{\circ} + i \operatorname{sen} 75^{\circ})$ e $z_{2} = \sqrt{8}\,(\cos 30^{\circ} + i \operatorname{sen} 30^{\circ})$.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> no quociente, os módulos se dividem e os argumentos se subtraem: z_{1}/z_{2} = (ρ_{1}/ρ_{2})[cos(θ_{1}−θ_{2}) + i sen(θ_{1}−θ_{2})].</p>
+      <p class="step-intro"><strong>Ideia:</strong> no quociente, os módulos se dividem e os argumentos se subtraem: $z_{1}/z_{2} = (\rho_{1}/\rho_{2})[\cos(\theta_{1}-\theta_{2}) + i \operatorname{sen}(\theta_{1}-\theta_{2})]$.</p>
       <ol>
         <li><strong>Passo 1 — Simplificar ρ_{2}:</strong>
           <div class="formula">$$\sqrt{8} = \sqrt{4\cdot2} = 2\sqrt{2}$$</div>
@@ -432,12 +432,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
   <div class="ex">
     <div class="ex-header"><span class="ex-num">P5</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">módulo e arg</span></div>
-    <div class="ex-q">Dado z = 5\(\sqrt{2}/2\) + (5\(\sqrt{2}/2\))i, determine \(|z|\) e \\\(\arg(z)\) em graus.</div>
+    <div class="ex-q">Dado $z = 5\sqrt{2}/2 + (5\sqrt{2}/2)i$, determine \(|z|\) e \(\arg(z)\) em graus.</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> a e b são iguais e positivos \(\Rightarrow\) o afixo está na bissetriz do 1º quadrante (\(\theta\) = \(45^{\circ}\)). O módulo é \sqrt{\(a^{2} + b^{2}\)}.</p>
+      <p class="step-intro"><strong>Ideia:</strong> a e b são iguais e positivos \(\Rightarrow\) o afixo está na bissetriz do 1º quadrante (\(\theta\) = \(45^{\circ}\)). O módulo é \(\sqrt{a^{2} + b^{2}}\).</p>
       <ol>
         <li><strong>Passo 1 — Identificar a e b:</strong>
-          <div class="formula">$$a = b = 5\sqrt{2}/2 > 0 \Rightarrow 1º quadrante$$</div>
+          <div class="formula">$$a = b = 5\sqrt{2}/2 > 0 \Rightarrow \text{1o quadrante}$$</div>
         </li>
         <li><strong>Passo 2 — Calcular \(|z|\):</strong>
           <div class="formula">$$|z| = \sqrt{a^{2} + b^{2}} = \sqrt{2a^{2}} = |a|\sqrt{2} = (5\sqrt{2}/2) \cdot \sqrt{2} = 5 \cdot 2 / 2 = 5$$</div>
@@ -448,10 +448,10 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$\theta = 45^{\circ}$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> \(|z|\) = 5; \\\(\arg(z)\) = \(45^{\circ}\)</p>
+      <p class="ans"><strong>Resposta final:</strong> \(|z| = 5\); \(\arg(z) = 45^{\circ}\)</p>
       <p class="dica"><strong>Dica:</strong> quando a = b &gt; 0, o argumento é sempre \(45^{\circ}\) — não precisa da calculadora.</p>
     </div>
-    <div class="ans-box">Resposta: \(|z|\) = 5; \\\(\arg(z)\) = \(45^{\circ}\)</div>
+    <div class="ans-box">Resposta: \(|z| = 5\); \(\arg(z) = 45^{\circ}\)</div>
   </div>
 
   <div class="ex" id="b42-p6">
@@ -490,9 +490,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
   <div class="ex">
     <div class="ex-header"><span class="ex-num">P7</span><span class="ex-src">Exercícios de prática (B42)</span><span class="badge-pratica">produto geométrico</span></div>
-    <div class="ex-q">(Vestibular-estilo) Se \(|z|\) = 3 e \\\(\arg(z)\) = \(20^{\circ}\), e w = 2i, então \(|zw|\) e \\\(\arg(zw)\) são:</div>
+    <div class="ex-q">(Vestibular-estilo) Se \(|z| = 3\) e \(\arg(z) = 20^{\circ}\), e $w = 2i$, então \(|zw|\) e \(\arg(zw)\) são:</div>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> \(|zw|\) = \(|z|\)\(|w|\) e \\\\(\arg(zw)\) = \\\\(\arg(z)\) + \\\\(\arg(w)\). Basta escrever w em forma trigonométrica.</p>
+      <p class="step-intro"><strong>Ideia:</strong> $|zw| = |z||w|$ e $\arg(zw) = \arg(z) + \arg(w)$. Basta escrever w em forma trigonométrica.</p>
       <ol>
         <li><strong>Passo 1 — Forma trigonométrica de w:</strong> w = 2i = 0 + 2i.
           <div class="formula">$$|w| = 2\; \arg(w) = 90^{\circ} (eixo imaginário positivo)$$</div>
@@ -508,10 +508,10 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">$$zw = 6 (\cos 110^{\circ} + i \operatorname{sen} 110^{\circ})$$</div>
         </li>
       </ol>
-      <p class="ans"><strong>Resposta final:</strong> \(|zw|\) = 6; \\\(\arg(zw)\) = \(110^{\circ}\)</p>
+      <p class="ans"><strong>Resposta final:</strong> \(|zw| = 6\); \(\arg(zw) = 110^{\circ}\)</p>
       <p class="dica"><strong>Dica:</strong> multiplicar por i (ou por múltiplo positivo de i) sempre adiciona \(90^{\circ}\) ao argumento e multiplica o módulo por \(|w|\).</p>
     </div>
-    <div class="ans-box">Resposta: \(|zw|\) = 6; \\\(\arg(zw)\) = \(110^{\circ}\)</div>
+    <div class="ans-box">Resposta: \(|zw| = 6\); \(\arg(zw) = 110^{\circ}\)</div>
   </div>
 
   <div class="ex">
