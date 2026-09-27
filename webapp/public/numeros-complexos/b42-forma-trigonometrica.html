@@ -277,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="theory-card">
       <h3>Trigonométrica → algébrica</h3>
       <div class="formula">$$a = \rho \cos \theta b = \rho \operatorname{sen} \theta$$</div>
-      <p>\(z = \(a + bi\)\).</p>
+      <p>\(z = a + bi\).</p>
     </div>
     <div class="theory-card">
       <h3>Produto</h3>
@@ -677,9 +677,9 @@ document.addEventListener("DOMContentLoaded", function() {
     liveVals.innerHTML =
       '<div class="hl2">$z = ' + fmt(rho, 3) + '(\\cos ' + fmt(thDeg, 1) + '^{\\circ} + i\\,\\operatorname{sen} ' + fmt(thDeg, 1) + '^{\\circ})$</div>' +
       '<div class="hl">z = ' + fmt(ax, 3) + ' ' + sign + ' ' + fmt(Math.abs(by), 3) + 'i</div>' +
-      '<div class="hl3">$\\rho = ' + fmt(rho, 3) + '\\;
-    if (window.renderKatex) window.renderKatex(liveVals);\\; \\theta = ' + fmt(thDeg, 1) + '^{\\circ} = ' + fmt(thDeg * Math.PI / 180, 4) + '\\,\\mathrm{rad}$</div>' +
+      '<div class="hl3">$\\rho = ' + fmt(rho, 3) + '\\; \\theta = ' + fmt(thDeg, 1) + '^{\\circ} = ' + fmt(thDeg * Math.PI / 180, 4) + '\\,\\mathrm{rad}$</div>' +
       opHtml;
+    if (window.renderKatex) window.renderKatex(liveVals);
   }
 
   function setPolar(r, t) {

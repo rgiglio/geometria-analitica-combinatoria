@@ -712,8 +712,8 @@ document.addEventListener("DOMContentLoaded", function() {
         '<div class="hl3">n = ' + n + '</div>' +
         '<div class="hl3">\\(z^{n} = ' + fmt(pn, 4) + '\\,\\mathrm{cis}\\,' + fmt(thN, 1) + '^{\\circ}\\)</div>' +
         '<div class="hl3">= ' + fmt(rx, 4) + ' ' + rsign + ' ' + fmt(Math.abs(ry), 4) + 'i</div>' +
-        (pn > RANGE ? '<div style="color:#ef5350;
-    if (window.renderKatex) window.renderKatex(liveVals);font-size:0.8rem">|zⁿ| grande demais para a escala; seta mostra só a direção.</div>' : '');
+        (pn > RANGE ? '<div style="color:#ef5350;font-size:0.8rem">|zⁿ| grande demais para a escala; seta mostra só a direção.</div>' : '');
+      if (window.renderKatex) window.renderKatex(liveVals);
     } else {
       // roots
       const rRoot = Math.pow(rho, 1 / n);
@@ -857,8 +857,8 @@ document.addEventListener("DOMContentLoaded", function() {
         '<div class="hl3">= ' + fmt(pnTarget * Math.cos(thNTarget * Math.PI / 180), 4) + ' ' +
           (Math.sin(thNTarget * Math.PI / 180) >= 0 ? '+' : '−') + ' ' +
           fmt(Math.abs(pnTarget * Math.sin(thNTarget * Math.PI / 180)), 4) + 'i</div>' +
-        (pnTarget > RANGE ? '<div style="color:#ef5350;
-    if (window.renderKatex) window.renderKatex(liveVals);font-size:0.8rem">|zⁿ| grande demais para a escala; seta mostra só a direção.</div>' : '');
+        (pnTarget > RANGE ? '<div style="color:#ef5350;font-size:0.8rem">|zⁿ| grande demais para a escala; seta mostra só a direção.</div>' : '');
+      if (window.renderKatex) window.renderKatex(liveVals);
     } else {
       var rRoot = Math.pow(rho, 1 / n);
       drawCircle(rRoot, 'rgba(129,199,132,0.45)');
@@ -888,6 +888,7 @@ document.addEventListener("DOMContentLoaded", function() {
       if (nShow >= n) drawPolygon(pts, 'rgba(129,199,132,0.7)');
       else if (nShow >= 2) drawPolygon(pts.slice(0, nShow), 'rgba(129,199,132,0.4)');
       liveVals.innerHTML = html;
+      if (window.renderKatex) window.renderKatex(liveVals);
     }
   };
 
