@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Duas circunferências | A43 Circunferência</title>
+<title>Recapitulação — Circunferência | A43</title>
 <style>
-
 
 :root {
   --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
@@ -62,12 +61,6 @@ button.primary { background: #0d47a1; border-color: var(--accent); color: #fff; 
 }
 .live-vals div { margin: 0.25rem 0; }
 .hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
-.status-pill {
-  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
-}
-.status-secante { background: rgba(79,195,247,.2); color: var(--accent); }
-.status-tangente { background: rgba(129,199,132,.2); color: var(--accent2); }
-.status-exterior { background: rgba(255,183,77,.2); color: var(--accent3); }
 .theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
 .theory-card {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -160,16 +153,6 @@ body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
 .theory-card .formula { font-size: 0.95rem; }
 .live-vals .katex { color: inherit; }
 .ans-box .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
-
-.status-exteriores { background: rgba(255,183,77,.2); color: var(--accent3); }
-.status-tang-ext { background: rgba(129,199,132,.2); color: var(--accent2); }
-.status-secantes { background: rgba(79,195,247,.2); color: var(--accent); }
-.status-tang-int { background: rgba(206,147,216,.2); color: var(--accent4); }
-.status-interior { background: rgba(239,83,80,.2); color: var(--danger); }
-.status-concentricas { background: rgba(139,155,180,.25); color: var(--muted); }
-.ex-num.duas { background: var(--accent2); }
-.section-label.duas { color: var(--accent2); }
-h1.duas { color: var(--accent2); }
 </style>
 <link rel="stylesheet" href="katex/katex.min.css">
 <script defer src="katex/katex.min.js"></script>
@@ -197,9 +180,9 @@ document.addEventListener("DOMContentLoaded", function() {
 <nav>
   <span class="brand">Circunferência · A43</span>
   <a href="index.html">Index</a>
-  <a href="a43-recapitulacao.html">Recap.</a>
+  <a href="a43-recapitulacao.html" class="active">Recap.</a>
   <a href="a43-reta-circunferencia.html">Reta × circ.</a>
-  <a href="a43-duas-circunferencias.html" class="active">Duas circ.</a>
+  <a href="a43-duas-circunferencias.html">Duas circ.</a>
 </nav>
 
 <div class="treino-banner" id="treinoBanner">
@@ -211,234 +194,191 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
 <div class="wrap">
-  <h1 class="duas">Duas circunferências</h1>
-  <p class="subtitle">A43 · Posições relativas · \(d\) vs \(R_1+R_2\) e \(|R_1-R_2|\) · eixo radical · Versa</p>
+  <h1>Recapitulação — Circunferência</h1>
+  <p class="subtitle">A43 · Definição · formas reduzida e geral · centro e raio · Versa · 3º ano EM</p>
 
-  <span class="section-label duas">(A) Playground interativo</span>
+  <span class="section-label">(A) Playground interativo</span>
   <div class="playground">
     <div class="play-grid">
       <div>
-        <canvas id="cvDuas" width="560" height="560" aria-label="Duas circunferências interativas"></canvas>
+        <canvas id="cvRecap" width="560" height="560" aria-label="Circunferência com centro e raio editáveis"></canvas>
         <p class="note" style="text-align:center;margin-top:0.5rem;font-style:normal">
-          <span class="hl">azul = \(\lambda_1\)</span> &nbsp;|&nbsp; <span class="hl2">verde = \(\lambda_2\)</span> &nbsp;|&nbsp; <span class="hl4">roxo = eixo radical</span> &nbsp;|&nbsp; <span class="hl3">âmbar = \(d\)</span>
+          <span class="hl">azul = circunferência</span> &nbsp;|&nbsp; <span class="hl2">verde = raio</span> &nbsp;|&nbsp; <span class="hl3">âmbar = centro \(C\)</span>
         </p>
       </div>
       <div class="controls">
-        <label>Circunferência \(\lambda_1\)</label>
+        <label>Centro \(C=(x_0,y_0)\)</label>
         <div class="ctrl-row">
-          <label>\(x_1\)</label>
-          <input type="number" id="x1" value="2" step="0.5" style="width:60px">
-          <label>\(y_1\)</label>
-          <input type="number" id="y1" value="1" step="0.5" style="width:60px">
-          <label>\(R_1\)</label>
-          <input type="number" id="R1" value="2" step="0.1" min="0.5" style="width:60px">
+          <label>\(x_0\)</label>
+          <input type="number" id="x0" value="0" step="0.5" style="width:70px">
+          <label>\(y_0\)</label>
+          <input type="number" id="y0" value="0" step="0.5" style="width:70px">
         </div>
-        <label>Circunferência \(\lambda_2\)</label>
+        <label for="slX0">\(x_0\) (slider)</label>
+        <input type="range" id="slX0" min="-10" max="10" step="0.5" value="0">
+        <label for="slY0">\(y_0\) (slider)</label>
+        <input type="range" id="slY0" min="-10" max="10" step="0.5" value="0">
+        <label for="slR">Raio \(R = \) <span id="rLabel" class="hl">5</span></label>
+        <input type="range" id="slR" min="0.5" max="12" step="0.1" value="5">
         <div class="ctrl-row">
-          <label>\(x_2\)</label>
-          <input type="number" id="x2" value="0" step="0.5" style="width:60px">
-          <label>\(y_2\)</label>
-          <input type="number" id="y2" value="-1" step="0.5" style="width:60px">
-          <label>\(R_2\)</label>
-          <input type="number" id="R2" value="3" step="0.1" min="0.5" style="width:60px">
-        </div>
-        <div class="ctrl-row">
-          <button type="button" class="primary" id="btnEx03">Ex03</button>
-          <button type="button" id="btnEx04">Ex04</button>
-          <button type="button" id="btnEx05">Ex05</button>
+          <button type="button" class="primary" id="btnExOrigem">Ex.: \(C=(0,0)\), \(R=10\)</button>
+          <button type="button" id="btnExCompletar">Ex.: completar \(+68=0\)</button>
         </div>
         <div class="live-vals" id="liveVals" aria-live="polite"></div>
       </div>
     </div>
   </div>
 
-  <span class="section-label duas">(B) Em palavras</span>
+  <span class="section-label">(B) Em palavras</span>
   <div class="explain">
-    <p class="lead">Dadas \(\lambda_1\) e \(\lambda_2\) com centros \(C_1\), \(C_2\) e raios \(R_1\), \(R_2\), a chave é a distância \(d = d_{C_1C_2}\) entre os centros — comparada com a <strong>soma</strong> e a <strong>diferença</strong> dos raios.</p>
-    <p>• <strong>Exteriores:</strong> \(d &gt; R_1+R_2\) (há um “vão” entre elas).</p>
-    <p>• <strong>Tangentes exteriores:</strong> \(d = R_1+R_2\) (tocam por fora, um ponto).</p>
-    <p>• <strong>Secantes:</strong> \(|R_1-R_2| &lt; d &lt; R_1+R_2\) (dois pontos em comum).</p>
-    <p>• <strong>Tangentes interiores:</strong> \(d = |R_1-R_2|\) (tocam por dentro, um ponto).</p>
-    <p>• <strong>Uma interior sem tocar:</strong> \(d &lt; |R_1-R_2|\) (a menor fica dentro da maior, sem contato).</p>
-    <p>• <strong>Concêntricas:</strong> \(d = 0\) (mesmo centro; se \(R_1\neq R_2\), uma está “dentro” da outra sem tocar).</p>
-    <p><strong>Eixo radical:</strong> escreva as circunferências na forma geral \(x^2+y^2+D_ix+E_iy+F_i=0\). Subtraindo as duas equações, os termos \(x^2+y^2\) cancelam e sobra uma <em>reta</em> — o eixo radical. Quando as circunferências são secantes, essa reta passa pelos dois pontos de interseção (é o atalho algébrico para achá-los).</p>
+    <p class="lead">Uma <strong>circunferência</strong> é o conjunto de todos os pontos do plano que estão a uma mesma distância \(R\) (o <strong>raio</strong>) de um ponto fixo \(C=(x_0,y_0)\) (o <strong>centro</strong>).</p>
+    <p><strong>Forma reduzida</strong> (ou canônica): escreve o centro e o raio de forma explícita:
+    \[
+    (x-x_0)^2+(y-y_0)^2=R^2.
+    \]
+    Quando o centro está na origem, fica simplesmente \(x^2+y^2=R^2\).</p>
+    <p><strong>Forma geral</strong>: expandindo a reduzida e reunindo os termos, aparece
+    \[
+    x^2+y^2+Dx+Ey+F=0,
+    \]
+    com \(D=-2x_0\), \(E=-2y_0\) e \(F=x_0^2+y_0^2-R^2\).</p>
+    <p><strong>Como achar centro e raio a partir da geral:</strong> complete o quadrado em \(x\) e em \(y\), ou use as fórmulas
+    \(C=\bigl(-\dfrac{D}{2},-\dfrac{E}{2}\bigr)\) e
+    \(R=\sqrt{\bigl(\dfrac{D}{2}\bigr)^2+\bigl(\dfrac{E}{2}\bigr)^2-F}\)
+    (quando a expressão sob a raiz for positiva — senão não é circunferência real).</p>
+    <p>Nos módulos seguintes você usa exatamente isso: a distância do centro a uma reta (reta × circ.) e a distância entre dois centros (duas circ.). Sem dominar centro e raio, o resto não anda.</p>
   </div>
 
-  <span class="section-label duas">(C) Fórmulas</span>
+  <span class="section-label">(C) Fórmulas</span>
   <div class="theory-grid">
     <div class="theory-card">
-      <h3>Distância entre centros</h3>
+      <h3>Forma reduzida</h3>
       <div class="formula">\[
-      d = \sqrt{(x_1-x_2)^2+(y_1-y_2)^2}
+      (x-x_0)^2+(y-y_0)^2=R^2
       \]</div>
-    </div>
-    <div class="theory-card">
-      <h3>Classificação</h3>
-      <ul>
-        <li>Exteriores: \(d &gt; R_1+R_2\)</li>
-        <li>Tang. exteriores: \(d = R_1+R_2\)</li>
-        <li>Secantes: \(|R_1-R_2| &lt; d &lt; R_1+R_2\)</li>
-        <li>Tang. interiores: \(d = |R_1-R_2|\)</li>
-        <li>Interior sem tocar: \(d &lt; |R_1-R_2|\)</li>
-        <li>Concêntricas: \(d = 0\)</li>
-      </ul>
+      <p>Centro \(C=(x_0,y_0)\), raio \(R&gt;0\).</p>
     </div>
     <div class="theory-card">
       <h3>Forma geral</h3>
       <div class="formula">\[
-      x^2+y^2+D_ix+E_iy+F_i=0
+      x^2+y^2+Dx+Ey+F=0
       \]</div>
-      <p>Centro \(\bigl(-\tfrac{D_i}{2},-\tfrac{E_i}{2}\bigr)\), raio \(\sqrt{(D_i/2)^2+(E_i/2)^2-F_i}\).</p>
+      <p>\(D=-2x_0\), \(E=-2y_0\), \(F=x_0^2+y_0^2-R^2\).</p>
     </div>
     <div class="theory-card">
-      <h3>Eixo radical</h3>
-      <p>Subtraia as duas formas gerais:</p>
+      <h3>Centro e raio (da geral)</h3>
       <div class="formula">\[
-      (D_1-D_2)x+(E_1-E_2)y+(F_1-F_2)=0
+      C=\Bigl(-\dfrac{D}{2},-\dfrac{E}{2}\Bigr)
       \]</div>
-      <p>É uma reta (quando os centros não coincidem).</p>
+      <div class="formula">\[
+      R=\sqrt{\Bigl(\dfrac{D}{2}\Bigr)^2+\Bigl(\dfrac{E}{2}\Bigr)^2-F}
+      \]</div>
+      <p>Exige \(\bigl(\dfrac{D}{2}\bigr)^2+\bigl(\dfrac{E}{2}\bigr)^2-F &gt; 0\).</p>
     </div>
   </div>
 
-  <h2>(D) Exercícios</h2>
-  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.9rem">Exercícios do material Versa A43. <span class="badge-pratica">Duas circ.</span></p>
+  <h2>(D) Mini prática</h2>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.9rem">Exercícios curtos de aquecimento. <span class="badge-pratica">Recap.</span></p>
 
   <div class="treino-section-bar" id="treinoSectionBar">
     <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
     <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
   </div>
 
-  <div class="ex" id="ex03">
-    <div class="ex-header"><span class="ex-num duas">Ex03</span><span class="ex-src">Versa A43 · posição relativa</span><span class="badge-pratica">proposta</span></div>
-    <p class="ex-q">Verifique a posição relativa entre as circunferências \(\lambda_1:(x-2)^2+(y-1)^2=4\) e \(\lambda_2:x^2+(y+1)^2=9\).</p>
+  <div class="ex" id="ex-r1">
+    <div class="ex-header"><span class="ex-num">R1</span><span class="ex-src">Centro e raio · forma reduzida</span><span class="badge-pratica">prática</span></div>
+    <p class="ex-q">Determine o centro e o raio da circunferência \((x-1)^2+(y-2)^2=25\).</p>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> ler centros e raios, calcular \(d\), comparar com soma e diferença.</p>
+      <p class="step-intro"><strong>Ideia:</strong> comparar com \((x-x_0)^2+(y-y_0)^2=R^2\).</p>
       <ol>
-        <li>\(\lambda_1\): \(C_1(2,1)\), \(R_1=\sqrt{4}=2\).</li>
-        <li>\(\lambda_2\): \(C_2(0,-1)\), \(R_2=\sqrt{9}=3\).</li>
-        <li>\(d=\sqrt{(2-0)^2+(1-(-1))^2}=\sqrt{4+4}=\sqrt{8}=2\sqrt{2}\).</li>
-        <li>\(R_1+R_2=5\) e \(|R_1-R_2|=1\).</li>
-        <li>Como \(1 &lt; 2\sqrt{2} &lt; 5\) (isto é, \(|R_1-R_2| &lt; d &lt; R_1+R_2\)), as circunferências são <strong>secantes</strong>.</li>
+        <li>Aqui \(x_0=1\), \(y_0=2\) e \(R^2=25\).</li>
+        <li>Logo \(R=\sqrt{25}=5\) (raio positivo).</li>
       </ol>
-      <div class="dica">No playground, “Ex03” carrega esses valores e mostra o eixo radical e a classificação ao vivo.</div>
+      <div class="dica">No playground, ajuste \(x_0=1\), \(y_0=2\), \(R=5\) e veja o desenho.</div>
     </div>
-    <div class="ans-box">Secantes, pois \(1 &lt; d=2\sqrt{2} &lt; 5\)</div>
+    <div class="ans-box">\(C=(1,2)\), \(R=5\)</div>
   </div>
 
-  <div class="ex" id="ex04">
-    <div class="ex-header"><span class="ex-num duas">Ex04</span><span class="ex-src">Versa A43 · tangente exterior</span><span class="badge-pratica">proposta</span></div>
-    <p class="ex-q">Obtenha a equação da circunferência de centro \(C_1(8,-9)\) que é tangente exterior à circunferência \((x-3)^2+(y-3)^2=16\).</p>
+  <div class="ex" id="ex-r2">
+    <div class="ex-header"><span class="ex-num">R2</span><span class="ex-src">Completar o quadrado</span><span class="badge-pratica">prática</span></div>
+    <p class="ex-q">Complete o quadrado e encontre centro e raio de \(x^2+y^2-12x-12y+68=0\).</p>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> tangência exterior \(\Rightarrow d=R_1+R_2\). Conhecemos \(C_1\), \(C_2\) e \(R_2\); falta \(R_1\).</p>
+      <p class="step-intro"><strong>Ideia:</strong> agrupar \(x\) e \(y\), completar o quadrado, isolar \(R^2\).</p>
       <ol>
-        <li>A circunferência dada tem \(C_2(3,3)\) e \(R_2=\sqrt{16}=4\).</li>
-        <li>\(d=\sqrt{(8-3)^2+(-9-3)^2}=\sqrt{25+144}=\sqrt{169}=13\).</li>
-        <li>Tangente exterior: \(d=R_1+R_2 \Rightarrow 13=R_1+4 \Rightarrow R_1=9\).</li>
-        <li>Equação com centro \(C_1(8,-9)\) e raio \(9\):
-          <div class="formula">\[(x-8)^2+(y+9)^2=81\]</div>
-        </li>
+        <li>Reescreva: \(x^2-12x + y^2-12y = -68\).</li>
+        <li>Complete: \(x^2-12x+36 + y^2-12y+36 = -68+36+36\).</li>
+        <li>Ou seja \((x-6)^2+(y-6)^2=4\).</li>
+        <li>Centro \(C=(6,6)\), raio \(R=2\).</li>
       </ol>
+      <div class="dica">Use o botão “Ex.: completar \(+68=0\)” no playground para carregar \(C=(6,6)\), \(R=2\).</div>
     </div>
-    <div class="ans-box">\((x-8)^2+(y+9)^2=81\)</div>
+    <div class="ans-box">\(C=(6,6)\), \(R=2\)</div>
   </div>
 
-  <div class="ex" id="ex05">
-    <div class="ex-header"><span class="ex-num duas">Ex05</span><span class="ex-src">Versa A43 · eixo radical</span><span class="badge-pratica">proposta</span></div>
-    <p class="ex-q">Dadas as circunferências \(\lambda_1: x^2+y^2-100=0\) e \(\lambda_2: x^2+y^2-12x-12y+68=0\), obtenha:
-    <br>(a) a equação do seu eixo radical;
-    <br>(b) seus pontos de interseção.</p>
+  <div class="ex" id="ex-r3">
+    <div class="ex-header"><span class="ex-num">R3</span><span class="ex-src">Forma geral</span><span class="badge-pratica">prática</span></div>
+    <p class="ex-q">Escreva a equação geral da circunferência de centro \(C=(0,0)\) e raio \(R=10\).</p>
     <div class="steps">
-      <p class="step-intro"><strong>Ideia:</strong> (a) subtrair as equações; (b) cruzar o eixo radical com uma das circunferências.</p>
+      <p class="step-intro"><strong>Ideia:</strong> parta da reduzida e expanda (ou use \(D,E,F\)).</p>
       <ol>
-        <li><strong>(a)</strong> \(\lambda_1-\lambda_2\):
-          <div class="formula">\[(x^2+y^2-100)-(x^2+y^2-12x-12y+68)=0\]</div>
-          Simplificando: \(12x+12y-168=0\), ou seja
-          <div class="formula">\[x+y-14=0\]</div>
-          Esse é o eixo radical.
-        </li>
-        <li><strong>(b)</strong> De \(y=14-x\), substitua em \(\lambda_1\): \(x^2+(14-x)^2=100\).</li>
-        <li>\(x^2+196-28x+x^2=100 \Rightarrow 2x^2-28x+96=0 \Rightarrow x^2-14x+48=0\).</li>
-        <li>\((x-6)(x-8)=0\), logo \(x=6\) ou \(x=8\).</li>
-        <li>Se \(x=6\), \(y=8\); se \(x=8\), \(y=6\). Pontos \(A(6,8)\) e \(B(8,6)\).</li>
-        <li><strong>Verificação em \(\lambda_2\):</strong>
-          para \((6,8)\): \(36+64-72-96+68=0\); para \((8,6)\): \(64+36-96-72+68=0\). Ambos pertencem às duas circunferências.
-        </li>
+        <li>Forma reduzida: \(x^2+y^2=100\).</li>
+        <li>Forma geral: \(x^2+y^2-100=0\) (aqui \(D=0\), \(E=0\), \(F=-100\)).</li>
       </ol>
-      <div class="dica">Leitura geométrica: \(\lambda_1\) é centro \((0,0)\) raio \(10\); \(\lambda_2\) completa o quadrado: \((x-6)^2+(y-6)^2=4\), centro \((6,6)\) raio \(2\). Como \(d=\sqrt{72}=6\sqrt{2}\approx 8{,}49\) e \(|10-2|=8 &lt; d &lt; 12\), são secantes — coerente com dois pontos.</div>
+      <div class="dica">No playground, clique em “Ex.: \(C=(0,0)\), \(R=10\)” e confira \(D\), \(E\) e \(F\) ao vivo.</div>
     </div>
-    <div class="ans-box">(a) \(x+y-14=0\) &nbsp;·&nbsp; (b) \(A(6,8)\) e \(B(8,6)\)</div>
+    <div class="ans-box">\(x^2+y^2-100=0\)</div>
   </div>
 
 </div>
 
 <footer>
-  Pack didático offline · Circunferência · A43 · Duas circunferências · Versa
+  Pack didático offline · Circunferência · A43 · Recapitulação · Versa
 </footer>
 
 <script>
 (function () {
-  var canvas = document.getElementById('cvDuas');
+  var canvas = document.getElementById('cvRecap');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
   var W = canvas.width, H = canvas.height;
-  var SCALE = 18;
+  var SCALE = 22;
   var OX = W / 2, OY = H / 2;
 
   function toPx(x, y) { return [OX + x * SCALE, OY - y * SCALE]; }
   function fmt(n) {
     if (!isFinite(n)) return '--';
-    return String(Math.round(n * 1000) / 1000);
+    var t = Math.round(n * 1000) / 1000;
+    return String(t);
+  }
+  function parenTerm(varName, v) {
+    if (Math.abs(v) < 1e-12) return varName;
+    if (v > 0) return '(' + varName + '-' + fmt(v) + ')';
+    return '(' + varName + '+' + fmt(-v) + ')';
+  }
+  function genTerm(coef, letter) {
+    if (Math.abs(coef) < 1e-12) return '';
+    var abs = Math.abs(coef);
+    var num = (abs === 1 && letter) ? '' : fmt(abs);
+    return (coef > 0 ? '+' : '-') + num + letter;
+  }
+  function syncSlidersFromInputs() {
+    var x0 = parseFloat(document.getElementById('x0').value) || 0;
+    var y0 = parseFloat(document.getElementById('y0').value) || 0;
+    var slX = document.getElementById('slX0');
+    var slY = document.getElementById('slY0');
+    slX.value = Math.max(parseFloat(slX.min), Math.min(parseFloat(slX.max), x0));
+    slY.value = Math.max(parseFloat(slY.min), Math.min(parseFloat(slY.max), y0));
+  }
+  function syncInputsFromSliders() {
+    document.getElementById('x0').value = document.getElementById('slX0').value;
+    document.getElementById('y0').value = document.getElementById('slY0').value;
   }
   function getState() {
     return {
-      x1: parseFloat(document.getElementById('x1').value) || 0,
-      y1: parseFloat(document.getElementById('y1').value) || 0,
-      R1: Math.max(0.1, parseFloat(document.getElementById('R1').value) || 1),
-      x2: parseFloat(document.getElementById('x2').value) || 0,
-      y2: parseFloat(document.getElementById('y2').value) || 0,
-      R2: Math.max(0.1, parseFloat(document.getElementById('R2').value) || 1)
+      x0: parseFloat(document.getElementById('x0').value) || 0,
+      y0: parseFloat(document.getElementById('y0').value) || 0,
+      R: parseFloat(document.getElementById('slR').value) || 1
     };
-  }
-  function classify(d, R1, R2) {
-    var sum = R1 + R2, dif = Math.abs(R1 - R2);
-    var eps = 1e-6;
-    if (d < eps) return { key: 'concentricas', label: 'concêntricas (d = 0)', cls: 'status-concentricas' };
-    if (Math.abs(d - sum) < eps) return { key: 'tang-ext', label: 'tangentes exteriores', cls: 'status-tang-ext' };
-    if (Math.abs(d - dif) < eps) return { key: 'tang-int', label: 'tangentes interiores', cls: 'status-tang-int' };
-    if (d > sum) return { key: 'exteriores', label: 'exteriores', cls: 'status-exteriores' };
-    if (d < dif) return { key: 'interior', label: 'uma interior sem tocar', cls: 'status-interior' };
-    return { key: 'secantes', label: 'secantes', cls: 'status-secantes' };
-  }
-  /* general form: x^2+y^2 -2x0 x -2y0 y + (x0^2+y0^2-R^2)=0 */
-  function radicalAxis(s) {
-    var D1 = -2 * s.x1, E1 = -2 * s.y1, F1 = s.x1 * s.x1 + s.y1 * s.y1 - s.R1 * s.R1;
-    var D2 = -2 * s.x2, E2 = -2 * s.y2, F2 = s.x2 * s.x2 + s.y2 * s.y2 - s.R2 * s.R2;
-    return { a: D1 - D2, b: E1 - E2, c: F1 - F2 };
-  }
-  function intersect(s) {
-    var ra = radicalAxis(s);
-    var a = ra.a, b = ra.b, c = ra.c;
-    var x0 = s.x1, y0 = s.y1, R = s.R1;
-    if (Math.abs(a) < 1e-12 && Math.abs(b) < 1e-12) return [];
-    if (Math.abs(b) >= Math.abs(a) && Math.abs(b) > 1e-12) {
-      var A = 1 + (a * a) / (b * b);
-      var Bcoef = -2 * x0 + 2 * (a / b) * (c / b + y0);
-      var C0 = x0 * x0 + (c / b + y0) * (c / b + y0) - R * R;
-      var disc = Bcoef * Bcoef - 4 * A * C0;
-      if (disc < -1e-9) return [];
-      if (Math.abs(disc) < 1e-9) disc = 0;
-      var xs = disc === 0 ? [-Bcoef / (2 * A)] : [(-Bcoef + Math.sqrt(disc)) / (2 * A), (-Bcoef - Math.sqrt(disc)) / (2 * A)];
-      return xs.map(function (x) { return [x, (-a * x - c) / b]; });
-    } else {
-      var A2 = 1 + (b * b) / (a * a);
-      var B2 = -2 * y0 + 2 * (b / a) * (c / a + x0);
-      var C2 = y0 * y0 + (c / a + x0) * (c / a + x0) - R * R;
-      var disc2 = B2 * B2 - 4 * A2 * C2;
-      if (disc2 < -1e-9) return [];
-      if (Math.abs(disc2) < 1e-9) disc2 = 0;
-      var ys = disc2 === 0 ? [-B2 / (2 * A2)] : [(-B2 + Math.sqrt(disc2)) / (2 * A2), (-B2 - Math.sqrt(disc2)) / (2 * A2)];
-      return ys.map(function (y) { return [(-b * y - c) / a, y]; });
-    }
   }
   function drawGrid() {
     ctx.clearRect(0, 0, W, H);
@@ -446,10 +386,10 @@ document.addEventListener("DOMContentLoaded", function() {
     ctx.fillRect(0, 0, W, H);
     ctx.strokeStyle = '#1a2332';
     ctx.lineWidth = 1;
-    for (var i = -25; i <= 25; i++) {
-      var p1 = toPx(i, -25), p2 = toPx(i, 25);
+    for (var i = -20; i <= 20; i++) {
+      var p1 = toPx(i, -20), p2 = toPx(i, 20);
       ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
-      p1 = toPx(-25, i); p2 = toPx(25, i);
+      p1 = toPx(-20, i); p2 = toPx(20, i);
       ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
     }
     ctx.strokeStyle = '#3a4a62';
@@ -457,117 +397,88 @@ document.addEventListener("DOMContentLoaded", function() {
     ctx.beginPath(); ctx.moveTo(0, OY); ctx.lineTo(W, OY); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(OX, 0); ctx.lineTo(OX, H); ctx.stroke();
   }
-  function drawCircle(x, y, R, stroke, label) {
-    var p = toPx(x, y);
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.arc(p[0], p[1], R * SCALE, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fillStyle = stroke;
-    ctx.beginPath(); ctx.arc(p[0], p[1], 4, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#8b9bb4';
-    ctx.font = '12px Segoe UI, sans-serif';
-    ctx.fillText(label, p[0] + 6, p[1] - 6);
-  }
   function draw() {
     var s = getState();
+    document.getElementById('rLabel').textContent = fmt(s.R);
     drawGrid();
-    drawCircle(s.x1, s.y1, s.R1, '#4fc3f7', 'C1');
-    drawCircle(s.x2, s.y2, s.R2, '#81c784', 'C2');
 
-    var p1 = toPx(s.x1, s.y1), p2 = toPx(s.x2, s.y2);
-    ctx.strokeStyle = '#ffb74d';
+    var cpx = toPx(s.x0, s.y0);
+    var rEnd = toPx(s.x0 + s.R, s.y0);
+    ctx.strokeStyle = '#81c784';
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 4]);
-    ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cpx[0], cpx[1]); ctx.lineTo(rEnd[0], rEnd[1]); ctx.stroke();
     ctx.setLineDash([]);
+    ctx.fillStyle = '#81c784';
+    ctx.beginPath(); ctx.arc(rEnd[0], rEnd[1], 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.font = '12px Segoe UI, sans-serif';
+    ctx.fillText('R', rEnd[0] + 6, rEnd[1] - 6);
 
-    var ra = radicalAxis(s);
-    if (Math.abs(ra.a) > 1e-12 || Math.abs(ra.b) > 1e-12) {
-      var ptsL;
-      if (Math.abs(ra.b) > 1e-9) {
-        ptsL = [[-25, (-ra.a * (-25) - ra.c) / ra.b], [25, (-ra.a * 25 - ra.c) / ra.b]];
-      } else {
-        var xv = -ra.c / ra.a;
-        ptsL = [[xv, -25], [xv, 25]];
-      }
-      var A = toPx(ptsL[0][0], ptsL[0][1]);
-      var B = toPx(ptsL[1][0], ptsL[1][1]);
-      ctx.strokeStyle = '#ce93d8';
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke();
-    }
+    ctx.strokeStyle = '#4fc3f7';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(cpx[0], cpx[1], Math.max(0.5, s.R) * SCALE, 0, Math.PI * 2);
+    ctx.stroke();
 
-    var ips = intersect(s);
-    ips.forEach(function (pt, i) {
-      var pp = toPx(pt[0], pt[1]);
-      ctx.fillStyle = '#ce93d8';
-      ctx.beginPath(); ctx.arc(pp[0], pp[1], 5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#e8eef7';
-      ctx.fillText(i === 0 ? 'A' : 'B', pp[0] + 7, pp[1] - 7);
-    });
+    ctx.fillStyle = '#ffb74d';
+    ctx.beginPath(); ctx.arc(cpx[0], cpx[1], 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#e8eef7';
+    ctx.fillText('C', cpx[0] + 7, cpx[1] - 7);
 
-    var d = Math.sqrt((s.x1 - s.x2) * (s.x1 - s.x2) + (s.y1 - s.y2) * (s.y1 - s.y2));
-    var cls = classify(d, s.R1, s.R2);
-    var sum = s.R1 + s.R2, dif = Math.abs(s.R1 - s.R2);
+    var D = -2 * s.x0;
+    var E = -2 * s.y0;
+    var F = s.x0 * s.x0 + s.y0 * s.y0 - s.R * s.R;
+    var red = parenTerm('x', s.x0) + '^2+' + parenTerm('y', s.y0) + '^2=' + fmt(s.R * s.R);
+    var gen = 'x^2+y^2' + genTerm(D, 'x') + genTerm(E, 'y') + genTerm(F, '') + '=0';
+
     var html = '';
-    html += '<div>\\(d = ' + fmt(d) + '\\)</div>';
-    html += '<div>\\(R_1+R_2 = ' + fmt(sum) + '\\), \\(|R_1-R_2| = ' + fmt(dif) + '\\)</div>';
-    html += '<div>posição: <span class="status-pill ' + cls.cls + '">' + cls.label + '</span></div>';
-    if (Math.abs(ra.a) > 1e-12 || Math.abs(ra.b) > 1e-12) {
-      var eq = '';
-      if (Math.abs(ra.a) > 1e-9) eq += (ra.a > 0 && eq ? '+' : '') + fmt(ra.a) + 'x';
-      if (Math.abs(ra.b) > 1e-9) eq += (ra.b > 0 ? (eq ? '+' : '') : '') + fmt(ra.b) + 'y';
-      if (Math.abs(ra.c) > 1e-9) eq += (ra.c > 0 ? '+' : '') + fmt(ra.c);
-      eq += '=0';
-      html += '<div class="hl4">eixo radical: \\(' + eq + '\\)</div>';
-    }
-    if (ips.length) {
-      html += '<div class="hl">interseção: ' + ips.map(function (p) {
-        return '\\((' + fmt(p[0]) + ',' + fmt(p[1]) + ')\\)';
-      }).join(', ') + '</div>';
-    }
+    html += '<div class="hl3">\\(C=(' + fmt(s.x0) + ',' + fmt(s.y0) + ')\\), \\(R=' + fmt(s.R) + '\\)</div>';
+    html += '<div class="hl">reduzida:</div>';
+    html += '<div>\\(' + red + '\\)</div>';
+    html += '<div class="hl2">geral:</div>';
+    html += '<div>\\(' + gen + '\\)</div>';
+    html += '<div style="color:var(--muted);font-size:0.85rem">\\(D=' + fmt(D) + '\\), \\(E=' + fmt(E) + '\\), \\(F=' + fmt(F) + '\\)</div>';
     var box = document.getElementById('liveVals');
     box.innerHTML = html;
     if (window.renderKatex) window.renderKatex(box);
   }
 
-  ['x1','y1','R1','x2','y2','R2'].forEach(function (id) {
-    document.getElementById(id).addEventListener('input', draw);
-  });
-  document.getElementById('btnEx03').addEventListener('click', function () {
-    document.getElementById('x1').value = 2;
-    document.getElementById('y1').value = 1;
-    document.getElementById('R1').value = 2;
-    document.getElementById('x2').value = 0;
-    document.getElementById('y2').value = -1;
-    document.getElementById('R2').value = 3;
+  function onInputNumber() {
+    syncSlidersFromInputs();
+    draw();
+  }
+  function onSliderXY() {
+    syncInputsFromSliders();
+    draw();
+  }
+
+  document.getElementById('x0').addEventListener('input', onInputNumber);
+  document.getElementById('y0').addEventListener('input', onInputNumber);
+  document.getElementById('slX0').addEventListener('input', onSliderXY);
+  document.getElementById('slY0').addEventListener('input', onSliderXY);
+  document.getElementById('slR').addEventListener('input', draw);
+
+  document.getElementById('btnExOrigem').addEventListener('click', function () {
+    document.getElementById('x0').value = 0;
+    document.getElementById('y0').value = 0;
+    document.getElementById('slR').value = 10;
+    syncSlidersFromInputs();
     draw();
   });
-  document.getElementById('btnEx04').addEventListener('click', function () {
-    document.getElementById('x1').value = 8;
-    document.getElementById('y1').value = -9;
-    document.getElementById('R1').value = 9;
-    document.getElementById('x2').value = 3;
-    document.getElementById('y2').value = 3;
-    document.getElementById('R2').value = 4;
+  document.getElementById('btnExCompletar').addEventListener('click', function () {
+    document.getElementById('x0').value = 6;
+    document.getElementById('y0').value = 6;
+    document.getElementById('slR').value = 2;
+    syncSlidersFromInputs();
     draw();
   });
-  document.getElementById('btnEx05').addEventListener('click', function () {
-    document.getElementById('x1').value = 0;
-    document.getElementById('y1').value = 0;
-    document.getElementById('R1').value = 10;
-    document.getElementById('x2').value = 6;
-    document.getElementById('y2').value = 6;
-    document.getElementById('R2').value = 2;
-    draw();
-  });
+
+  syncSlidersFromInputs();
   draw();
 })();
 
 (function () {
-  var KEY = 'a43-duas-treino';
+  var KEY = 'a43-recap-treino';
   function loadPref() {
     try {
       var v = localStorage.getItem(KEY);

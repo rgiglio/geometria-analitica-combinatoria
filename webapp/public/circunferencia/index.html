@@ -105,6 +105,7 @@ header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
   border-left: 4px solid var(--accent);
 }
 .plan-step.duas { border-left-color: var(--accent2); }
+.plan-step.recap { border-left-color: var(--accent4); }
 .plan-step .num {
   font-weight: 800;
   font-size: 1.15rem;
@@ -112,6 +113,7 @@ header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
   min-width: 3.2rem;
 }
 .plan-step.duas .num { color: var(--accent2); }
+.plan-step.recap .num { color: var(--accent4); }
 .plan-step h3 { font-size: 1rem; margin-bottom: 0.25rem; }
 .plan-step p { color: var(--muted); font-size: 0.9rem; }
 .cards {
@@ -145,6 +147,9 @@ header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
 }
 .card.reta .tag { color: var(--accent); }
 .card.duas .tag { color: var(--accent2); }
+.card.recap .tag { color: var(--accent4); }
+.card.recap .cta { color: var(--accent4); }
+.card.recap:hover { border-color: var(--accent4); box-shadow: 0 8px 32px rgba(206,147,216,.15); }
 .card h2 { font-size: 1.15rem; margin-bottom: 0.5rem; }
 .card p { color: var(--muted); font-size: 0.9rem; }
 .card .cta {
@@ -185,6 +190,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <nav>
   <span class="brand">Circunferência · A43</span>
   <a href="index.html" class="active">Index</a>
+  <a href="a43-recapitulacao.html">Recap.</a>
   <a href="a43-reta-circunferencia.html">Reta × circ.</a>
   <a href="a43-duas-circunferencias.html">Duas circ.</a>
 </nav>
@@ -192,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <header class="hero">
   <h1>Circunferência — Posições Relativas</h1>
   <p>Pack offline · Ensino Médio · Versa Sistema de Ensino · Módulo A43</p>
-  <p>Reta × circunferência · Duas circunferências · Eixo radical</p>
+  <p>Recapitulação · Reta × circunferência · Duas circunferências · Eixo radical</p>
   <span class="badge">Geometria Analítica · A43</span>
 </header>
 
@@ -200,7 +206,8 @@ document.addEventListener("DOMContentLoaded", function() {
   <section class="plan" style="margin-top:0">
     <h2>O que você vai aprender</h2>
     <p style="color:var(--muted);font-size:0.95rem">
-      Dada a reta \(r: ax+by+c=0\) e a circunferência \(\lambda:(x-x_0)^2+(y-y_0)^2=R^2\),
+      Comece pela <strong style="color:var(--text)">recapitulação</strong>: definição de circunferência, formas reduzida e geral, centro e raio.
+      Depois, dada a reta \(r: ax+by+c=0\) e a circunferência \(\lambda:(x-x_0)^2+(y-y_0)^2=R^2\),
       a distância do centro à reta \(d_{Cr}\) decide se a reta é <strong style="color:var(--text)">secante</strong>,
       <strong style="color:var(--text)">tangente</strong> ou <strong style="color:var(--text)">exterior</strong>.
       Entre duas circunferências, comparamos a distância entre centros \(d\) com \(R_1+R_2\) e \(|R_1-R_2|\).
@@ -211,6 +218,13 @@ document.addEventListener("DOMContentLoaded", function() {
   <section class="plan">
     <h2>Assuntos abordados</h2>
     <div class="plan-steps">
+      <div class="plan-step recap">
+        <div class="num">Recap</div>
+        <div>
+          <h3>Recapitulação — Circunferência</h3>
+          <p>Definição (pontos a distância \(R\) de \(C\)). Forma reduzida \((x-x_0)^2+(y-y_0)^2=R^2\) e geral \(x^2+y^2+Dx+Ey+F=0\). Completar o quadrado; centro e raio.</p>
+        </div>
+      </div>
       <div class="plan-step">
         <div class="num">Reta</div>
         <div>
@@ -229,9 +243,15 @@ document.addEventListener("DOMContentLoaded", function() {
   </section>
 
   <h2 style="margin-bottom:0.25rem;color:var(--accent)">Módulos</h2>
-  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.95rem">Cada módulo traz playground interativo, explicação em palavras, fórmulas e resolução completa dos exercícios (com modo treino).</p>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.95rem">Comece pela recapitulação; depois avance para reta × circ. e duas circ. Cada módulo traz playground interativo, explicação em palavras, fórmulas e resolução completa (com modo treino).</p>
 
   <div class="cards">
+    <a class="card recap" href="a43-recapitulacao.html">
+      <div class="tag">Módulo A43 · Recap</div>
+      <h2>Recapitulação — Circunferência</h2>
+      <p>Playground com centro e raio editáveis, formas reduzida e geral ao vivo, completar o quadrado e mini prática (modo treino).</p>
+      <div class="cta">Começar por aqui →</div>
+    </a>
     <a class="card reta" href="a43-reta-circunferencia.html">
       <div class="tag">Módulo A43 · Reta</div>
       <h2>Reta × circunferência</h2>
