@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circunferência — Posições Relativas | A43 · Versa</title>
+<style>
+:root {
+  --bg: #0f1419;
+  --surface: #1a2332;
+  --surface2: #243044;
+  --border: #2d3a4f;
+  --text: #e8eef7;
+  --muted: #8b9bb4;
+  --accent: #4fc3f7;
+  --accent2: #81c784;
+  --accent3: #ffb74d;
+  --accent4: #ce93d8;
+  --danger: #ef5350;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+nav .brand {
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 1rem;
+  font-size: 1.05rem;
+}
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: background .15s, color .15s;
+}
+nav a:hover, nav a.active {
+  background: var(--surface2);
+  color: var(--accent);
+}
+.wrap { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+header.hero {
+  text-align: center;
+  padding: 2.5rem 1rem 2rem;
+  background: linear-gradient(160deg, #1a2332 0%, #0f1419 60%);
+  border-bottom: 1px solid var(--border);
+}
+header.hero h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
+.badge {
+  display: inline-block;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--accent3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  margin-top: 0.75rem;
+}
+.plan {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: var(--shadow);
+}
+.plan h2 { color: var(--accent); font-size: 1.2rem; margin-bottom: 1rem; }
+.plan-steps { display: grid; gap: 1rem; }
+.plan-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+  background: var(--surface2);
+  border-radius: 10px;
+  border-left: 4px solid var(--accent);
+}
+.plan-step.duas { border-left-color: var(--accent2); }
+.plan-step .num {
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--accent);
+  min-width: 3.2rem;
+}
+.plan-step.duas .num { color: var(--accent2); }
+.plan-step h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+.plan-step p { color: var(--muted); font-size: 0.9rem; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+  display: block;
+  box-shadow: var(--shadow);
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 32px rgba(79,195,247,.15);
+}
+.card .tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.card.reta .tag { color: var(--accent); }
+.card.duas .tag { color: var(--accent2); }
+.card h2 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+.card p { color: var(--muted); font-size: 0.9rem; }
+.card .cta {
+  margin-top: 1rem;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.card.duas .cta { color: var(--accent2); }
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  padding: 2rem 1rem;
+  border-top: 1px solid var(--border);
+  margin-top: 3rem;
+}
+.katex { color: inherit; }
+</style>
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "\\[", right: "\\]", display: true},
+      {left: "\\(", right: "\\)", display: false}
+    ],
+    throwOnError: false,
+    ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+  });
+});
+</script>
+</head>
+<body>
+<nav>
+  <span class="brand">Circunferência · A43</span>
+  <a href="index.html" class="active">Index</a>
+  <a href="a43-reta-circunferencia.html">Reta × circ.</a>
+  <a href="a43-duas-circunferencias.html">Duas circ.</a>
+</nav>
+
+<header class="hero">
+  <h1>Circunferência — Posições Relativas</h1>
+  <p>Pack offline · Ensino Médio · Versa Sistema de Ensino · Módulo A43</p>
+  <p>Reta × circunferência · Duas circunferências · Eixo radical</p>
+  <span class="badge">Geometria Analítica · A43</span>
+</header>
+
+<div class="wrap">
+  <section class="plan" style="margin-top:0">
+    <h2>O que você vai aprender</h2>
+    <p style="color:var(--muted);font-size:0.95rem">
+      Dada a reta \(r: ax+by+c=0\) e a circunferência \(\lambda:(x-x_0)^2+(y-y_0)^2=R^2\),
+      a distância do centro à reta \(d_{Cr}\) decide se a reta é <strong style="color:var(--text)">secante</strong>,
+      <strong style="color:var(--text)">tangente</strong> ou <strong style="color:var(--text)">exterior</strong>.
+      Entre duas circunferências, comparamos a distância entre centros \(d\) com \(R_1+R_2\) e \(|R_1-R_2|\).
+      O <strong style="color:var(--accent3)">eixo radical</strong> aparece ao subtrair as equações gerais — e contém os pontos de interseção quando elas se cortam.
+    </p>
+  </section>
+
+  <section class="plan">
+    <h2>Assuntos abordados</h2>
+    <div class="plan-steps">
+      <div class="plan-step">
+        <div class="num">Reta</div>
+        <div>
+          <h3>Reta × circunferência</h3>
+          <p>Fórmula \(d_{Cr}=\dfrac{|ax_0+by_0+c|}{\sqrt{a^2+b^2}}\). Casos \(d&lt;R\), \(d=R\), \(d&gt;R\). Interseção algébrica via sistema e discriminante \(\Delta\).</p>
+        </div>
+      </div>
+      <div class="plan-step duas">
+        <div class="num">Duas</div>
+        <div>
+          <h3>Duas circunferências</h3>
+          <p>Exteriores, tangentes exteriores, secantes, tangentes interiores, uma interior sem tocar, concêntricas. Eixo radical e pontos de interseção.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h2 style="margin-bottom:0.25rem;color:var(--accent)">Módulos</h2>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.95rem">Cada módulo traz playground interativo, explicação em palavras, fórmulas e resolução completa dos exercícios (com modo treino).</p>
+
+  <div class="cards">
+    <a class="card reta" href="a43-reta-circunferencia.html">
+      <div class="tag">Módulo A43 · Reta</div>
+      <h2>Reta × circunferência</h2>
+      <p>Playground com reta e círculo editáveis, classificação ao vivo (\(d_{Cr}\) vs \(R\)), teoria e Ex02 resolvido passo a passo.</p>
+      <div class="cta">Abrir módulo →</div>
+    </a>
+    <a class="card duas" href="a43-duas-circunferencias.html">
+      <div class="tag">Módulo A43 · Duas</div>
+      <h2>Duas circunferências</h2>
+      <p>Playground com duas circunferências, classificação e eixo radical; Ex03, Ex04 e Ex05 (eixo radical + interseção).</p>
+      <div class="cta">Abrir módulo →</div>
+    </a>
+  </div>
+
+  <section class="plan" style="margin-top:2.5rem">
+    <h2>Como usar</h2>
+    <p style="color:var(--muted);font-size:0.95rem">
+      Abra os arquivos HTML diretamente no navegador (<code style="color:var(--accent3)">file://</code>) — não precisa de internet.
+      Cada página é autossuficiente (KaTeX local). Use a barra de navegação para alternar entre módulos.
+      Nos playgrounds: ajuste os controles e observe os valores e a classificação ao vivo.
+    </p>
+  </section>
+</div>
+
+<footer>
+  Pack didático offline · Circunferência · A43 Posições Relativas · Versa · Ensino Médio
+</footer>
+</body>
+</html>
