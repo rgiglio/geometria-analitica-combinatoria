@@ -396,6 +396,72 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="ans-box">a) \(P(4,3)\) &nbsp;&nbsp; b) \(4x-3y-7=0\)</div>
   </div>
 
+  <div class="ex" id="ex-prop-02">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 02</span><span class="ex-src">Versa A44 · p. 722 · não é o Ex02 da FGV</span><span class="badge-pratica">proposta</span></div>
+    <p class="ex-q">Obtenha as retas tangentes à circunferência \((x+2)^2+(y-1)^2=4\) que são paralelas à reta \(r: 4x+3y-1=0\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> as paralelas a \(r\) têm a mesma normal \((4,3)\). Imponha \(d_{Ct}=R\) e resolva a constante livre.</p>
+      <ol>
+        <li>A circunferência tem centro \(C=(-2,1)\) e raio \(R=2\), pois \(R^2=4\).</li>
+        <li>Uma reta paralela a \(4x+3y-1=0\) se escreve
+          <div class="formula">\[4x+3y+c=0,\]</div>
+          com \(c\) a determinar. A reta \(r\) corresponde a \(c=-1\) e, em geral, não é uma das tangentes.
+        </li>
+        <li>Distância de \(C\) à reta, igual ao raio:
+          <div class="formula">\[d=\dfrac{|4\cdot(-2)+3\cdot 1+c|}{\sqrt{4^2+3^2}}=\dfrac{|-8+3+c|}{5}=\dfrac{|-5+c|}{5}=2.\]</div>
+        </li>
+        <li>Logo
+          <div class="formula">\[|-5+c|=10.\]</div>
+          As duas soluções são
+          <div class="formula">\[-5+c=10\quad\text{ou}\quad -5+c=-10,\]</div>
+          <div class="formula">\[c=15\quad\text{ou}\quad c=-5.\]</div>
+        </li>
+        <li>As tangentes são
+          <div class="formula">\[4x+3y+15=0\qquad\text{e}\qquad 4x+3y-5=0.\]</div>
+        </li>
+      </ol>
+      <div class="dica">A resolução manuscrita do livro, com \(n=5\) e \(n=-5/3\), não confere: a forma com coeficiente angular usada ali não reproduz a condição de distância \(d=R\). As duas retas acima são as que ficam a distância \(2\) do centro.</div>
+    </div>
+    <div class="ans-box">\(4x+3y+15=0\) e \(4x+3y-5=0\)</div>
+  </div>
+
+  <div class="ex" id="ex-prop-03">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 03</span><span class="ex-src">Versa A44 · p. 722</span><span class="badge-pratica">proposta</span></div>
+    <p class="ex-q">Obtenha as retas tangentes à circunferência \((x-1)^2+(y-2)^2=8\) que passam pelo ponto \(P(1,-2)\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> \(P\) está fora da circunferência, então saem duas tangentes por \(P\). Escreva a reta por \(P\) com inclinação \(m\) e imponha \(d_{Ct}=R\).</p>
+      <ol>
+        <li>Centro \(C=(1,2)\) e raio
+          <div class="formula">\[R=\sqrt{8}=2\sqrt{2}.\]</div>
+          Distância de \(C\) a \(P\):
+          <div class="formula">\[CP=\sqrt{(1-1)^2+(-2-2)^2}=\sqrt{16}=4.\]</div>
+          Como \(4&gt;2\sqrt{2}\), o ponto \(P\) é exterior: há duas tangentes.
+        </li>
+        <li>Retas não verticais por \(P(1,-2)\):
+          <div class="formula">\[y+2=m(x-1),\]</div>
+          ou, na forma geral,
+          <div class="formula">\[mx-y-m-2=0.\]</div>
+        </li>
+        <li>Distância de \(C(1,2)\) a essa reta:
+          <div class="formula">\[d=\dfrac{|m\cdot 1-2-m-2|}{\sqrt{m^2+1}}=\dfrac{|-4|}{\sqrt{m^2+1}}=\dfrac{4}{\sqrt{m^2+1}}.\]</div>
+          Impondo \(d=R\):
+          <div class="formula">\[\dfrac{4}{\sqrt{m^2+1}}=2\sqrt{2}\quad\Rightarrow\quad \sqrt{m^2+1}=\dfrac{4}{2\sqrt{2}}=\sqrt{2}.\]</div>
+          Quadrando:
+          <div class="formula">\[m^2+1=2\quad\Rightarrow\quad m^2=1\quad\Rightarrow\quad m=\pm 1.\]</div>
+        </li>
+        <li>A reta vertical por \(P\) é \(x=1\). A distância do centro a ela é \(|1-1|=0\neq R\), então \(x=1\) não é tangente (passa pelo centro).
+        </li>
+        <li>Para \(m=1\):
+          <div class="formula">\[y+2=x-1\quad\Rightarrow\quad y=x-3\quad\Rightarrow\quad x-y-3=0.\]</div>
+          Para \(m=-1\):
+          <div class="formula">\[y+2=-(x-1)\quad\Rightarrow\quad y=-x-1\quad\Rightarrow\quad x+y+1=0.\]</div>
+        </li>
+      </ol>
+      <div class="dica">O termo em \(m\) do numerador se cancela: \(|m-2-m-2|=4\). Por isso a condição de tangência não depende de um \(m\) escondido no numerador e sai \(m^2=1\).</div>
+    </div>
+    <div class="ans-box">\(x-y-3=0\) (ou \(y=x-3\)) e \(x+y+1=0\) (ou \(y=-x-1\))</div>
+  </div>
+
 </div>
 
 <footer>
