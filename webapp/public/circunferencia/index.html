@@ -150,6 +150,11 @@ header.hero p { color: var(--muted); max-width: 640px; margin: 0.4rem auto; }
 .card.recap .tag { color: var(--accent4); }
 .card.recap .cta { color: var(--accent4); }
 .card.recap:hover { border-color: var(--accent4); box-shadow: 0 8px 32px rgba(206,147,216,.15); }
+.card.tang .tag { color: var(--accent3); }
+.card.tang .cta { color: var(--accent3); }
+.card.tang:hover { border-color: var(--accent3); box-shadow: 0 8px 32px rgba(255,183,77,.15); }
+.plan-step.tang { border-left-color: var(--accent3); }
+.plan-step.tang .num { color: var(--accent3); }
 .card h2 { font-size: 1.15rem; margin-bottom: 0.5rem; }
 .card p { color: var(--muted); font-size: 0.9rem; }
 .card .cta {
@@ -193,12 +198,13 @@ document.addEventListener("DOMContentLoaded", function() {
   <a href="a43-recapitulacao.html">Recap.</a>
   <a href="a43-reta-circunferencia.html">Reta × circ.</a>
   <a href="a43-duas-circunferencias.html">Duas circ.</a>
+  <a href="a44-tangencia.html">Tangência</a>
 </nav>
 
 <header class="hero">
   <h1>Circunferência — Posições Relativas</h1>
   <p>Pack offline · Ensino Médio · Versa Sistema de Ensino · Módulo A43</p>
-  <p>Recapitulação · Reta × circunferência · Duas circunferências · Eixo radical</p>
+  <p>Recapitulação · Reta × circunferência · Duas circunferências · Eixo radical · Tangência (A44)</p>
   <span class="badge">Geometria Analítica · A43</span>
 </header>
 
@@ -212,6 +218,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <strong style="color:var(--text)">tangente</strong> ou <strong style="color:var(--text)">exterior</strong>.
       Entre duas circunferências, comparamos a distância entre centros \(d\) com \(R_1+R_2\) e \(|R_1-R_2|\).
       O <strong style="color:var(--accent3)">eixo radical</strong> aparece ao subtrair as equações gerais — e contém os pontos de interseção quando elas se cortam.
+      No módulo <strong style="color:var(--text)">A44</strong>, a tangência: a reta toca a circunferência em um único ponto quando \(d_{Ct}=R\), e o raio até esse ponto é perpendicular à reta.
     </p>
   </section>
 
@@ -239,11 +246,18 @@ document.addEventListener("DOMContentLoaded", function() {
           <p>Exteriores, tangentes exteriores, secantes, tangentes interiores, uma interior sem tocar, concêntricas. Eixo radical e pontos de interseção.</p>
         </div>
       </div>
+      <div class="plan-step tang">
+        <div class="num">A44</div>
+        <div>
+          <h3>Problemas de tangência</h3>
+          <p>Reta tangente num ponto da circunferência (raio perpendicular). Tangentes por ponto exterior. Paralelas com \(d_{Ct}=R\). Ponto de tangência.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <h2 style="margin-bottom:0.25rem;color:var(--accent)">Módulos</h2>
-  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.95rem">Comece pela recapitulação; depois avance para reta × circ. e duas circ. Cada módulo traz playground interativo, explicação em palavras, fórmulas e resolução completa (com modo treino).</p>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.95rem">Comece pela recapitulação; depois avance para reta × circ., duas circ. e tangência (A44). Cada módulo traz playground interativo, explicação em palavras, fórmulas e resolução completa (com modo treino).</p>
 
   <div class="cards">
     <a class="card recap" href="a43-recapitulacao.html">
@@ -262,6 +276,12 @@ document.addEventListener("DOMContentLoaded", function() {
       <div class="tag">Módulo A43 · Duas</div>
       <h2>Duas circunferências</h2>
       <p>Playground com duas circunferências, classificação e eixo radical; Ex03, Ex04 e Ex05 (eixo radical + interseção).</p>
+      <div class="cta">Abrir módulo →</div>
+    </a>
+    <a class="card tang" href="a44-tangencia.html">
+      <div class="tag">Módulo A44 · Tangência</div>
+      <h2>Problemas de tangência</h2>
+      <p>Playground com classificação \(d_{Ct}\) vs \(R\) e raio até o ponto de tangência; Ex01, Ex02 (FGV) e Ex04 resolvidos (modo treino).</p>
       <div class="cta">Abrir módulo →</div>
     </a>
   </div>
