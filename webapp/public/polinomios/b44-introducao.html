@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polinômios — Introdução | B44</title>
+<style>
+
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --danger: #ef5350; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+  touch-action: none;
+}
+.controls { display: flex; flex-direction: column; gap: 0.7rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-size: 0.92rem;
+}
+.live-vals div { margin: 0.25rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.status-pill {
+  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+}
+.status-secante { background: rgba(79,195,247,.2); color: var(--accent); }
+.status-tangente { background: rgba(129,199,132,.2); color: var(--accent2); }
+.status-exterior { background: rgba(255,183,77,.2); color: var(--accent3); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow); overflow: hidden;
+}
+.theory-card h3 { margin-top: 0; color: var(--accent); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
+}
+.explain {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 0 0 1.5rem; box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(79,195,247,.15); color: var(--accent);
+  border: 1px solid rgba(79,195,247,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps, .ex.collapsed .ans-box { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+/* ---- B44 extras ---- */
+canvas#cvPoly { aspect-ratio: 4 / 3; max-width: 640px; }
+.formulario {
+  background: linear-gradient(160deg, #22301f 0%, #1a2332 55%);
+  border: 2px solid var(--accent3); border-radius: var(--radius);
+  padding: 1.25rem 1.3rem 1.4rem; margin: 0 0 1.75rem; box-shadow: 0 6px 28px rgba(255,183,77,.12);
+}
+.formulario-head { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+.formulario-head h2 { margin: 0; border: none; padding: 0; color: var(--accent3); font-size: 1.35rem; letter-spacing: .02em; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 0.9rem; }
+.form-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; }
+.form-item h4 { color: var(--accent3); font-size: 0.92rem; margin-bottom: 0.25rem; }
+.form-item h4 .n { display: inline-block; min-width: 1.6rem; color: var(--bg); background: var(--accent3); border-radius: 5px; text-align: center; margin-right: 0.4rem; font-size: 0.8rem; }
+.form-item p { color: var(--muted); font-size: 0.86rem; margin-top: 0.3rem; }
+.form-item .formula { border-left-color: var(--accent3); font-size: 0.98rem; }
+.fix {
+  margin: 0.75rem 0; padding: 0.65rem 0.9rem; border-radius: 8px;
+  background: rgba(239,83,80,.10); border: 1px solid rgba(239,83,80,.4); color: #ffab9f; font-size: 0.9rem;
+}
+.fix strong { color: #ffcdd2; }
+.fix .katex { color: inherit; }
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.lab-tabs button.on { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.coef-row { display: grid; grid-template-columns: 4.2rem 1fr 3.4rem; gap: 0.5rem; align-items: center; }
+.coef-row .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--text); font-size: 0.88rem; }
+.coef-row.dom label { color: var(--accent3); font-weight: 700; }
+.coef-row.zero label { opacity: .55; }
+.ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .ops-grid { grid-template-columns: 1fr; } }
+.poly-in { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; font-size: 0.9rem; color: var(--muted); }
+.poly-in input { width: 58px; }
+.mult-table { border-collapse: collapse; margin: 0.6rem 0; font-size: 0.92rem; }
+.mult-table th, .mult-table td { border: 1px solid var(--border); padding: 0.4rem 0.65rem; text-align: center; }
+.mult-table th { background: var(--surface2); color: var(--accent); }
+.mult-table td { background: var(--bg); }
+.work { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-top: 0.8rem; overflow-x: auto; }
+.work div { margin: 0.3rem 0; color: var(--muted); }
+.deg-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(255,183,77,.18); color: var(--accent3); }
+.deg-tag.nulo { background: rgba(239,83,80,.18); color: var(--danger); }
+.root-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(129,199,132,.2); color: var(--accent2); }
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.9rem 0; }
+.quiz-q .qt { margin-bottom: 0.6rem; }
+.quiz-opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.quiz-opts button.ok { background: rgba(129,199,132,.25); border-color: var(--accent2); color: var(--accent2); }
+.quiz-opts button.bad { background: rgba(239,83,80,.18); border-color: var(--danger); color: #ffab9f; }
+.quiz-fb { margin-top: 0.55rem; font-size: 0.9rem; color: var(--muted); display: none; }
+.quiz-q.done .quiz-fb { display: block; }
+.score { display: inline-block; font-weight: 800; color: var(--accent2); font-size: 1.05rem; }
+.sys { display: inline-block; }
+@media print {
+  body.print-form nav, body.print-form .treino-banner, body.print-form .wrap > *:not(.formulario), body.print-form footer, body.print-form .no-print { display: none !important; }
+  body.print-form { background: #fff; color: #000; }
+  body.print-form .formulario { border-color: #999; background: #fff; box-shadow: none; }
+  body.print-form .form-item { background: #fff; border-color: #bbb; break-inside: avoid; }
+  body.print-form .form-item h4, body.print-form .formulario-head h2 { color: #000; }
+  body.print-form .form-item p { color: #333; }
+}
+</style>
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "\\[", right: "\\]", display: true},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+</head>
+<body class="treino-ativo">
+
+<nav>
+  <span class="brand">Polinômios · B44</span>
+  <a href="index.html">Index</a>
+  <a href="b44-introducao.html" class="active">Introdução</a>
+  <a href="#formulario">Formulário</a>
+  <a href="#laboratorio">Laboratório</a>
+  <a href="#teste">Teste rápido</a>
+  <a href="#exercicios">Exercícios</a>
+</nav>
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+  <h1>Introdução ao Estudo dos Polinômios</h1>
+  <p class="subtitle">B44 · Definição · Grau · Valor numérico · Raiz · Polinômios idênticos · Identicamente nulo · Adição, subtração e multiplicação · Versa</p>
+
+  <span class="section-label">(A) De onde vem um polinômio</span>
+  <div class="explain">
+    <p class="lead">Uma pessoa abre uma poupança e faz depósitos mensais: \(a\) reais em janeiro, \(b\) em fevereiro, \(c\) em março, \(d\) em abril e \(e\) em maio. A taxa mensal de rendimento é \(i\%\).</p>
+    <p>Cada mês aplicado multiplica o dinheiro pelo <strong>fator de correção</strong> \(x = 1+\dfrac{i}{100}\). O depósito de janeiro fica 4 meses rendendo, o de fevereiro 3 meses, e assim por diante. O montante fica</p>
+    <div class="formula">\[M = a\left(1+\tfrac{i}{100}\right)^4 + b\left(1+\tfrac{i}{100}\right)^3 + c\left(1+\tfrac{i}{100}\right)^2 + d\left(1+\tfrac{i}{100}\right) + e.\]</div>
+    <p>Trocando \(1+\frac{i}{100}\) por \(x\):</p>
+    <div class="formula">\[P(x) = ax^4 + bx^3 + cx^2 + dx + e.\]</div>
+    <p>Essa expressão é uma <strong>função polinomial</strong>, ou simplesmente <strong>polinômio</strong>. Os depósitos \(a, b, c, d, e\) são os <strong>coeficientes</strong>, e o montante é o <strong>valor numérico</strong> \(P(x)\) para o fator \(x\) do período.</p>
+  </div>
+
+  <span class="section-label">(B) Conceitos, passo a passo</span>
+  <div class="explain">
+    <h3 style="margin-top:0">1. Definição</h3>
+    <p>Dados os números complexos \(a_n, a_{n-1}, a_{n-2}, \dots, a_1, a_0\) e o número natural \(n\), chama-se <strong>polinômio</strong> a função \(P:\mathbb{C}\to\mathbb{C}\) dada por</p>
+    <div class="formula">\[P(x)=a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}+\dots+a_1x+a_0.\]</div>
+    <p>\(a_n, a_{n-1}, \dots, a_1, a_0\) são os <strong>coeficientes</strong>. \(a_nx^n, a_{n-1}x^{n-1}, \dots, a_1x, a_0\) são os <strong>termos</strong> (ou monômios). \(x\) é a variável (complexa).</p>
+    <p>\(a_n\) é o <strong>coeficiente dominante</strong>, o que acompanha a maior potência. \(a_0\) é o <strong>termo independente</strong>, o que não tem \(x\).</p>
+    <p><strong>Exemplo do livro.</strong> Em \(P(x)=5x^3-3x^2+6ix+4\):</p>
+    <ul style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li>coeficientes: \(5,\ -3,\ 6i\ \text{e}\ 4\) (o coeficiente pode ser complexo: \(6i\));</li>
+      <li>termos: \(5x^3,\ -3x^2,\ 6ix\ \text{e}\ 4\);</li>
+      <li>coeficiente dominante: \(5\);</li>
+      <li>termo independente: \(4\).</li>
+    </ul>
+
+    <h3>2. Grau</h3>
+    <p>O <strong>grau</strong> de \(P\) é o <strong>maior expoente de \(x\) cujo coeficiente não é zero</strong>. Se \(a_n\neq 0\), então \(\operatorname{gr}(P)=n\).</p>
+    <p><strong>Exemplo.</strong> \(P(x)=2x^6+x^5-2x^3+3x-1\): o maior expoente é \(6\), com coeficiente \(2\neq 0\). Logo \(\operatorname{gr}(P)=6\).</p>
+    <p><strong>Cuidado.</strong> Um termo com coeficiente zero "some". Em \(0x^3+4x^2+1\), o grau é \(2\), não \(3\). É exatamente isso que o Exercício 01 explora. Um polinômio constante não nulo, como \(P(x)=7\), tem grau \(0\).</p>
+
+    <h3>3. Valor numérico</h3>
+    <p>O <strong>valor numérico</strong> de \(P\) em \(x=\alpha\) é o número obtido ao <strong>substituir \(x\) por \(\alpha\)</strong> e fazer as contas:</p>
+    <div class="formula">\[P(\alpha)=a_n\alpha^n+a_{n-1}\alpha^{n-1}+\dots+a_1\alpha+a_0.\]</div>
+    <p><strong>Exemplo do livro.</strong> \(P(x)=2x^3-3x^2+6x-1\).</p>
+    <div class="formula">\[P(3)=2\cdot 3^3-3\cdot 3^2+6\cdot 3-1=2\cdot 27-3\cdot 9+18-1=54-27+18-1=44\]</div>
+    <div class="formula">\[P(1)=2\cdot 1^3-3\cdot 1^2+6\cdot 1-1=2-3+6-1=4\]</div>
+    <div class="formula">\[P(0)=2\cdot 0^3-3\cdot 0^2+6\cdot 0-1=0-0+0-1=-1\]</div>
+    <p>Repare: \(P(1)=2+(-3)+6+(-1)=4\) é a <strong>soma dos coeficientes</strong>, porque \(1\) elevado a qualquer potência dá \(1\). E \(P(0)=-1\) é o <strong>termo independente</strong>, porque todos os termos com \(x\) viram zero.</p>
+
+    <h3>4. Raiz</h3>
+    <p>\(\alpha\) é <strong>raiz</strong> de \(P\) se, e somente se, \(P(\alpha)=0\).</p>
+    <p><strong>Exemplo do livro.</strong> \(x=2\) é raiz de \(P(x)=x^3+3x^2-7x-6\)?</p>
+    <div class="formula">\[P(2)=2^3+3\cdot 2^2-7\cdot 2-6=8+3\cdot 4-14-6=8+12-14-6=0.\]</div>
+    <p>Como \(P(2)=0\), \(x=2\) é raiz de \(P\). No gráfico, raiz real é onde a curva <strong>corta (ou toca) o eixo \(x\)</strong>.</p>
+
+    <h3>5. Polinômios idênticos</h3>
+    <p>\(A(x)\) e \(B(x)\) são <strong>idênticos</strong> quando têm o mesmo valor numérico para todo \(\alpha\in\mathbb{C}\). Para isso, basta que os <strong>coeficientes dos termos de mesmo grau sejam iguais</strong>.</p>
+    <div class="formula">\[A(x)\equiv B(x)\iff A(\alpha)=B(\alpha),\ \forall\alpha\in\mathbb{C}.\]</div>
+    <p><strong>Exemplo do livro.</strong> \(A(x)=3x^2+bx+2\) e \(B(x)=ax^2+x-c\). Comparando grau a grau:</p>
+    <div class="formula">\[\begin{cases} x^2:\ 3=a\\ x^1:\ b=1\\ x^0:\ 2=-c \end{cases}\quad\Rightarrow\quad a=3,\ b=1,\ c=-2.\]</div>
+
+    <h3>6. Polinômio identicamente nulo</h3>
+    <p>\(P\) é <strong>identicamente nulo</strong> quando \(P(\alpha)=0\) para todo \(\alpha\in\mathbb{C}\). Para isso, <strong>todos os coeficientes têm que ser zero</strong>. Não se define grau para o polinômio nulo.</p>
+    <div class="formula">\[P(x)\equiv 0\iff P(\alpha)=0,\ \forall\alpha\in\mathbb{C}.\]</div>
+    <p><strong>Exemplo do livro.</strong> \(P(x)=(a+2)x^2+(b-1)x+(c+4)\) nulo:</p>
+    <div class="formula">\[\begin{cases} a+2=0\Rightarrow a=-2\\ b-1=0\Rightarrow b=1\\ c+4=0\Rightarrow c=-4 \end{cases}\]</div>
+
+    <h3>7. Adição e subtração</h3>
+    <p>Somamos (ou subtraímos) os <strong>coeficientes dos termos de mesmo grau</strong>.</p>
+    <p><strong>Exemplo do livro.</strong> \(A(x)=3x^3-4x^2+11x-8\) e \(B(x)=-2x^3+9x^2-2x+16\).</p>
+    <div class="formula">\[C(x)=A(x)+B(x)=(3-2)x^3+(-4+9)x^2+(11-2)x+(-8+16)=x^3+5x^2+9x+8\]</div>
+    <div class="formula">\[D(x)=A(x)-B(x)=(3+2)x^3+(-4-9)x^2+(11+2)x+(-8-16)=5x^3-13x^2+13x-24\]</div>
+    <div class="fix"><strong>Correção do livro.</strong> O livro imprime \(D(x)=5x^3-13x^2+13x+24\). O termo independente é \(-8-16=-24\), então o certo é \(D(x)=5x^3-13x^2+13x\mathbf{-24}\).</div>
+    <p><strong>Grau da soma.</strong> Se os graus são diferentes, o maior "manda": \(\operatorname{gr}(A\pm B)=\operatorname{gr}(A)\). Se os graus são iguais, os termos dominantes podem se cancelar e o grau pode <strong>cair</strong>: \(\operatorname{gr}(A\pm B)\le\operatorname{gr}(A)\).</p>
+    <div class="fix"><strong>Correção do livro.</strong> Na observação, o livro troca as duas regras (escreve "\(\le\)" no caso \(\operatorname{gr}(A)&gt;\operatorname{gr}(B)\) e "\(=\)" no caso de graus iguais). O certo está no Formulário abaixo. Contraexemplo: \(A=x^2+1\) e \(B=-x^2+x\) têm grau \(2\), mas \(A+B=x+1\) tem grau \(1\). Teste no Laboratório, botão "Cancelamento".</div>
+
+    <h3>8. Multiplicação</h3>
+    <p>Multiplicamos <strong>cada termo de \(A\) por cada termo de \(B\)</strong> (distributiva) e depois juntamos os termos de mesmo grau.</p>
+    <p><strong>Exemplo do livro.</strong> \(A(x)=x^2+3x-4\) e \(B(x)=x^3+2x+1\). Vamos obter \(E(x)=A(x)\cdot B(x)\).</p>
+    <div class="formula">\[E(x)=x^2\cdot x^3+x^2\cdot 2x+x^2\cdot 1+3x\cdot x^3+3x\cdot 2x+3x\cdot 1-4\cdot x^3-4\cdot 2x-4\cdot 1\]</div>
+    <div class="formula">\[E(x)=x^5+2x^3+x^2+3x^4+6x^2+3x-4x^3-8x-4\]</div>
+    <div class="formula">\[E(x)=x^5+3x^4+(2-4)x^3+(1+6)x^2+(3-8)x-4=x^5+3x^4-2x^3+7x^2-5x-4\]</div>
+    <p>Grau: \(\operatorname{gr}(E)=5=2+3=\operatorname{gr}(A)+\operatorname{gr}(B)\).</p>
+    <div class="fix"><strong>Correção do livro.</strong> O enunciado chama o produto de \(E(x)\), mas a resolução escreve \(D(x)=\dots\). É o mesmo polinômio: leia \(E(x)\) nas duas linhas.</div>
+  </div>
+
+  <section class="formulario" id="formulario">
+    <div class="formulario-head">
+      <h2>(C) FORMULÁRIO · B44 Polinômios</h2>
+      <button type="button" class="primary no-print" id="btnPrintForm">Imprimir só o formulário</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-item">
+        <h4><span class="n">1</span>Forma geral</h4>
+        <div class="formula">\[P(x)=a_nx^n+a_{n-1}x^{n-1}+\dots+a_1x+a_0\]</div>
+        <p>\(a_i\): coeficientes · \(a_n\): coeficiente dominante · \(a_0\): termo independente · \(n\in\mathbb{N}\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">2</span>Grau</h4>
+        <div class="formula">\[a_n\neq 0\ \Rightarrow\ \operatorname{gr}(P)=n\]</div>
+        <p>Maior expoente com coeficiente <strong>não nulo</strong>. Constante \(k\neq0\): grau \(0\). Polinômio nulo: grau não definido.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">3</span>Condição para ter grau \(n\)</h4>
+        <div class="formula">\[\text{coef. de } x^n\neq 0\quad\text{e}\quad\text{coef. de } x^{k}=0\ \ (k&gt;n)\]</div>
+        <p>Usada no Ex01: zere tudo que está acima e exija "\(\neq 0\)" no termo que deve mandar.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">4</span>Valor numérico</h4>
+        <div class="formula">\[P(\alpha)=a_n\alpha^n+a_{n-1}\alpha^{n-1}+\dots+a_1\alpha+a_0\]</div>
+        <p>Troque \(x\) por \(\alpha\) em <strong>todos</strong> os termos, com parênteses quando \(\alpha&lt;0\): \((-2)^2=4\), \((-2)^3=-8\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">5</span>Dois valores especiais</h4>
+        <div class="formula">\[P(1)=a_n+a_{n-1}+\dots+a_1+a_0\]</div>
+        <div class="formula">\[P(0)=a_0\]</div>
+        <p>\(P(1)\) = <strong>soma dos coeficientes</strong>. \(P(0)\) = <strong>termo independente</strong>.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">6</span>Raiz</h4>
+        <div class="formula">\[\alpha \text{ é raiz de } P\iff P(\alpha)=0\]</div>
+        <p>Raiz real = ponto onde o gráfico encontra o eixo \(x\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">7</span>Polinômios idênticos</h4>
+        <div class="formula">\[A\equiv B\iff A(\alpha)=B(\alpha),\ \forall\alpha\in\mathbb{C}\]</div>
+        <p>Na prática: <strong>coeficientes de mesmo grau iguais</strong> (\(x^2\) com \(x^2\), \(x\) com \(x\), constante com constante).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">8</span>Identicamente nulo</h4>
+        <div class="formula">\[P\equiv 0\iff P(\alpha)=0,\ \forall\alpha\in\mathbb{C}\]</div>
+        <p>Na prática: <strong>todos os coeficientes iguais a zero</strong>. Não tem grau.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">9</span>Adição e subtração</h4>
+        <div class="formula">\[(A\pm B)(x)=\textstyle\sum (a_k\pm b_k)\,x^k\]</div>
+        <p>Some/subtraia coeficientes de mesmo grau. Na subtração, troque o sinal de <strong>todos</strong> os termos de \(B\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">10</span>Grau da soma/diferença</h4>
+        <div class="formula">\[\operatorname{gr}(A)&gt;\operatorname{gr}(B)\Rightarrow \operatorname{gr}(A\pm B)=\operatorname{gr}(A)\]</div>
+        <div class="formula">\[\operatorname{gr}(A)=\operatorname{gr}(B)\Rightarrow \operatorname{gr}(A\pm B)\le\operatorname{gr}(A)\]</div>
+        <p>Com graus iguais, os termos dominantes podem se cancelar (ou o resultado pode até ser nulo).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">11</span>Multiplicação</h4>
+        <div class="formula">\[a x^i\cdot b x^j=(a\cdot b)\,x^{i+j}\]</div>
+        <div class="formula">\[\operatorname{gr}(A\cdot B)=\operatorname{gr}(A)+\operatorname{gr}(B)\]</div>
+        <p>Cada termo de \(A\) vezes cada termo de \(B\) (distributiva); depois junte os de mesmo grau. Expoentes <strong>somam</strong>.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">12</span>Ferramentas que caem junto</h4>
+        <div class="formula">\[(x-p)(x-q)=x^2-(p+q)x+pq\]</div>
+        <div class="formula">\[\frac{a}{x-1}+\frac{b}{x+1}=\frac{a(x+1)+b(x-1)}{x^2-1}\]</div>
+        <p>Frações com o <strong>mesmo denominador</strong> iguais \(\Rightarrow\) numeradores idênticos (Ex06). \(x^2-1=(x-1)(x+1)\).</p>
+      </div>
+    </div>
+  </section>
+
+  <span class="section-label" id="laboratorio">(D) Laboratório interativo</span>
+  <div class="lab-tabs">
+    <button type="button" class="on" id="tabLab1">1 · Gráfico, grau, valor numérico e raízes</button>
+    <button type="button" id="tabLab2">2 · Somar, subtrair e multiplicar</button>
+  </div>
+
+  <div class="playground" id="lab1">
+    <div class="play-grid">
+      <div>
+        <canvas id="cvPoly" width="640" height="480" aria-label="Gráfico do polinômio P(x)"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem;font-style:normal">
+          <span class="hl">azul = \(y=P(x)\)</span> &nbsp;|&nbsp; <span class="hl3">âmbar = \((\alpha, P(\alpha))\)</span> &nbsp;|&nbsp; <span class="hl2">verde = raízes reais</span> &nbsp;|&nbsp; <span class="hl4">lilás = \(P(0)\) e \(P(1)\)</span>
+        </p>
+        <div class="live-vals" id="polyVals" aria-live="polite" style="margin-top:0.8rem"></div>
+      </div>
+      <div class="controls">
+        <label>Coeficientes de \(P(x)=a_4x^4+a_3x^3+a_2x^2+a_1x+a_0\)</label>
+        <div class="coef-row" id="row4"><label for="c4">\(a_4\ (x^4)\)</label><input type="range" id="c4" min="-5" max="5" step="0.25" value="0"><span class="val" id="v4">0</span></div>
+        <div class="coef-row" id="row3"><label for="c3">\(a_3\ (x^3)\)</label><input type="range" id="c3" min="-5" max="5" step="0.25" value="2"><span class="val" id="v3">2</span></div>
+        <div class="coef-row" id="row2"><label for="c2">\(a_2\ (x^2)\)</label><input type="range" id="c2" min="-5" max="5" step="0.25" value="-3"><span class="val" id="v2">-3</span></div>
+        <div class="coef-row" id="row1"><label for="c1">\(a_1\ (x)\)</label><input type="range" id="c1" min="-20" max="20" step="0.25" value="6"><span class="val" id="v1">6</span></div>
+        <div class="coef-row" id="row0"><label for="c0">\(a_0\)</label><input type="range" id="c0" min="-40" max="40" step="0.25" value="-1"><span class="val" id="v0">-1</span></div>
+        <label for="alpha">Valor de \(\alpha\) (onde calcular \(P(\alpha)\)): <span id="alphaLbl" class="hl3">3</span></label>
+        <input type="range" id="alpha" min="-5" max="5" step="0.5" value="3">
+        <label for="yScale">Escala vertical: \(y\) de \(-Y\) a \(Y\), \(Y=\) <span id="yLbl" class="hl">50</span></label>
+        <input type="range" id="yScale" min="0" max="5" step="1" value="3">
+        <div class="ctrl-row">
+          <button type="button" class="primary" data-preset="livro">Livro: \(2x^3-3x^2+6x-1\)</button>
+          <button type="button" class="primary" data-preset="raiz">Livro: raiz \(x=2\)</button>
+        </div>
+        <div class="ctrl-row">
+          <button type="button" data-preset="ex02">Ex02</button>
+          <button type="button" data-preset="ex03">Ex03</button>
+          <button type="button" data-preset="nulo">Nulo</button>
+          <button type="button" data-preset="reset">Reset</button>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:0.7rem;margin-top:0.2rem">
+          <label><input type="checkbox" id="chkEx01"> Modo Ex01: \(P(x)=(m^2-4)x^3+(m+2)x^2+(m-2)x+1\)</label>
+          <div id="ex01Box" style="display:none;margin-top:0.45rem">
+            <label for="mSl">\(m=\) <span id="mLbl" class="hl3">0</span></label>
+            <input type="range" id="mSl" min="-3" max="3" step="0.5" value="0">
+            <p class="note">Ponha \(m=2\) e depois \(m=-2\) e veja o grau cair.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="playground" id="lab2" style="display:none">
+    <div class="ops-grid">
+      <div>
+        <label>\(A(x)=\)</label>
+        <div class="poly-in" id="inA"></div>
+      </div>
+      <div>
+        <label>\(B(x)=\)</label>
+        <div class="poly-in" id="inB"></div>
+      </div>
+    </div>
+    <div class="ctrl-row" style="margin-top:0.8rem">
+      <span style="color:var(--muted);font-size:0.88rem">Operação:</span>
+      <button type="button" class="primary" data-op="+">\(A+B\)</button>
+      <button type="button" data-op="-">\(A-B\)</button>
+      <button type="button" data-op="*">\(A\cdot B\)</button>
+      <span style="flex:1"></span>
+      <button type="button" data-ops="soma">Livro: \(C\) e \(D\)</button>
+      <button type="button" data-ops="prod">Livro: \(E=A\cdot B\)</button>
+      <button type="button" data-ops="cancel">Cancelamento</button>
+    </div>
+    <div class="work" id="opsWork" aria-live="polite"></div>
+  </div>
+
+  <span class="section-label" id="teste">(E) Teste rápido</span>
+  <div class="explain">
+    <p>Clique na alternativa. A explicação aparece logo depois. Acertos: <span class="score" id="quizScore">0 / 0</span> &nbsp; <button type="button" id="quizReset">Recomeçar</button></p>
+    <div id="quizBox"></div>
+  </div>
+
+  <h2 id="exercicios">(F) Exercícios propostos</h2>
+  <p style="color:var(--muted);margin-bottom:0.5rem;font-size:0.9rem">Exercícios propostos do material Versa B44, p. 746, resolvidos linha por linha, sem pular passagem. <span class="badge-pratica">Polinômios</span></p>
+
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+  <!-- ===================== 01 ===================== -->
+  <div class="ex" id="ex01">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 01</span><span class="ex-src">Versa B44 · p. 746</span><span class="badge-pratica">grau</span></div>
+    <p class="ex-q">Dado o polinômio \(P(x)=(m^2-4)x^3+(m+2)x^2+(m-2)x+1\), com \(m\in\mathbb{R}\), determine os valores de \(m\) de modo que</p>
+    <p class="ex-q">a) \(P\) seja um polinômio do 3º grau.</p>
+    <p class="ex-q">b) \(P\) seja um polinômio do 2º grau.</p>
+    <p class="ex-q">c) \(P\) seja um polinômio do 1º grau.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> o grau é o maior expoente com coeficiente <strong>diferente de zero</strong>. Para ter grau \(n\): o coeficiente de \(x^n\) tem que ser \(\neq 0\) e todos os coeficientes acima dele têm que ser \(=0\).</p>
+      <ol>
+        <li><strong>Identificar os coeficientes.</strong>
+          <div class="formula">\[\text{coef. de } x^3:\ m^2-4\qquad \text{coef. de } x^2:\ m+2\qquad \text{coef. de } x:\ m-2\qquad \text{termo independente: } 1\]</div>
+        </li>
+        <li><strong>Resolver de uma vez a equação \(m^2-4=0\)</strong> (ela aparece nos três itens):
+          <div class="formula">\[m^2-4=0\]</div>
+          <div class="formula">\[m^2=4\]</div>
+          <div class="formula">\[m=\pm\sqrt{4}\]</div>
+          <div class="formula">\[m=2\quad\text{ou}\quad m=-2\]</div>
+        </li>
+        <li><strong>Item a) 3º grau.</strong> O coeficiente de \(x^3\) tem que ser diferente de zero:
+          <div class="formula">\[m^2-4\neq 0\]</div>
+          Pelo passo 2, \(m^2-4\) só vale zero para \(m=2\) ou \(m=-2\). Então:
+          <div class="formula">\[m\neq 2\quad\text{e}\quad m\neq -2.\]</div>
+          Não há termo acima de \(x^3\), então não há mais nenhuma condição.
+        </li>
+        <li><strong>Item b) 2º grau.</strong> Duas condições ao mesmo tempo:
+          <div class="formula">\[\begin{cases} m^2-4=0 &amp; (\text{o termo em } x^3 \text{ some})\\ m+2\neq 0 &amp; (\text{o termo em } x^2 \text{ fica}) \end{cases}\]</div>
+          Da primeira: \(m=2\) ou \(m=-2\).<br>
+          Da segunda:
+          <div class="formula">\[m+2\neq 0\ \Rightarrow\ m\neq -2.\]</div>
+          Das duas opções, sobra só \(m=2\).
+        </li>
+        <li><strong>Conferência do item b)</strong>, substituindo \(m=2\):
+          <div class="formula">\[P(x)=(2^2-4)x^3+(2+2)x^2+(2-2)x+1\]</div>
+          <div class="formula">\[P(x)=(4-4)x^3+4x^2+0x+1\]</div>
+          <div class="formula">\[P(x)=0x^3+4x^2+0x+1=4x^2+1\quad(\text{grau }2\ \checkmark)\]</div>
+        </li>
+        <li><strong>Item c) 1º grau.</strong> Três condições ao mesmo tempo:
+          <div class="formula">\[\begin{cases} m^2-4=0 &amp; (\text{some } x^3)\\ m+2=0 &amp; (\text{some } x^2)\\ m-2\neq 0 &amp; (\text{o termo em } x \text{ fica}) \end{cases}\]</div>
+          Da segunda equação:
+          <div class="formula">\[m+2=0\ \Rightarrow\ m=-2.\]</div>
+          Testando \(m=-2\) na primeira:
+          <div class="formula">\[(-2)^2-4=4-4=0\ \checkmark\]</div>
+          Testando \(m=-2\) na terceira:
+          <div class="formula">\[-2-2=-4\neq 0\ \checkmark\]</div>
+          As três condições valem para \(m=-2\).
+        </li>
+        <li><strong>Conferência do item c)</strong>, substituindo \(m=-2\):
+          <div class="formula">\[P(x)=\big((-2)^2-4\big)x^3+(-2+2)x^2+(-2-2)x+1\]</div>
+          <div class="formula">\[P(x)=(4-4)x^3+0x^2+(-4)x+1\]</div>
+          <div class="formula">\[P(x)=0x^3+0x^2-4x+1=-4x+1\quad(\text{grau }1\ \checkmark)\]</div>
+        </li>
+      </ol>
+      <div class="dica">Ligue o "Modo Ex01" no Laboratório e arraste \(m\): em \(m=2\) a curva vira uma parábola (\(4x^2+1\)) e em \(m=-2\) vira uma reta (\(-4x+1\)).</div>
+    </div>
+    <div class="ans-box">a) \(m\in\mathbb{R}\), com \(m\neq 2\) e \(m\neq -2\) &nbsp;&nbsp; b) \(m=2\) &nbsp;&nbsp; c) \(m=-2\)</div>
+  </div>
+
+  <!-- ===================== 02 ===================== -->
+  <div class="ex" id="ex02">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 02</span><span class="ex-src">Versa B44 · p. 746</span><span class="badge-pratica">valor numérico</span></div>
+    <p class="ex-q">Considerando o polinômio \(P(x)=x^3+mx^2+k\) tal que \(P(-2)=-13\) e \(P(3)=12\), calcule a soma dos coeficientes de \(P\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> cada valor numérico dado vira uma equação em \(m\) e \(k\). Resolvemos o sistema e, no fim, a soma dos coeficientes é \(P(1)\).</p>
+      <ol>
+        <li><strong>Usar \(P(-2)=-13\).</strong> Trocando \(x\) por \(-2\):
+          <div class="formula">\[P(-2)=(-2)^3+m\cdot(-2)^2+k\]</div>
+          <div class="formula">\[P(-2)=-8+m\cdot 4+k=-8+4m+k\]</div>
+          Igualando a \(-13\):
+          <div class="formula">\[-8+4m+k=-13\]</div>
+          <div class="formula">\[4m+k=-13+8\]</div>
+          <div class="formula">\[4m+k=-5\qquad\text{(I)}\]</div>
+        </li>
+        <li><strong>Usar \(P(3)=12\).</strong> Trocando \(x\) por \(3\):
+          <div class="formula">\[P(3)=3^3+m\cdot 3^2+k\]</div>
+          <div class="formula">\[P(3)=27+m\cdot 9+k=27+9m+k\]</div>
+          Igualando a \(12\):
+          <div class="formula">\[27+9m+k=12\]</div>
+          <div class="formula">\[9m+k=12-27\]</div>
+          <div class="formula">\[9m+k=-15\qquad\text{(II)}\]</div>
+        </li>
+        <li><strong>Resolver o sistema.</strong>
+          <div class="formula">\[\begin{cases} 4m+k=-5 &amp; \text{(I)}\\ 9m+k=-15 &amp; \text{(II)} \end{cases}\]</div>
+          Fazendo (II) − (I), o \(k\) some:
+          <div class="formula">\[(9m+k)-(4m+k)=-15-(-5)\]</div>
+          <div class="formula">\[9m-4m+k-k=-15+5\]</div>
+          <div class="formula">\[5m=-10\]</div>
+          <div class="formula">\[m=\frac{-10}{5}=-2\]</div>
+        </li>
+        <li><strong>Achar \(k\)</strong>, substituindo \(m=-2\) em (I):
+          <div class="formula">\[4\cdot(-2)+k=-5\]</div>
+          <div class="formula">\[-8+k=-5\]</div>
+          <div class="formula">\[k=-5+8=3\]</div>
+        </li>
+        <li><strong>Escrever o polinômio.</strong>
+          <div class="formula">\[P(x)=x^3+(-2)x^2+3=x^3-2x^2+3\]</div>
+          Completo, com todos os graus: \(P(x)=1x^3-2x^2+0x+3\). Os coeficientes são \(1,\ -2,\ 0\ \text{e}\ 3\).
+        </li>
+        <li><strong>Conferir os dados do enunciado.</strong>
+          <div class="formula">\[P(-2)=(-2)^3-2\cdot(-2)^2+3=-8-2\cdot 4+3=-8-8+3=-13\ \checkmark\]</div>
+          <div class="formula">\[P(3)=3^3-2\cdot 3^2+3=27-2\cdot 9+3=27-18+3=12\ \checkmark\]</div>
+        </li>
+        <li><strong>Soma dos coeficientes = \(P(1)\).</strong>
+          <div class="formula">\[P(1)=1^3-2\cdot 1^2+3=1-2+3=2\]</div>
+          Conferindo somando direto: \(1+(-2)+0+3=2\).
+        </li>
+      </ol>
+      <div class="dica">Atalho do Formulário (item 5): soma dos coeficientes é sempre \(P(1)\). Botão "Ex02" no Laboratório desenha \(x^3-2x^2+3\); ponha \(\alpha=-2\), \(\alpha=3\) e \(\alpha=1\).</div>
+    </div>
+    <div class="ans-box">\(m=-2\), \(k=3\), \(P(x)=x^3-2x^2+3\) · soma dos coeficientes \(=P(1)=2\)</div>
+  </div>
+
+  <!-- ===================== 03 ===================== -->
+  <div class="ex" id="ex03">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 03</span><span class="ex-src">Versa B44 · p. 746</span><span class="badge-pratica">raiz</span></div>
+    <p class="ex-q">Obtenha o polinômio \(P(x)\) do 2º grau tal que \(3\) e \(5\) sejam suas raízes e \(P(2)=-6\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> um polinômio do 2º grau é \(P(x)=ax^2+bx+c\) com \(a\neq 0\). "3 é raiz" significa \(P(3)=0\); "5 é raiz" significa \(P(5)=0\). Com \(P(2)=-6\), são 3 equações para 3 incógnitas.</p>
+      <ol>
+        <li><strong>Forma geral:</strong>
+          <div class="formula">\[P(x)=ax^2+bx+c,\quad a\neq 0.\]</div>
+        </li>
+        <li><strong>3 é raiz:</strong>
+          <div class="formula">\[P(3)=a\cdot 3^2+b\cdot 3+c=9a+3b+c=0\qquad\text{(I)}\]</div>
+        </li>
+        <li><strong>5 é raiz:</strong>
+          <div class="formula">\[P(5)=a\cdot 5^2+b\cdot 5+c=25a+5b+c=0\qquad\text{(II)}\]</div>
+        </li>
+        <li><strong>\(P(2)=-6\):</strong>
+          <div class="formula">\[P(2)=a\cdot 2^2+b\cdot 2+c=4a+2b+c=-6\qquad\text{(III)}\]</div>
+        </li>
+        <li><strong>Eliminar \(c\) com (II) − (I):</strong>
+          <div class="formula">\[(25a+5b+c)-(9a+3b+c)=0-0\]</div>
+          <div class="formula">\[25a-9a+5b-3b+c-c=0\]</div>
+          <div class="formula">\[16a+2b=0\]</div>
+          <div class="formula">\[2b=-16a\ \Rightarrow\ b=-8a\qquad\text{(IV)}\]</div>
+        </li>
+        <li><strong>Eliminar \(c\) com (I) − (III):</strong>
+          <div class="formula">\[(9a+3b+c)-(4a+2b+c)=0-(-6)\]</div>
+          <div class="formula">\[9a-4a+3b-2b+c-c=6\]</div>
+          <div class="formula">\[5a+b=6\qquad\text{(V)}\]</div>
+        </li>
+        <li><strong>Substituir (IV) em (V):</strong>
+          <div class="formula">\[5a+(-8a)=6\]</div>
+          <div class="formula">\[-3a=6\]</div>
+          <div class="formula">\[a=\frac{6}{-3}=-2\]</div>
+        </li>
+        <li><strong>Achar \(b\)</strong> por (IV):
+          <div class="formula">\[b=-8\cdot(-2)=16\]</div>
+        </li>
+        <li><strong>Achar \(c\)</strong> por (I):
+          <div class="formula">\[9\cdot(-2)+3\cdot 16+c=0\]</div>
+          <div class="formula">\[-18+48+c=0\]</div>
+          <div class="formula">\[30+c=0\]</div>
+          <div class="formula">\[c=-30\]</div>
+        </li>
+        <li><strong>Polinômio:</strong> \(a=-2\neq 0\), então é mesmo do 2º grau:
+          <div class="formula">\[P(x)=-2x^2+16x-30\]</div>
+        </li>
+        <li><strong>Conferência:</strong>
+          <div class="formula">\[P(3)=-2\cdot 9+16\cdot 3-30=-18+48-30=0\ \checkmark\]</div>
+          <div class="formula">\[P(5)=-2\cdot 25+16\cdot 5-30=-50+80-30=0\ \checkmark\]</div>
+          <div class="formula">\[P(2)=-2\cdot 4+16\cdot 2-30=-8+32-30=-6\ \checkmark\]</div>
+        </li>
+      </ol>
+      <div class="dica">Caminho mais curto (forma fatorada): se \(3\) e \(5\) são raízes, \(P(x)=a(x-3)(x-5)\). Então \(P(2)=a(2-3)(2-5)=a\cdot(-1)\cdot(-3)=3a=-6\Rightarrow a=-2\). E \(-2(x-3)(x-5)=-2(x^2-8x+15)=-2x^2+16x-30\). Mesmo resultado. Botão "Ex03" no Laboratório mostra a parábola cortando o eixo em \(3\) e \(5\).</div>
+    </div>
+    <div class="ans-box">\(P(x)=-2x^2+16x-30\) &nbsp; (ou \(P(x)=-2(x-3)(x-5)\))</div>
+  </div>
+
+  <!-- ===================== 04 ===================== -->
+  <div class="ex" id="ex04">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 04</span><span class="ex-src">Versa B44 · p. 746</span><span class="badge-pratica">polinômios idênticos</span></div>
+    <p class="ex-q">Para quais valores reais de \(a\), \(b\) e \(c\) os polinômios \(A(x)=ax^2+bx+c\) e \(B(x)=3(x-1)\cdot(x+4)\) são idênticos?</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> desenvolver \(B(x)\) até a forma \(\_\,x^2+\_\,x+\_\) e igualar os coeficientes de mesmo grau com os de \(A(x)\).</p>
+      <ol>
+        <li><strong>Distributiva em \((x-1)(x+4)\)</strong> (cada termo do primeiro vezes cada termo do segundo):
+          <div class="formula">\[(x-1)(x+4)=x\cdot x+x\cdot 4+(-1)\cdot x+(-1)\cdot 4\]</div>
+          <div class="formula">\[(x-1)(x+4)=x^2+4x-x-4\]</div>
+          <div class="formula">\[(x-1)(x+4)=x^2+3x-4\]</div>
+        </li>
+        <li><strong>Multiplicar por 3:</strong>
+          <div class="formula">\[B(x)=3\cdot(x^2+3x-4)=3x^2+9x-12\]</div>
+        </li>
+        <li><strong>Igualar grau a grau</strong> \(A(x)=ax^2+bx+c\) com \(B(x)=3x^2+9x-12\):
+          <div class="formula">\[\begin{cases} x^2:\ a=3\\ x^1:\ b=9\\ x^0:\ c=-12 \end{cases}\]</div>
+        </li>
+        <li><strong>Conferência</strong> num valor qualquer, por exemplo \(x=2\):
+          <div class="formula">\[A(2)=3\cdot 4+9\cdot 2-12=12+18-12=18\]</div>
+          <div class="formula">\[B(2)=3\cdot(2-1)\cdot(2+4)=3\cdot 1\cdot 6=18\ \checkmark\]</div>
+        </li>
+      </ol>
+      <div class="dica">Leitura da foto: entre \((x-1)\) e \((x+4)\) aparece um ponto de multiplicação "·" (bem menor que o sinal de menos dentro do parêntese). Se fosse um sinal de menos, \(B(x)=3(x-1)-(x+4)=3x-3-x-4=2x-7\), e daria \(a=0,\ b=2,\ c=-7\). Confira no livro impresso.</div>
+    </div>
+    <div class="ans-box">\(a=3\), \(b=9\), \(c=-12\)</div>
+  </div>
+
+  <!-- ===================== 05 ===================== -->
+  <div class="ex" id="ex05">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 05</span><span class="ex-src">Versa B44 · p. 746</span><span class="badge-pratica">identicamente nulo</span></div>
+    <p class="ex-q">Determine os valores de \(a\), \(b\) e \(c\) para que o polinômio \(P(x)=(a+b+c)x^2+(a-b)x+(c-3)\) seja identicamente nulo.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> polinômio identicamente nulo \(\iff\) <strong>todos</strong> os coeficientes valem zero.</p>
+      <ol>
+        <li><strong>Zerar cada coeficiente:</strong>
+          <div class="formula">\[\begin{cases} a+b+c=0 &amp; \text{(I) coef. de } x^2\\ a-b=0 &amp; \text{(II) coef. de } x\\ c-3=0 &amp; \text{(III) termo independente} \end{cases}\]</div>
+        </li>
+        <li><strong>De (III):</strong>
+          <div class="formula">\[c-3=0\ \Rightarrow\ c=3\]</div>
+        </li>
+        <li><strong>De (II):</strong>
+          <div class="formula">\[a-b=0\ \Rightarrow\ a=b\]</div>
+        </li>
+        <li><strong>Substituir \(b=a\) e \(c=3\) em (I):</strong>
+          <div class="formula">\[a+a+3=0\]</div>
+          <div class="formula">\[2a+3=0\]</div>
+          <div class="formula">\[2a=-3\]</div>
+          <div class="formula">\[a=-\frac{3}{2}\]</div>
+        </li>
+        <li><strong>Como \(b=a\):</strong>
+          <div class="formula">\[b=-\frac{3}{2}\]</div>
+        </li>
+        <li><strong>Conferência:</strong>
+          <div class="formula">\[a+b+c=-\frac{3}{2}-\frac{3}{2}+3=-\frac{6}{2}+3=-3+3=0\ \checkmark\]</div>
+          <div class="formula">\[a-b=-\frac{3}{2}-\left(-\frac{3}{2}\right)=-\frac{3}{2}+\frac{3}{2}=0\ \checkmark\]</div>
+          <div class="formula">\[c-3=3-3=0\ \checkmark\]</div>
+          Então \(P(x)=0x^2+0x+0\), que vale \(0\) para todo \(x\).
+        </li>
+      </ol>
+      <div class="dica">O botão "Nulo" no Laboratório zera os coeficientes: o gráfico vira o próprio eixo \(x\) e o painel avisa que o grau não é definido.</div>
+    </div>
+    <div class="ans-box">\(a=-\dfrac{3}{2}\), \(b=-\dfrac{3}{2}\), \(c=3\)</div>
+  </div>
+
+  <!-- ===================== 06 ===================== -->
+  <div class="ex" id="ex06">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 06</span><span class="ex-src">Versa B44 · p. 746</span><span class="badge-pratica">identidade com frações</span></div>
+    <p class="ex-q">Determine os valores de \(a\) e \(b\) de modo que \(\dfrac{a}{x-1}+\dfrac{b}{x+1}=\dfrac{2x+6}{x^2-1}\), para todo \(x\in\mathbb{R}\), tal que \(x\neq\pm 1\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> somar as frações da esquerda com o denominador comum \(x^2-1=(x-1)(x+1)\). Com o mesmo denominador dos dois lados, os <strong>numeradores</strong> têm que ser polinômios idênticos.</p>
+      <ol>
+        <li><strong>Fatorar o denominador da direita</strong> (diferença de quadrados):
+          <div class="formula">\[x^2-1=(x-1)(x+1)\]</div>
+          Por isso \(x\neq 1\) e \(x\neq -1\): esses valores zerariam o denominador.
+        </li>
+        <li><strong>Deixar cada fração com o denominador \((x-1)(x+1)\):</strong>
+          <div class="formula">\[\frac{a}{x-1}=\frac{a\cdot(x+1)}{(x-1)(x+1)}\qquad\qquad \frac{b}{x+1}=\frac{b\cdot(x-1)}{(x+1)(x-1)}\]</div>
+        </li>
+        <li><strong>Somar:</strong>
+          <div class="formula">\[\frac{a}{x-1}+\frac{b}{x+1}=\frac{a(x+1)+b(x-1)}{(x-1)(x+1)}=\frac{a(x+1)+b(x-1)}{x^2-1}\]</div>
+        </li>
+        <li><strong>Igualar ao lado direito:</strong>
+          <div class="formula">\[\frac{a(x+1)+b(x-1)}{x^2-1}=\frac{2x+6}{x^2-1}\]</div>
+          Os denominadores são iguais e não nulos (\(x\neq\pm1\)). Então os numeradores são iguais para todo \(x\):
+          <div class="formula">\[a(x+1)+b(x-1)\equiv 2x+6\]</div>
+        </li>
+        <li><strong>Desenvolver e agrupar por grau:</strong>
+          <div class="formula">\[ax+a+bx-b\equiv 2x+6\]</div>
+          <div class="formula">\[(a+b)x+(a-b)\equiv 2x+6\]</div>
+        </li>
+        <li><strong>Polinômios idênticos: coeficientes de mesmo grau iguais.</strong>
+          <div class="formula">\[\begin{cases} a+b=2 &amp; \text{(I) coef. de } x\\ a-b=6 &amp; \text{(II) termo independente} \end{cases}\]</div>
+        </li>
+        <li><strong>Somar (I) e (II)</strong> (o \(b\) some):
+          <div class="formula">\[(a+b)+(a-b)=2+6\]</div>
+          <div class="formula">\[2a=8\]</div>
+          <div class="formula">\[a=4\]</div>
+        </li>
+        <li><strong>Achar \(b\)</strong> em (I):
+          <div class="formula">\[4+b=2\ \Rightarrow\ b=2-4=-2\]</div>
+        </li>
+        <li><strong>Conferência:</strong>
+          <div class="formula">\[\frac{4}{x-1}+\frac{-2}{x+1}=\frac{4(x+1)-2(x-1)}{x^2-1}=\frac{4x+4-2x+2}{x^2-1}=\frac{2x+6}{x^2-1}\ \checkmark\]</div>
+        </li>
+      </ol>
+      <div class="dica">Cuidado com o sinal em \(b(x-1)=bx-b\): o \(-b\) vai para o termo independente. É ele que faz aparecer \(a-b\).</div>
+    </div>
+    <div class="ans-box">\(a=4\) e \(b=-2\)</div>
+  </div>
+
+</div>
+
+<footer>
+  Pack didático offline · Polinômios · B44 · Introdução ao Estudo dos Polinômios · Versa
+</footer>
+
+<script>
+/* ---------- utilidades de formatação ---------- */
+var PolyFmt = (function () {
+  function isInt(n) { return Math.abs(n - Math.round(n)) < 1e-9; }
+  function num(n) {
+    if (Math.abs(n) < 1e-12) n = 0;
+    if (isInt(n)) return String(Math.round(n));
+    var t = Math.round(n * 10000) / 10000;
+    return String(t).replace('.', '{,}');
+  }
+  function par(n) { return n < 0 ? '(' + num(n) + ')' : num(n); }
+  function xpow(k) { return k === 0 ? '' : (k === 1 ? 'x' : 'x^{' + k + '}'); }
+  function deg(c) { for (var k = c.length - 1; k >= 0; k--) if (Math.abs(c[k]) > 1e-12) return k; return -1; }
+  function mono(v, k, first) {
+    var a = Math.abs(v), s = '';
+    var cs = (a === 1 && k > 0) ? '' : num(a);
+    if (first) s = (v < 0 ? '-' : '') + cs + xpow(k);
+    else s = (v < 0 ? ' - ' : ' + ') + cs + xpow(k);
+    return s;
+  }
+  // opts.dom: cor do termo dominante; opts.ind: cor do termo independente
+  function tex(c, opts) {
+    opts = opts || {};
+    var out = '', first = true, d = deg(c);
+    if (d < 0) return '0';
+    for (var k = d; k >= 0; k--) {
+      var v = c[k];
+      if (Math.abs(v) < 1e-12) continue;
+      var m = mono(v, k, first);
+      if (k === d && opts.dom) m = '\\color{' + opts.dom + '}{' + m + '}';
+      else if (k === 0 && opts.ind) m = '\\color{' + opts.ind + '}{' + m + '}';
+      out += m; first = false;
+    }
+    return out;
+  }
+  function evalP(c, x) { var s = 0; for (var k = c.length - 1; k >= 0; k--) s = s * x + c[k]; return s; }
+  return { num: num, par: par, xpow: xpow, deg: deg, tex: tex, evalP: evalP, mono: mono };
+})();
+
+/* ---------- Laboratório 1 ---------- */
+(function () {
+  var F = PolyFmt;
+  var canvas = document.getElementById('cvPoly');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var XMIN = -6, XMAX = 6;
+  var YS = [5, 10, 20, 50, 100, 200];
+  var ids = ['c0', 'c1', 'c2', 'c3', 'c4'];
+  function el(id) { return document.getElementById(id); }
+  function coefs() { return ids.map(function (id) { return parseFloat(el(id).value) || 0; }); }
+  function Y() { return YS[parseInt(el('yScale').value, 10)] || 50; }
+  function px(x, y, Ym) { return [(x - XMIN) / (XMAX - XMIN) * W, H / 2 - y / Ym * (H / 2)]; }
+
+  function roots(c) {
+    var d = F.deg(c), out = [];
+    if (d <= 0) return out;
+    var N = 2400, h = (XMAX - XMIN) / N, prevX = XMIN, prevY = F.evalP(c, XMIN);
+    function add(r) { for (var i = 0; i < out.length; i++) if (Math.abs(out[i] - r) < 1e-3) return; out.push(r); }
+    if (Math.abs(prevY) < 1e-9) add(prevX);
+    for (var i = 1; i <= N; i++) {
+      var x = XMIN + i * h, y = F.evalP(c, x);
+      if (Math.abs(y) < 1e-9) add(x);
+      else if (prevY * y < 0) {
+        var lo = prevX, hi = x, flo = prevY;
+        for (var j = 0; j < 60; j++) { var mid = (lo + hi) / 2, fm = F.evalP(c, mid); if (flo * fm <= 0) hi = mid; else { lo = mid; flo = fm; } }
+        add((lo + hi) / 2);
+      }
+      prevX = x; prevY = y;
+    }
+    // raízes duplas (tangentes ao eixo): mínimos locais de |P| muito próximos de 0
+    for (var t = -6; t <= 6; t += 0.5) {
+      if (Math.abs(F.evalP(c, t)) < 1e-9) add(t);
+    }
+    out.sort(function (a, b) { return a - b; });
+    return out;
+  }
+
+  function draw() {
+    var c = coefs(), Ym = Y(), d = F.deg(c);
+    ids.forEach(function (id, k) {
+      el('v' + k).textContent = F.num(c[k]).replace('{,}', ',');
+      var row = el('row' + k);
+      row.classList.toggle('dom', k === d);
+      row.classList.toggle('zero', Math.abs(c[k]) < 1e-12);
+    });
+    el('yLbl').textContent = Ym;
+    var al = parseFloat(el('alpha').value);
+    el('alphaLbl').textContent = F.num(al).replace('{,}', ',');
+
+    ctx.fillStyle = '#0a0e14'; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#1a2332'; ctx.lineWidth = 1;
+    for (var gx = XMIN; gx <= XMAX; gx++) { var a = px(gx, 0, Ym); ctx.beginPath(); ctx.moveTo(a[0], 0); ctx.lineTo(a[0], H); ctx.stroke(); }
+    var stepY = Ym / 5;
+    for (var gy = -Ym; gy <= Ym + 1e-9; gy += stepY) { var b = px(0, gy, Ym); ctx.beginPath(); ctx.moveTo(0, b[1]); ctx.lineTo(W, b[1]); ctx.stroke(); }
+    ctx.strokeStyle = '#3a4a62'; ctx.lineWidth = 1.5;
+    var o = px(0, 0, Ym);
+    ctx.beginPath(); ctx.moveTo(0, o[1]); ctx.lineTo(W, o[1]); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(o[0], 0); ctx.lineTo(o[0], H); ctx.stroke();
+    ctx.fillStyle = '#8b9bb4'; ctx.font = '11px Segoe UI, sans-serif';
+    for (var tx = XMIN + 1; tx < XMAX; tx++) { if (tx === 0) continue; var q = px(tx, 0, Ym); ctx.fillText(String(tx), q[0] - 4, o[1] + 13); }
+    for (var ty = -Ym + stepY; ty < Ym; ty += stepY) { if (Math.abs(ty) < 1e-9) continue; var r = px(0, ty, Ym); ctx.fillText(String(Math.round(ty)), o[0] + 4, r[1] + 4); }
+
+    // curva
+    ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2.5; ctx.beginPath();
+    var started = false;
+    for (var i = 0; i <= W; i++) {
+      var x = XMIN + (XMAX - XMIN) * i / W, y = F.evalP(c, x);
+      var yy = Math.max(-Ym * 4, Math.min(Ym * 4, y));
+      var p = px(x, yy, Ym);
+      if (!started) { ctx.moveTo(p[0], p[1]); started = true; } else ctx.lineTo(p[0], p[1]);
+    }
+    ctx.stroke();
+
+    function dot(x, y, col, rad, lab) {
+      if (Math.abs(y) > Ym * 1.05) return;
+      var p = px(x, y, Ym);
+      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(p[0], p[1], rad, 0, Math.PI * 2); ctx.fill();
+      if (lab) { ctx.fillStyle = '#e8eef7'; ctx.font = '12px Segoe UI, sans-serif'; ctx.fillText(lab, p[0] + 7, p[1] - 7); }
+    }
+    var rs = roots(c);
+    rs.forEach(function (rt) { dot(rt, 0, '#81c784', 5.5, ''); });
+    dot(0, c[0], '#ce93d8', 5, 'P(0)');
+    dot(1, F.evalP(c, 1), '#ce93d8', 5, 'P(1)');
+    var Pa = F.evalP(c, al);
+    if (Math.abs(Pa) <= Ym * 1.05) {
+      var pa = px(al, Pa, Ym), pb = px(al, 0, Ym);
+      ctx.strokeStyle = '#ffb74d'; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pb[0], pb[1]); ctx.lineTo(pa[0], pa[1]); ctx.stroke(); ctx.setLineDash([]);
+    }
+    dot(al, Pa, '#ffb74d', 6.5, 'α');
+
+    // painel
+    var html = '';
+    html += '<div>\\(P(x)=' + F.tex(c, { dom: '#ffb74d', ind: '#81c784' }) + '\\)</div>';
+    if (d < 0) {
+      html += '<div>grau: <span class="deg-tag nulo">identicamente nulo — grau não definido</span></div>';
+    } else {
+      html += '<div>grau: <span class="deg-tag">gr(P) = ' + d + '</span> &nbsp; coeficiente dominante <span class="hl3">\\(a_' + d + '=' + F.num(c[d]) + '\\)</span></div>';
+      var skipped = [];
+      for (var k = 4; k > d; k--) skipped.push('a_' + k);
+      if (skipped.length) html += '<div class="note" style="margin:0">\\(' + skipped.join('=') + '=0\\): esses termos sumiram, por isso o grau é ' + d + '.</div>';
+    }
+    html += '<div>termo independente: \\(P(0)=a_0=' + F.num(c[0]) + '\\)</div>';
+    var sumParts = [];
+    for (var k2 = 4; k2 >= 0; k2--) sumParts.push(F.par(c[k2]));
+    html += '<div>soma dos coeficientes: \\(P(1)=' + sumParts.join('+') + '=' + F.num(F.evalP(c, 1)) + '\\)</div>';
+    // P(alpha) com substituição
+    var sub = [], vals = [], first = true;
+    for (var k3 = 4; k3 >= 0; k3--) {
+      if (Math.abs(c[k3]) < 1e-12) continue;
+      var ab = Math.abs(c[k3]);
+      var term = (k3 === 0) ? F.num(ab) : F.num(ab) + '\\cdot ' + F.par(al) + (k3 > 1 ? '^{' + k3 + '}' : '');
+      sub.push((c[k3] < 0 ? '-' : (first ? '' : '+')) + term);
+      var tv = c[k3] * Math.pow(al, k3);
+      vals.push((first ? '' : (tv < 0 ? '' : '+')) + F.num(tv));
+      first = false;
+    }
+    var aTex = F.num(al);
+    if (sub.length) {
+      html += '<div>\\(P(' + aTex + ')=' + sub.join('') + '\\)</div>';
+      html += '<div>\\(\\phantom{P(' + aTex + ')}=' + vals.join('') + '=' + F.num(Pa) + '\\)</div>';
+    } else {
+      html += '<div>\\(P(' + aTex + ')=0\\)</div>';
+    }
+    if (Math.abs(Pa) < 1e-9) html += '<div><span class="root-tag">\\(P(' + aTex + ')=0\\Rightarrow ' + aTex + '\\) é raiz</span></div>';
+    else html += '<div class="note" style="margin:0">\\(P(' + aTex + ')\\neq 0\\): \\(' + aTex + '\\) não é raiz.</div>';
+    if (d > 0) {
+      html += '<div class="hl2">raízes reais em \\([-6,6]\\): ' + (rs.length ? rs.map(function (r) { return '\\(' + F.num(Math.round(r * 1000) / 1000) + '\\)'; }).join(', ') : 'nenhuma (o gráfico não toca o eixo \\(x\\) aqui)') + '</div>';
+    }
+    var box = el('polyVals');
+    box.innerHTML = html;
+    if (window.renderKatex) window.renderKatex(box);
+  }
+
+  function set(cs, alpha, yIdx) {
+    ids.forEach(function (id, k) { el(id).value = cs[k]; });
+    if (alpha !== undefined) el('alpha').value = alpha;
+    if (yIdx !== undefined) el('yScale').value = yIdx;
+    draw();
+  }
+  function ex01FromM() {
+    var m = parseFloat(el('mSl').value);
+    el('mLbl').textContent = F.num(m).replace('{,}', ',');
+    set([1, m - 2, m + 2, m * m - 4, 0], undefined, 1);
+  }
+  function exitEx01() { el('chkEx01').checked = false; el('ex01Box').style.display = 'none'; }
+  ids.concat(['alpha', 'yScale']).forEach(function (id) {
+    el(id).addEventListener('input', function () { if (ids.indexOf(id) >= 0) exitEx01(); draw(); });
+  });
+  var presets = {
+    livro: [[-1, 6, -3, 2, 0], 3, 3],
+    raiz: [[-6, -7, 3, 1, 0], 2, 2],
+    ex02: [[3, 0, -2, 1, 0], 1, 2],
+    ex03: [[-30, 16, -2, 0, 0], 2, 2],
+    nulo: [[0, 0, 0, 0, 0], 1, 1],
+    reset: [[0, 0, 1, 0, 0], 2, 2]
+  };
+  document.querySelectorAll('[data-preset]').forEach(function (b) {
+    b.addEventListener('click', function () { exitEx01(); var p = presets[b.dataset.preset]; set(p[0], p[1], p[2]); });
+  });
+  el('chkEx01').addEventListener('change', function () {
+    el('ex01Box').style.display = this.checked ? 'block' : 'none';
+    if (this.checked) ex01FromM();
+  });
+  el('mSl').addEventListener('input', function () { el('chkEx01').checked = true; ex01FromM(); });
+  window.addEventListener('load', draw);
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(draw, 0); });
+})();
+
+/* ---------- Laboratório 2 ---------- */
+(function () {
+  var F = PolyFmt;
+  var op = '+';
+  function el(id) { return document.getElementById(id); }
+  function build(container, prefix, vals) {
+    var h = '';
+    for (var k = 3; k >= 0; k--) {
+      h += '<input type="number" step="1" id="' + prefix + k + '" value="' + vals[k] + '">' + (k > 0 ? '<span>\\(' + F.xpow(k) + '\\ +\\)</span>' : '');
+    }
+    el(container).innerHTML = h;
+  }
+  function read(prefix) { var c = []; for (var k = 0; k <= 3; k++) c.push(parseFloat(el(prefix + k).value) || 0); return c; }
+  function grTex(d) { return d < 0 ? '\\text{(nulo)}' : String(d); }
+  function compute() {
+    var A = read('pa'), B = read('pb'), dA = F.deg(A), dB = F.deg(B), h = '';
+    h += '<div>\\(A(x)=' + F.tex(A) + '\\quad (\\operatorname{gr}=' + grTex(dA) + ')\\)</div>';
+    h += '<div>\\(B(x)=' + F.tex(B) + '\\quad (\\operatorname{gr}=' + grTex(dB) + ')\\)</div>';
+    if (op === '+' || op === '-') {
+      var top = Math.max(dA, dB, 0), parts = [], R = [];
+      for (var k = 0; k <= 3; k++) R.push(op === '+' ? A[k] + B[k] : A[k] - B[k]);
+      for (var k2 = top; k2 >= 0; k2--) parts.push('(' + F.num(A[k2]) + (op === '+' ? '+' : '-') + F.par(B[k2]) + ')' + F.xpow(k2));
+      var name = op === '+' ? 'A+B' : 'A-B', dR = F.deg(R);
+      h += '<div style="margin-top:0.6rem">Coeficientes de mesmo grau:</div>';
+      h += '<div>\\((' + name + ')(x)=' + parts.join('+') + '\\)</div>';
+      var simp = [];
+      for (var k3 = top; k3 >= 0; k3--) simp.push(F.par(R[k3]) + F.xpow(k3));
+      h += '<div>\\(\\phantom{(' + name + ')(x)}=' + simp.join('+') + '\\)</div>';
+      h += '<div>\\(\\phantom{(' + name + ')(x)}=' + F.tex(R) + '\\)</div>';
+      h += '<div style="margin-top:0.6rem">grau: <span class="deg-tag' + (dR < 0 ? ' nulo' : '') + '">gr(' + name + ') = ' + (dR < 0 ? 'não definido (nulo)' : dR) + '</span></div>';
+      if (dA >= 0 && dB >= 0) {
+        if (dA !== dB) h += '<div class="hl2">Graus diferentes (\\(' + dA + '\\neq' + dB + '\\)): o maior manda, \\(\\operatorname{gr}=' + Math.max(dA, dB) + '\\).</div>';
+        else if (dR === dA) h += '<div class="hl2">Graus iguais (\\(' + dA + '\\)): os dominantes não se cancelaram, \\(\\operatorname{gr}=' + dA + '\\).</div>';
+        else h += '<div class="hl3">Graus iguais (\\(' + dA + '\\)) e os termos dominantes se cancelaram: o grau caiu para ' + (dR < 0 ? 'nulo' : dR) + '. Por isso a regra é \\(\\operatorname{gr}(A\\pm B)\\le\\operatorname{gr}(A)\\).</div>';
+      }
+    } else {
+      var tA = [], tB = [];
+      for (var i = 3; i >= 0; i--) { if (Math.abs(A[i]) > 1e-12) tA.push(i); if (Math.abs(B[i]) > 1e-12) tB.push(i); }
+      if (!tA.length || !tB.length) {
+        h += '<div class="hl3">Um dos fatores é nulo, então o produto é o polinômio nulo.</div>';
+      } else {
+        h += '<div style="margin-top:0.6rem">Cada termo de \\(A\\) vezes cada termo de \\(B\\) (expoentes somam):</div>';
+        h += '<table class="mult-table"><tr><th>\\(\\times\\)</th>';
+        tB.forEach(function (j) { h += '<th>\\(' + F.mono(B[j], j, true) + '\\)</th>'; });
+        h += '</tr>';
+        var P = [0, 0, 0, 0, 0, 0, 0], contrib = [[], [], [], [], [], [], []];
+        tA.forEach(function (i) {
+          h += '<tr><th>\\(' + F.mono(A[i], i, true) + '\\)</th>';
+          tB.forEach(function (j) {
+            var v = A[i] * B[j]; P[i + j] += v; contrib[i + j].push(v);
+            h += '<td>\\(' + F.mono(v, i + j, true) + '\\)</td>';
+          });
+          h += '</tr>';
+        });
+        h += '</table>';
+        h += '<div>Juntando os de mesmo grau:</div>';
+        for (var k4 = 6; k4 >= 0; k4--) {
+          if (!contrib[k4].length) continue;
+          var lab = k4 === 0 ? '\\text{constante}' : F.xpow(k4);
+          h += '<div>\\(' + lab + ':\\ ' + contrib[k4].map(function (v, idx) { return idx === 0 ? F.num(v) : (v < 0 ? F.num(v) : '+' + F.num(v)); }).join('') + '=' + F.num(P[k4]) + '\\)</div>';
+        }
+        h += '<div style="margin-top:0.4rem">\\((A\\cdot B)(x)=' + F.tex(P) + '\\)</div>';
+        h += '<div style="margin-top:0.6rem">grau: <span class="deg-tag">gr(A·B) = ' + F.deg(P) + '</span> &nbsp; <span class="hl2">\\(=' + dA + '+' + dB + '=\\operatorname{gr}(A)+\\operatorname{gr}(B)\\)</span></div>';
+      }
+    }
+    var box = el('opsWork');
+    box.innerHTML = h;
+    if (window.renderKatex) window.renderKatex(box);
+  }
+  function load(a, b) {
+    for (var k = 0; k <= 3; k++) { el('pa' + k).value = a[k]; el('pb' + k).value = b[k]; }
+    compute();
+  }
+  function setOp(o) {
+    op = o;
+    document.querySelectorAll('[data-op]').forEach(function (b) { b.classList.toggle('primary', b.dataset.op === o); });
+    compute();
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    build('inA', 'pa', [-8, 11, -4, 3]);
+    build('inB', 'pb', [16, -2, 9, -2]);
+    document.querySelectorAll('#inA input, #inB input').forEach(function (inp) { inp.addEventListener('input', compute); });
+    document.querySelectorAll('[data-op]').forEach(function (b) { b.addEventListener('click', function () { setOp(b.dataset.op); }); });
+    var sets = {
+      soma: [[-8, 11, -4, 3], [16, -2, 9, -2], '+'],
+      prod: [[-4, 3, 1, 0], [1, 2, 0, 1], '*'],
+      cancel: [[1, 0, 1, 0], [0, 1, -1, 0], '+']
+    };
+    document.querySelectorAll('[data-ops]').forEach(function (b) {
+      b.addEventListener('click', function () { var s = sets[b.dataset.ops]; load(s[0], s[1]); setOp(s[2]); });
+    });
+    if (window.renderKatex) { window.renderKatex(el('inA')); window.renderKatex(el('inB')); }
+    compute();
+    // abas
+    function tab(n) {
+      el('lab1').style.display = n === 1 ? '' : 'none';
+      el('lab2').style.display = n === 2 ? '' : 'none';
+      el('tabLab1').classList.toggle('on', n === 1);
+      el('tabLab2').classList.toggle('on', n === 2);
+    }
+    el('tabLab1').addEventListener('click', function () { tab(1); });
+    el('tabLab2').addEventListener('click', function () { tab(2); });
+    // imprimir formulário
+    el('btnPrintForm').addEventListener('click', function () {
+      document.body.classList.add('print-form');
+      window.print();
+      setTimeout(function () { document.body.classList.remove('print-form'); }, 500);
+    });
+  });
+})();
+
+/* ---------- Teste rápido ---------- */
+(function () {
+  var Q = [
+    { q: 'Qual é o grau de \\(P(x)=0x^5+3x^3-x+2\\)?', o: ['5', '3', '1', '0'], a: 1,
+      e: 'O termo em \\(x^5\\) tem coeficiente \\(0\\) e some. O maior expoente com coeficiente não nulo é \\(3\\).' },
+    { q: 'Em \\(P(x)=2x^3-3x^2+6x-1\\), a soma dos coeficientes é', o: ['\\(4\\)', '\\(-1\\)', '\\(12\\)', '\\(44\\)'], a: 0,
+      e: 'Soma dos coeficientes \\(=P(1)=2-3+6-1=4\\).' },
+    { q: 'O termo independente de \\(P(x)=(x+2)(x-3)\\) é', o: ['\\(-1\\)', '\\(6\\)', '\\(-6\\)', '\\(5\\)'], a: 2,
+      e: 'Termo independente \\(=P(0)=(0+2)(0-3)=2\\cdot(-3)=-6\\).' },
+    { q: '\\(x=1\\) é raiz de \\(P(x)=x^2-3x+2\\)?', o: ['Sim', 'Não'], a: 0,
+      e: '\\(P(1)=1-3+2=0\\). Como deu zero, \\(1\\) é raiz.' },
+    { q: 'Se \\(\\operatorname{gr}(A)=3\\) e \\(\\operatorname{gr}(B)=2\\), então \\(\\operatorname{gr}(A\\cdot B)\\) é', o: ['\\(6\\)', '\\(5\\)', '\\(3\\)', 'não dá para saber'], a: 1,
+      e: 'Na multiplicação os graus somam: \\(3+2=5\\).' },
+    { q: 'Se \\(\\operatorname{gr}(A)=\\operatorname{gr}(B)=4\\), o grau de \\(A+B\\)…', o: ['é sempre \\(4\\)', 'é sempre \\(8\\)', 'é no máximo \\(4\\) (pode cair)', 'é sempre menor que \\(4\\)'], a: 2,
+      e: 'Os termos em \\(x^4\\) podem se cancelar. Ex.: \\(x^4+x\\) e \\(-x^4+1\\) somam \\(x+1\\), de grau \\(1\\).' },
+    { q: '\\((a-1)x^2+(b+2)x+c\\) é identicamente nulo quando', o: ['\\(a=1,\\ b=-2,\\ c=0\\)', '\\(a=-1,\\ b=2,\\ c=0\\)', '\\(a=0,\\ b=0,\\ c=0\\)', '\\(a=1,\\ b=2,\\ c=1\\)'], a: 0,
+      e: 'Todos os coeficientes valem zero: \\(a-1=0\\Rightarrow a=1\\); \\(b+2=0\\Rightarrow b=-2\\); \\(c=0\\).' }
+  ];
+  var right = 0, answered = 0;
+  function score() { document.getElementById('quizScore').textContent = right + ' / ' + answered + ' (de ' + Q.length + ')'; }
+  function render() {
+    right = 0; answered = 0;
+    var box = document.getElementById('quizBox'), h = '';
+    Q.forEach(function (it, i) {
+      h += '<div class="quiz-q" data-i="' + i + '"><div class="qt"><strong>' + (i + 1) + '.</strong> ' + it.q + '</div><div class="quiz-opts">';
+      it.o.forEach(function (op, j) { h += '<button type="button" data-j="' + j + '">' + op + '</button>'; });
+      h += '</div><div class="quiz-fb"></div></div>';
+    });
+    box.innerHTML = h;
+    box.querySelectorAll('.quiz-q').forEach(function (qq) {
+      var it = Q[+qq.dataset.i];
+      qq.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (qq.classList.contains('done')) return;
+          qq.classList.add('done'); answered++;
+          var j = +b.dataset.j, ok = j === it.a;
+          if (ok) right++;
+          b.classList.add(ok ? 'ok' : 'bad');
+          qq.querySelectorAll('button')[it.a].classList.add('ok');
+          var fb = qq.querySelector('.quiz-fb');
+          fb.innerHTML = (ok ? '<strong style="color:var(--accent2)">Certo!</strong> ' : '<strong style="color:var(--danger)">Ainda não.</strong> ') + it.e;
+          if (window.renderKatex) window.renderKatex(fb);
+          score();
+        });
+      });
+    });
+    if (window.renderKatex) window.renderKatex(box);
+    score();
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    render();
+    document.getElementById('quizReset').addEventListener('click', render);
+  });
+})();
+
+(function () {
+  var KEY = 'b44-poli-treino';
+  function loadPref() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v === null) return true;
+      return v === 'true';
+    } catch (e) { return true; }
+  }
+  function savePref(on) {
+    try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {}
+  }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal');
+    var btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) {
+    ex.classList.remove('collapsed');
+    ex.dataset.userRevealed = '1';
+    syncButtons(ex);
+  }
+  function hide(ex) {
+    ex.classList.add('collapsed');
+    delete ex.dataset.userRevealed;
+    syncButtons(ex);
+  }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner');
+    var chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) {
+        if (!ex.dataset.userRevealed) ex.classList.add('collapsed');
+      } else {
+        ex.classList.remove('collapsed');
+      }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var steps = ex.querySelector('.steps');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (steps) {
+          steps.parentNode.insertBefore(box, steps);
+          steps.parentNode.insertBefore(row, steps);
+        } else {
+          ex.appendChild(box);
+          ex.appendChild(row);
+        }
+      }
+      var br = ex.querySelector('.btn-reveal');
+      var bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) {
+      chk.checked = on;
+      chk.addEventListener('change', function () { setMode(chk.checked); });
+    }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) {
+          if (all.checked) reveal(ex); else hide(ex);
+        });
+      });
+    }
+    setMode(on);
+  });
+})();
+</script>
+</body>
+</html>
