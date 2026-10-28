@@ -208,6 +208,20 @@ canvas#cvPoly { aspect-ratio: 4 / 3; max-width: 640px; }
 .quiz-q.done .quiz-fb { display: block; }
 .score { display: inline-block; font-weight: 800; color: var(--accent2); font-size: 1.05rem; }
 .sys { display: inline-block; }
+/* B44 · complementares p. 747 */
+.badge-prova {
+  display: inline-block; background: rgba(239,83,80,.18); color: #ff8a80; border: 1px solid rgba(239,83,80,.6);
+  padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: .03em;
+}
+.badge-prova.max { background: #c62828; color: #fff; border-color: #ff8a80; box-shadow: 0 0 12px rgba(239,83,80,.45); }
+.ex.prova { border-left: 4px solid #ef5350; }
+.ex.prova-max { border: 2px solid #ef5350; box-shadow: 0 0 24px rgba(239,83,80,.18); }
+.badge-gab { display: inline-block; background: rgba(129,199,132,.15); color: var(--accent2); border: 1px solid rgba(129,199,132,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.opts { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem 1.2rem; margin: 0.35rem 0 0.2rem; color: var(--muted); font-size: 0.93rem; }
+.prova-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+.prova-list a { display: block; background: var(--bg); border: 1px solid rgba(239,83,80,.45); border-radius: 8px; padding: 0.5rem 0.7rem; color: var(--text); text-decoration: none; font-size: 0.88rem; }
+.prova-list a:hover { border-color: #ef5350; }
+.prova-list a .k { color: #ff8a80; font-weight: 800; margin-right: 0.35rem; }
 @media print {
   body.print-form nav, body.print-form .treino-banner, body.print-form .wrap > *:not(.formulario), body.print-form footer, body.print-form .no-print { display: none !important; }
   body.print-form { background: #fff; color: #000; }
@@ -250,6 +264,7 @@ document.addEventListener("DOMContentLoaded", function() {
   <a href="#laboratorio">Laboratório</a>
   <a href="#teste">Teste rápido</a>
   <a href="#exercicios">Exercícios</a>
+  <a href="#complementares">Complementares</a>
 </nav>
 
 <div class="treino-banner" id="treinoBanner">
@@ -612,8 +627,8 @@ document.addEventListener("DOMContentLoaded", function() {
   </div>
 
   <!-- ===================== 03 ===================== -->
-  <div class="ex" id="ex03">
-    <div class="ex-header"><span class="ex-num">Exercício proposto 03</span><span class="ex-src">Versa B44 · p. 746</span><span class="badge-pratica">raiz</span></div>
+  <div class="ex prova" id="ex03">
+    <div class="ex-header"><span class="ex-num">Exercício proposto 03</span><span class="ex-src">Versa B44 · p. 746</span><span class="badge-pratica">raiz</span><span class="badge-prova">★ Cai na prova</span></div>
     <p class="ex-q">Obtenha o polinômio \(P(x)\) do 2º grau tal que \(3\) e \(5\) sejam suas raízes e \(P(2)=-6\).</p>
     <div class="steps">
       <p class="step-intro"><strong>Ideia:</strong> um polinômio do 2º grau é \(P(x)=ax^2+bx+c\) com \(a\neq 0\). "3 é raiz" significa \(P(3)=0\); "5 é raiz" significa \(P(5)=0\). Com \(P(2)=-6\), são 3 equações para 3 incógnitas.</p>
@@ -692,7 +707,6 @@ document.addEventListener("DOMContentLoaded", function() {
           <div class="formula">\[B(2)=3\cdot(2-1)\cdot(2+4)=3\cdot 1\cdot 6=18\ \checkmark\]</div>
         </li>
       </ol>
-      <div class="dica">Leitura da foto: entre \((x-1)\) e \((x+4)\) aparece um ponto de multiplicação "·" (bem menor que o sinal de menos dentro do parêntese). Se fosse um sinal de menos, \(B(x)=3(x-1)-(x+4)=3x-3-x-4=2x-7\), e daria \(a=0,\ b=2,\ c=-7\). Confira no livro impresso.</div>
     </div>
     <div class="ans-box">\(a=3\), \(b=9\), \(c=-12\)</div>
   </div>
@@ -780,10 +794,481 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="ans-box">\(a=4\) e \(b=-2\)</div>
   </div>
 
+  <h2 id="complementares">(G) Exercícios complementares (p. 747)</h2>
+  <div class="explain">
+    <p class="lead"><span class="badge-prova">★ Cai na prova</span> &nbsp;marca os exercícios que a Gica separou para a prova: complementares <strong>03, 04 e 07</strong> (eles vêm primeiro) e o proposto 03 da p. 746. Depois vêm os outros dez complementares, resolvidos com o mesmo detalhe. No modo treino as resoluções ficam escondidas.</p>
+    <div class="prova-list">
+      <a href="#ec03"><span class="k">★</span>Complementar 03 · UEM PR · calcule \(P(3)\)</a>
+      <a href="#ec04"><span class="k">★</span>Complementar 04 · Esan SP · \(P(1)-Q(2)\)</a>
+      <a href="#ec07"><span class="k">★</span>Complementar 07 · Cefet MG · \(a^5-4b\)</a>
+      <a href="#ex03"><span class="k">★</span>Proposto 03 · p. 746 · raízes 3 e 5</a>
+    </div>
+  </div>
+
+  <h3>Os que caem na prova</h3>
+
+  <!-- ===================== C03 ===================== -->
+  <div class="ex prova" id="ec03">
+    <div class="ex-header"><span class="ex-num">Complementar 03</span><span class="ex-src">UEM PR · p. 747</span><span class="badge-pratica">valor numérico · sistema</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Seja \(P(x)=ax^2+bx+c\), em que \(a\), \(b\) e \(c\) são números reais. Sabendo que \(P(0)=9\), \(P(1)=10\) e \(P(2)=7\), calcule \(P(3)\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> cada valor numérico dado vira uma equação. São 3 equações para 3 incógnitas (\(a\), \(b\), \(c\)). Com o polinômio pronto, é só trocar \(x\) por \(3\).</p>
+      <ol>
+        <li><strong>Usar \(P(0)=9\)</strong> (comece sempre pelo \(P(0)\): ele entrega o termo independente de graça):
+          <div class="formula">\[P(0)=a\cdot 0^2+b\cdot 0+c=0+0+c=c\]</div>
+          <div class="formula">\[c=9\]</div>
+        </li>
+        <li><strong>Usar \(P(1)=10\)</strong>, já com \(c=9\):
+          <div class="formula">\[P(1)=a\cdot 1^2+b\cdot 1+9=a+b+9\]</div>
+          <div class="formula">\[a+b+9=10\]</div>
+          <div class="formula">\[a+b=10-9\]</div>
+          <div class="formula">\[a+b=1\qquad\text{(I)}\]</div>
+        </li>
+        <li><strong>Usar \(P(2)=7\)</strong>, já com \(c=9\):
+          <div class="formula">\[P(2)=a\cdot 2^2+b\cdot 2+9=4a+2b+9\]</div>
+          <div class="formula">\[4a+2b+9=7\]</div>
+          <div class="formula">\[4a+2b=7-9\]</div>
+          <div class="formula">\[4a+2b=-2\]</div>
+          Dividindo tudo por 2:
+          <div class="formula">\[2a+b=-1\qquad\text{(II)}\]</div>
+        </li>
+        <li><strong>Resolver o sistema.</strong>
+          <div class="formula">\[\begin{cases} a+b=1 &amp; \text{(I)}\\ 2a+b=-1 &amp; \text{(II)} \end{cases}\]</div>
+          Fazendo (II) − (I), o \(b\) some:
+          <div class="formula">\[(2a+b)-(a+b)=-1-1\]</div>
+          <div class="formula">\[2a-a+b-b=-2\]</div>
+          <div class="formula">\[a=-2\]</div>
+        </li>
+        <li><strong>Achar \(b\)</strong>, substituindo \(a=-2\) em (I):
+          <div class="formula">\[-2+b=1\]</div>
+          <div class="formula">\[b=1+2=3\]</div>
+        </li>
+        <li><strong>Escrever o polinômio:</strong>
+          <div class="formula">\[P(x)=-2x^2+3x+9\]</div>
+        </li>
+        <li><strong>Conferir os três dados:</strong>
+          <div class="formula">\[P(0)=-2\cdot 0+3\cdot 0+9=9\ \checkmark\]</div>
+          <div class="formula">\[P(1)=-2\cdot 1+3\cdot 1+9=-2+3+9=10\ \checkmark\]</div>
+          <div class="formula">\[P(2)=-2\cdot 4+3\cdot 2+9=-8+6+9=7\ \checkmark\]</div>
+        </li>
+        <li><strong>Calcular \(P(3)\):</strong>
+          <div class="formula">\[P(3)=-2\cdot 3^2+3\cdot 3+9\]</div>
+          <div class="formula">\[P(3)=-2\cdot 9+9+9\]</div>
+          <div class="formula">\[P(3)=-18+18=0\]</div>
+        </li>
+      </ol>
+      <div class="dica">Deu zero, então \(3\) é <strong>raiz</strong> de \(P\). De fato, \(-2x^2+3x+9=-(2x+3)(x-3)\). Não é pegadinha: a conta está certa.</div>
+    </div>
+    <div class="ans-box">\(P(x)=-2x^2+3x+9\) &nbsp;⇒&nbsp; \(P(3)=0\)</div>
+  </div>
+
+  <!-- ===================== C04 ===================== -->
+  <div class="ex prova" id="ec04">
+    <div class="ex-header"><span class="ex-num">Complementar 04</span><span class="ex-src">Esan SP · p. 747</span><span class="badge-pratica">raiz · valor numérico</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Sendo \(P(x)=Q(x)+x^2+x+1\) e sabendo que \(2\) é raiz de \(P(x)\) e que \(1\) é raiz de \(Q(x)\), então \(P(1)-Q(2)\) vale</p>
+    <ul class="opts"><li>a) \(0\)</li><li>b) \(2\)</li><li>c) \(3\)</li><li>d) \(6\)</li><li>e) \(10\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> não dá (nem precisa) descobrir \(P\) e \(Q\) inteiros. Basta traduzir "é raiz" em "vale zero" e usar a relação \(P(x)=Q(x)+x^2+x+1\) nos pontos \(x=1\) e \(x=2\).</p>
+      <ol>
+        <li><strong>Traduzir os dados:</strong>
+          <div class="formula">\[2 \text{ é raiz de } P\ \Rightarrow\ P(2)=0\]</div>
+          <div class="formula">\[1 \text{ é raiz de } Q\ \Rightarrow\ Q(1)=0\]</div>
+        </li>
+        <li><strong>Calcular \(P(1)\).</strong> Troque \(x\) por \(1\) na relação:
+          <div class="formula">\[P(1)=Q(1)+1^2+1+1\]</div>
+          <div class="formula">\[P(1)=0+1+1+1\]</div>
+          <div class="formula">\[P(1)=3\]</div>
+        </li>
+        <li><strong>Calcular \(Q(2)\).</strong> Troque \(x\) por \(2\) na relação:
+          <div class="formula">\[P(2)=Q(2)+2^2+2+1\]</div>
+          <div class="formula">\[0=Q(2)+4+2+1\]</div>
+          <div class="formula">\[0=Q(2)+7\]</div>
+          <div class="formula">\[Q(2)=-7\]</div>
+        </li>
+        <li><strong>Pedido:</strong>
+          <div class="formula">\[P(1)-Q(2)=3-(-7)\]</div>
+          <div class="formula">\[P(1)-Q(2)=3+7=10\]</div>
+        </li>
+      </ol>
+      <div class="dica"><strong>Pegadinha:</strong> \(3-(-7)\) é \(3+7=10\). Quem esquece o "menos com menos" marca \(3-7=-4\), que nem está nas alternativas. Note também que em cada passo usamos o valor que o enunciado deu no ponto certo: \(Q(1)\) em \(x=1\) e \(P(2)\) em \(x=2\).</div>
+    </div>
+    <div class="ans-box">\(P(1)-Q(2)=10\) &nbsp; <span class="badge-gab">Alternativa e</span></div>
+  </div>
+
+  <!-- ===================== C07 ===================== -->
+  <div class="ex prova" id="ec07">
+    <div class="ex-header"><span class="ex-num">Complementar 07</span><span class="ex-src">Cefet MG · p. 747</span><span class="badge-pratica">raiz · valor numérico · sistema</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Se uma das raízes do polinômio \(P(x)=x^4-8x^2+ax+b\) é \(2\) e \(P(1)=9\), então o valor de \(a^5-4b\) é</p>
+    <ul class="opts"><li>a) \(-64\)</li><li>b) \(-28\)</li><li>c) \(16\)</li><li>d) \(24\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> "2 é raiz" vira \(P(2)=0\) e o outro dado é \(P(1)=9\). São duas equações para \(a\) e \(b\).</p>
+      <ol>
+        <li><strong>\(2\) é raiz \(\Rightarrow P(2)=0\).</strong> Trocando \(x\) por \(2\):
+          <div class="formula">\[P(2)=2^4-8\cdot 2^2+a\cdot 2+b\]</div>
+          <div class="formula">\[P(2)=16-8\cdot 4+2a+b\]</div>
+          <div class="formula">\[P(2)=16-32+2a+b=-16+2a+b\]</div>
+          Igualando a zero:
+          <div class="formula">\[-16+2a+b=0\]</div>
+          <div class="formula">\[2a+b=16\qquad\text{(I)}\]</div>
+        </li>
+        <li><strong>\(P(1)=9\).</strong> Trocando \(x\) por \(1\):
+          <div class="formula">\[P(1)=1^4-8\cdot 1^2+a\cdot 1+b\]</div>
+          <div class="formula">\[P(1)=1-8+a+b=-7+a+b\]</div>
+          Igualando a 9:
+          <div class="formula">\[-7+a+b=9\]</div>
+          <div class="formula">\[a+b=9+7\]</div>
+          <div class="formula">\[a+b=16\qquad\text{(II)}\]</div>
+        </li>
+        <li><strong>Resolver o sistema.</strong>
+          <div class="formula">\[\begin{cases} 2a+b=16 &amp; \text{(I)}\\ a+b=16 &amp; \text{(II)} \end{cases}\]</div>
+          Fazendo (I) − (II), o \(b\) some:
+          <div class="formula">\[(2a+b)-(a+b)=16-16\]</div>
+          <div class="formula">\[2a-a+b-b=0\]</div>
+          <div class="formula">\[a=0\]</div>
+        </li>
+        <li><strong>Achar \(b\)</strong>, substituindo \(a=0\) em (II):
+          <div class="formula">\[0+b=16\ \Rightarrow\ b=16\]</div>
+        </li>
+        <li><strong>Conferir:</strong> com \(a=0\) e \(b=16\), \(P(x)=x^4-8x^2+16\).
+          <div class="formula">\[P(2)=16-32+0+16=0\ \checkmark\]</div>
+          <div class="formula">\[P(1)=1-8+0+16=9\ \checkmark\]</div>
+        </li>
+        <li><strong>Pedido:</strong>
+          <div class="formula">\[a^5-4b=0^5-4\cdot 16\]</div>
+          <div class="formula">\[a^5-4b=0-64=-64\]</div>
+        </li>
+      </ol>
+      <div class="dica">Não estranhe \(a=0\): o polinômio simplesmente não tem termo em \(x\). Bônus: \(x^4-8x^2+16=(x^2-4)^2=(x-2)^2(x+2)^2\), então \(2\) é raiz "dupla" (ela aparece duas vezes). Cuidado com \(0^5=0\), e não \(1\).</div>
+    </div>
+    <div class="ans-box">\(a=0\), \(b=16\) &nbsp;⇒&nbsp; \(a^5-4b=-64\) &nbsp; <span class="badge-gab">Alternativa a</span></div>
+  </div>
+
+  <h3>Os outros complementares (p. 747)</h3>
+
+  <!-- ===================== C01 ===================== -->
+  <div class="ex" id="ec01">
+    <div class="ex-header"><span class="ex-num">Complementar 01</span><span class="ex-src">UFG GO · p. 747</span><span class="badge-pratica">grau do produto</span></div>
+    <p class="ex-q">Considere o polinômio \(p(x)=(x-1)\cdot(x-3)^2\cdot(x-5)^3\cdot(x-7)^4\cdot(x-9)^5\cdot(x-11)^6\). O grau de \(p(x)\) é igual a</p>
+    <ul class="opts"><li>a) \(6\)</li><li>b) \(21\)</li><li>c) \(36\)</li><li>d) \(720\)</li><li>e) \(1\,080\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> no produto, os graus <strong>se somam</strong>: \(\operatorname{gr}(A\cdot B)=\operatorname{gr}(A)+\operatorname{gr}(B)\). Não precisa multiplicar nada.</p>
+      <ol>
+        <li><strong>Grau de cada fator.</strong> \((x-k)\) tem grau 1; \((x-k)^n\) é \((x-k)\) multiplicado \(n\) vezes, então tem grau \(n\):
+          <div class="formula">\[\operatorname{gr}(x-1)=1,\ \ \operatorname{gr}(x-3)^2=2,\ \ \operatorname{gr}(x-5)^3=3\]</div>
+          <div class="formula">\[\operatorname{gr}(x-7)^4=4,\ \ \operatorname{gr}(x-9)^5=5,\ \ \operatorname{gr}(x-11)^6=6\]</div>
+        </li>
+        <li><strong>Somar os graus:</strong>
+          <div class="formula">\[\operatorname{gr}(p)=1+2+3+4+5+6\]</div>
+          <div class="formula">\[\operatorname{gr}(p)=21\]</div>
+        </li>
+        <li><strong>Por que não é outra coisa:</strong> o termo de maior grau é \(x\cdot x^2\cdot x^3\cdot x^4\cdot x^5\cdot x^6=x^{1+2+3+4+5+6}=x^{21}\), com coeficiente \(1\neq 0\).</li>
+      </ol>
+      <div class="dica">\(720=1\cdot2\cdot3\cdot4\cdot5\cdot6\) é a alternativa de quem <strong>multiplica</strong> os expoentes. E \(6\) é só o número de fatores. Expoentes de potências de mesma base se <strong>somam</strong>.</div>
+    </div>
+    <div class="ans-box">\(\operatorname{gr}(p)=21\) &nbsp; <span class="badge-gab">Alternativa b</span></div>
+  </div>
+
+  <!-- ===================== C02 ===================== -->
+  <div class="ex" id="ec02">
+    <div class="ex-header"><span class="ex-num">Complementar 02</span><span class="ex-src">PUC SP · p. 747</span><span class="badge-pratica">grau com parâmetro</span></div>
+    <p class="ex-q">O polinômio na variável \(x\), dado por \(f(x)=(2a^2+a-3)x^3+(a^2-1)x^2+(a+1)x-3\), com \(a\in\mathbb{R}\), tem grau</p>
+    <ul class="opts"><li>a) \(3\), para todo \(a\in\mathbb{R}\)</li><li>b) \(2\), se \(a=1\)</li><li>c) \(3\), se \(a\neq-\tfrac32\)</li><li>d) \(1\), se \(a=1\)</li><li>e) \(0\), para todo \(a\in\mathbb{R}\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> o grau depende de quais coeficientes zeram. Descubra para quais \(a\) o coeficiente de \(x^3\) zera e teste esses valores nos outros coeficientes.</p>
+      <ol>
+        <li><strong>Quando o coeficiente de \(x^3\) é zero?</strong>
+          <div class="formula">\[2a^2+a-3=0\]</div>
+          Bhaskara com \(A=2\), \(B=1\), \(C=-3\):
+          <div class="formula">\[\Delta=1^2-4\cdot 2\cdot(-3)=1+24=25\]</div>
+          <div class="formula">\[a=\frac{-1\pm 5}{2\cdot 2}=\frac{-1\pm 5}{4}\]</div>
+          <div class="formula">\[a'=\frac{-1+5}{4}=\frac{4}{4}=1\qquad a''=\frac{-1-5}{4}=\frac{-6}{4}=-\frac32\]</div>
+          Então para \(a\neq 1\) e \(a\neq-\frac32\) o grau é 3.
+        </li>
+        <li><strong>Testar \(a=1\):</strong>
+          <div class="formula">\[2\cdot 1^2+1-3=0,\qquad 1^2-1=0,\qquad 1+1=2\]</div>
+          <div class="formula">\[f(x)=0x^3+0x^2+2x-3=2x-3\quad\Rightarrow\quad \text{grau }1\]</div>
+        </li>
+        <li><strong>Testar \(a=-\frac32\):</strong>
+          <div class="formula">\[a^2-1=\frac94-1=\frac54\neq 0\]</div>
+          <div class="formula">\[f(x)=0x^3+\frac54x^2+\left(-\frac32+1\right)x-3=\frac54x^2-\frac12x-3\quad\Rightarrow\quad \text{grau }2\]</div>
+        </li>
+        <li><strong>Julgar as alternativas:</strong>
+          <ul style="padding-left:1.1rem">
+            <li>a) falsa: em \(a=1\) o grau é 1.</li>
+            <li>b) falsa: em \(a=1\) o grau é 1, não 2.</li>
+            <li>c) falsa: \(a=1\) também é \(\neq-\frac32\), e ali o grau não é 3.</li>
+            <li>d) <strong>verdadeira</strong>: em \(a=1\), \(f(x)=2x-3\), grau 1.</li>
+            <li>e) falsa: o termo \(-3\) nunca zera e o grau só seria 0 se todos os outros zerassem.</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+    <div class="ans-box">Grau 1 se \(a=1\) (\(f(x)=2x-3\)) &nbsp; <span class="badge-gab">Alternativa d</span></div>
+  </div>
+
+  <!-- ===================== C05 ===================== -->
+  <div class="ex" id="ec05">
+    <div class="ex-header"><span class="ex-num">Complementar 05</span><span class="ex-src">UFSC · p. 747</span><span class="badge-pratica">raiz complexa</span></div>
+    <p class="ex-q">O número complexo \(1+4i\) é raiz da equação \(x^2+px+q=0\) de coeficientes reais. Determine o valor \(q-p\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> raiz \(\Rightarrow\) substituindo, dá zero. Um número complexo é zero quando a parte real <strong>e</strong> a parte imaginária são zero. Lembre: \(i^2=-1\).</p>
+      <ol>
+        <li><strong>Calcular \((1+4i)^2\)</strong> (quadrado da soma):
+          <div class="formula">\[(1+4i)^2=1^2+2\cdot 1\cdot 4i+(4i)^2=1+8i+16i^2\]</div>
+          <div class="formula">\[=1+8i+16\cdot(-1)=1+8i-16=-15+8i\]</div>
+        </li>
+        <li><strong>Substituir na equação:</strong>
+          <div class="formula">\[(-15+8i)+p(1+4i)+q=0\]</div>
+          <div class="formula">\[-15+8i+p+4pi+q=0\]</div>
+        </li>
+        <li><strong>Separar parte real e parte imaginária</strong> (\(p\) e \(q\) são reais):
+          <div class="formula">\[(-15+p+q)+(8+4p)\,i=0+0i\]</div>
+        </li>
+        <li><strong>Parte imaginária igual a zero:</strong>
+          <div class="formula">\[8+4p=0\ \Rightarrow\ 4p=-8\ \Rightarrow\ p=-2\]</div>
+        </li>
+        <li><strong>Parte real igual a zero:</strong>
+          <div class="formula">\[-15+(-2)+q=0\ \Rightarrow\ -17+q=0\ \Rightarrow\ q=17\]</div>
+        </li>
+        <li><strong>Pedido:</strong>
+          <div class="formula">\[q-p=17-(-2)=17+2=19\]</div>
+        </li>
+        <li><strong>Conferência:</strong> \(x^2-2x+17=0\Rightarrow \Delta=4-68=-64\Rightarrow x=\dfrac{2\pm 8i}{2}=1\pm 4i\ \checkmark\)</li>
+      </ol>
+      <div class="dica">Atalho (B46): com coeficientes reais, o conjugado \(1-4i\) também é raiz. Soma das raízes \(=2=-p\Rightarrow p=-2\); produto \(=(1+4i)(1-4i)=1+16=17=q\).</div>
+    </div>
+    <div class="ans-box">\(p=-2\), \(q=17\) &nbsp;⇒&nbsp; \(q-p=19\)</div>
+  </div>
+
+  <!-- ===================== C06 ===================== -->
+  <div class="ex" id="ec06">
+    <div class="ex-header"><span class="ex-num">Complementar 06</span><span class="ex-src">UFPR · p. 747</span><span class="badge-pratica">\(P(0)\) e \(P(1)\)</span></div>
+    <p class="ex-q">Sendo \(P(x)=(x^3-4x^2+x+1)^{20}\), a diferença entre o termo independente de \(P(x)\) e a soma dos coeficientes de \(P(x)\) vale</p>
+    <ul class="opts"><li>a) \(0\)</li><li>b) \(2\)</li><li>c) \(1\)</li><li>d) \(-1\)</li><li>e) \(-2\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> ninguém vai expandir uma potência 20. Use o Formulário: <strong>termo independente \(=P(0)\)</strong> e <strong>soma dos coeficientes \(=P(1)\)</strong>.</p>
+      <ol>
+        <li><strong>Termo independente:</strong>
+          <div class="formula">\[P(0)=(0^3-4\cdot 0^2+0+1)^{20}=(0-0+0+1)^{20}=1^{20}=1\]</div>
+        </li>
+        <li><strong>Soma dos coeficientes:</strong>
+          <div class="formula">\[P(1)=(1^3-4\cdot 1^2+1+1)^{20}=(1-4+1+1)^{20}=(-1)^{20}\]</div>
+          Expoente par: \((-1)^{20}=1\).
+          <div class="formula">\[P(1)=1\]</div>
+        </li>
+        <li><strong>Diferença:</strong>
+          <div class="formula">\[P(0)-P(1)=1-1=0\]</div>
+        </li>
+      </ol>
+      <div class="dica">Cuidado com \((-1)^{20}\): expoente par dá \(+1\); se fosse ímpar daria \(-1\) e a resposta seria \(2\).</div>
+    </div>
+    <div class="ans-box">\(P(0)-P(1)=0\) &nbsp; <span class="badge-gab">Alternativa a</span></div>
+  </div>
+
+  <!-- ===================== C08 ===================== -->
+  <div class="ex" id="ec08">
+    <div class="ex-header"><span class="ex-num">Complementar 08</span><span class="ex-src">FEI SP · p. 747</span><span class="badge-pratica">identidade com frações</span></div>
+    <p class="ex-q">Determine \(a\) e \(b\) para que a identidade \(\dfrac{a}{x-3}+\dfrac{b}{x+1}=\dfrac{3x-5}{x^2-2x-3}\) seja verificada para todo \(x\) real tal que \(x\neq-1\) e \(x\neq 3\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> igual ao proposto 06: denominador comum e, com denominadores iguais, os numeradores são polinômios idênticos.</p>
+      <ol>
+        <li><strong>Fatorar o denominador da direita.</strong> Dois números com soma \(2\) e produto \(-3\): \(3\) e \(-1\).
+          <div class="formula">\[x^2-2x-3=(x-3)(x+1)\]</div>
+          Conferindo: \((x-3)(x+1)=x^2+x-3x-3=x^2-2x-3\ \checkmark\)
+        </li>
+        <li><strong>Somar as frações da esquerda:</strong>
+          <div class="formula">\[\frac{a}{x-3}+\frac{b}{x+1}=\frac{a(x+1)+b(x-3)}{(x-3)(x+1)}\]</div>
+        </li>
+        <li><strong>Igualar os numeradores:</strong>
+          <div class="formula">\[a(x+1)+b(x-3)\equiv 3x-5\]</div>
+          <div class="formula">\[ax+a+bx-3b\equiv 3x-5\]</div>
+          <div class="formula">\[(a+b)x+(a-3b)\equiv 3x-5\]</div>
+        </li>
+        <li><strong>Comparar os coeficientes:</strong>
+          <div class="formula">\[\begin{cases} a+b=3 &amp; \text{(I) coef. de } x\\ a-3b=-5 &amp; \text{(II) termo independente} \end{cases}\]</div>
+        </li>
+        <li><strong>(I) − (II):</strong>
+          <div class="formula">\[(a+b)-(a-3b)=3-(-5)\]</div>
+          <div class="formula">\[a-a+b+3b=8\]</div>
+          <div class="formula">\[4b=8\ \Rightarrow\ b=2\]</div>
+        </li>
+        <li><strong>Em (I):</strong>
+          <div class="formula">\[a+2=3\ \Rightarrow\ a=1\]</div>
+        </li>
+        <li><strong>Conferência:</strong>
+          <div class="formula">\[\frac{1}{x-3}+\frac{2}{x+1}=\frac{(x+1)+2(x-3)}{x^2-2x-3}=\frac{x+1+2x-6}{x^2-2x-3}=\frac{3x-5}{x^2-2x-3}\ \checkmark\]</div>
+        </li>
+      </ol>
+    </div>
+    <div class="ans-box">\(a=1\) e \(b=2\)</div>
+  </div>
+
+  <!-- ===================== C09 ===================== -->
+  <div class="ex" id="ec09">
+    <div class="ex-header"><span class="ex-num">Complementar 09</span><span class="ex-src">UFPA · p. 747</span><span class="badge-pratica">identicamente nulo</span></div>
+    <p class="ex-q">Dos polinômios abaixo, qual o único que pode ser identicamente nulo?</p>
+    <ul class="opts" style="flex-direction:column"><li>a) \(a^2x^3+(a-1)x^2-(7-b)x\)</li><li>b) \((a+1)x^2+(b-1)x+(a-1)\)</li><li>c) \((a^2+1)x^3-(a-1)x^2\)</li><li>d) \((a-1)x^3-(b+3)x^2+a^2-1\)</li><li>e) \(a^2x^3-(3-b)x^2-5x\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> identicamente nulo \(\iff\) <strong>todos</strong> os coeficientes são zero <strong>ao mesmo tempo</strong>. Em cada alternativa, monte as condições e veja se existe \(a\), \(b\) real que satisfaça todas.</p>
+      <ol>
+        <li><strong>a)</strong> Precisaria \(a^2=0\) (então \(a=0\)) e \(a-1=0\) (então \(a=1\)). \(a\) não pode ser 0 e 1 ao mesmo tempo. <strong>Impossível.</strong></li>
+        <li><strong>b)</strong> Precisaria \(a+1=0\) (\(a=-1\)) e \(a-1=0\) (\(a=1\)). Contradição. <strong>Impossível.</strong></li>
+        <li><strong>c)</strong> Precisaria \(a^2+1=0\), ou seja, \(a^2=-1\). Nenhum real ao quadrado dá negativo. <strong>Impossível.</strong></li>
+        <li><strong>d)</strong> Precisaria:
+          <div class="formula">\[\begin{cases} a-1=0 &amp; \Rightarrow a=1\\ b+3=0 &amp; \Rightarrow b=-3\\ a^2-1=0 &amp; \Rightarrow a=1 \text{ ou } a=-1 \end{cases}\]</div>
+          \(a=1\) satisfaz a 1ª e a 3ª; \(b=-3\) satisfaz a 2ª. <strong>Possível!</strong> Conferindo: \((1-1)x^3-(-3+3)x^2+1^2-1=0x^3-0x^2+0=0\ \checkmark\)
+        </li>
+        <li><strong>e)</strong> O coeficiente de \(x\) é \(-5\), que nunca é zero. <strong>Impossível.</strong></li>
+      </ol>
+    </div>
+    <div class="ans-box">Só o d) pode ser nulo (com \(a=1\), \(b=-3\)) &nbsp; <span class="badge-gab">Alternativa d</span></div>
+  </div>
+
+  <!-- ===================== C10 ===================== -->
+  <div class="ex" id="ec10">
+    <div class="ex-header"><span class="ex-num">Complementar 10</span><span class="ex-src">UEL PR · p. 747</span><span class="badge-pratica">polinômios idênticos</span></div>
+    <p class="ex-q">Para que o polinômio \(f(x)=x^3-6x^2+mx+n\) seja um cubo perfeito, ou seja, tenha a forma \(f(x)=(x+b)^3\), os valores de \(m\) e \(n\) devem ser, respectivamente</p>
+    <ul class="opts"><li>a) \(3\) e \(-1\)</li><li>b) \(-6\) e \(8\)</li><li>c) \(-4\) e \(27\)</li><li>d) \(12\) e \(-8\)</li><li>e) \(10\) e \(-27\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> desenvolver \((x+b)^3\) e igualar os coeficientes de mesmo grau com \(x^3-6x^2+mx+n\).</p>
+      <ol>
+        <li><strong>Cubo da soma:</strong>
+          <div class="formula">\[(x+b)^3=x^3+3\cdot x^2\cdot b+3\cdot x\cdot b^2+b^3=x^3+3b\,x^2+3b^2\,x+b^3\]</div>
+        </li>
+        <li><strong>Igualar grau a grau</strong> com \(x^3-6x^2+mx+n\):
+          <div class="formula">\[\begin{cases} x^3:\ 1=1 \ \checkmark\\ x^2:\ 3b=-6\\ x^1:\ 3b^2=m\\ x^0:\ b^3=n \end{cases}\]</div>
+        </li>
+        <li><strong>Achar \(b\):</strong>
+          <div class="formula">\[3b=-6\ \Rightarrow\ b=-2\]</div>
+        </li>
+        <li><strong>Achar \(m\) e \(n\):</strong>
+          <div class="formula">\[m=3\cdot(-2)^2=3\cdot 4=12\]</div>
+          <div class="formula">\[n=(-2)^3=-8\]</div>
+        </li>
+        <li><strong>Conferência:</strong>
+          <div class="formula">\[(x-2)^3=x^3-6x^2+12x-8\ \checkmark\]</div>
+        </li>
+      </ol>
+    </div>
+    <div class="ans-box">\(m=12\) e \(n=-8\) &nbsp; <span class="badge-gab">Alternativa d</span></div>
+  </div>
+
+  <!-- ===================== C11 ===================== -->
+  <div class="ex" id="ec11">
+    <div class="ex-header"><span class="ex-num">Complementar 11</span><span class="ex-src">Unifesp SP · p. 747</span><span class="badge-pratica">identidade com frações</span></div>
+    <p class="ex-q">Se \(\dfrac{x}{x^2-3x+2}=\dfrac{a}{x+1}+\dfrac{b}{x-2}\) é verdadeira para todo \(x\) real, \(x\neq 1\), \(x\neq 2\), então o valor de \(a\cdot b\) é</p>
+    <ul class="opts"><li>a) \(-4\)</li><li>b) \(-3\)</li><li>c) \(-2\)</li><li>d) \(2\)</li><li>e) \(6\)</li></ul>
+    <div class="fix"><strong>Correção do livro.</strong> O livro imprime \(\dfrac{a}{x+1}\), mas o certo é \(\dfrac{a}{x-1}\): \(x^2-3x+2=(x-1)(x-2)\), e o próprio enunciado exclui \(x\neq 1\) (não \(-1\)). Com o "\(x+1\)" impresso, a conta dá \(a=\frac13\), \(b=\frac23\) e \(a\cdot b=\frac29\), que não está em nenhuma alternativa. Com \(x-1\) sai \(-2\), alternativa c.</div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> fatorar o denominador, somar as frações da direita e igualar os numeradores (polinômios idênticos).</p>
+      <ol>
+        <li><strong>Fatorar.</strong> Soma \(3\), produto \(2\): os números são \(1\) e \(2\).
+          <div class="formula">\[x^2-3x+2=(x-1)(x-2)\]</div>
+        </li>
+        <li><strong>Somar as frações</strong> (com \(x-1\)):
+          <div class="formula">\[\frac{a}{x-1}+\frac{b}{x-2}=\frac{a(x-2)+b(x-1)}{(x-1)(x-2)}\]</div>
+        </li>
+        <li><strong>Igualar os numeradores:</strong>
+          <div class="formula">\[a(x-2)+b(x-1)\equiv x\]</div>
+          <div class="formula">\[ax-2a+bx-b\equiv x\]</div>
+          <div class="formula">\[(a+b)x+(-2a-b)\equiv 1x+0\]</div>
+        </li>
+        <li><strong>Comparar coeficientes:</strong>
+          <div class="formula">\[\begin{cases} a+b=1 &amp; \text{(I)}\\ -2a-b=0 &amp; \text{(II)} \end{cases}\]</div>
+        </li>
+        <li><strong>(I) + (II)</strong> (o \(b\) some):
+          <div class="formula">\[a-2a+b-b=1+0\ \Rightarrow\ -a=1\ \Rightarrow\ a=-1\]</div>
+        </li>
+        <li><strong>Em (I):</strong>
+          <div class="formula">\[-1+b=1\ \Rightarrow\ b=2\]</div>
+        </li>
+        <li><strong>Conferência:</strong>
+          <div class="formula">\[\frac{-1}{x-1}+\frac{2}{x-2}=\frac{-(x-2)+2(x-1)}{(x-1)(x-2)}=\frac{-x+2+2x-2}{x^2-3x+2}=\frac{x}{x^2-3x+2}\ \checkmark\]</div>
+        </li>
+        <li><strong>Pedido:</strong>
+          <div class="formula">\[a\cdot b=(-1)\cdot 2=-2\]</div>
+        </li>
+      </ol>
+    </div>
+    <div class="ans-box">\(a=-1\), \(b=2\) &nbsp;⇒&nbsp; \(a\cdot b=-2\) &nbsp; <span class="badge-gab">Alternativa c</span> (com a correção \(x+1\to x-1\))</div>
+  </div>
+
+  <!-- ===================== C12 ===================== -->
+  <div class="ex" id="ec12">
+    <div class="ex-header"><span class="ex-num">Complementar 12</span><span class="ex-src">UFSC · p. 747</span><span class="badge-pratica">identidade com frações</span></div>
+    <p class="ex-q">Determine \(a+b+c\) na identidade \(\dfrac{32}{x^3-4x}=\dfrac{a}{x}+\dfrac{b}{x+2}+\dfrac{c}{x-2}\), com \(x\neq 0\), \(x\neq 2\) e \(x\neq-2\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> mesmo método, agora com três frações. Repare no fim: o coeficiente de \(x^2\) já entrega \(a+b+c\) direto.</p>
+      <ol>
+        <li><strong>Fatorar o denominador:</strong>
+          <div class="formula">\[x^3-4x=x\,(x^2-4)=x\,(x+2)(x-2)\]</div>
+        </li>
+        <li><strong>Somar as três frações</strong> com denominador \(x(x+2)(x-2)\). Cada numerador é multiplicado pelos fatores que faltam:
+          <div class="formula">\[\frac{a(x+2)(x-2)+b\,x(x-2)+c\,x(x+2)}{x(x+2)(x-2)}\]</div>
+        </li>
+        <li><strong>Igualar os numeradores:</strong>
+          <div class="formula">\[a(x+2)(x-2)+b\,x(x-2)+c\,x(x+2)\equiv 32\]</div>
+        </li>
+        <li><strong>Desenvolver cada parte:</strong>
+          <div class="formula">\[a(x^2-4)+b(x^2-2x)+c(x^2+2x)\equiv 32\]</div>
+          <div class="formula">\[ax^2-4a+bx^2-2bx+cx^2+2cx\equiv 32\]</div>
+          <div class="formula">\[(a+b+c)x^2+(-2b+2c)x-4a\equiv 0x^2+0x+32\]</div>
+        </li>
+        <li><strong>Comparar coeficientes:</strong>
+          <div class="formula">\[\begin{cases} a+b+c=0 &amp; (x^2)\\ -2b+2c=0 &amp; (x)\\ -4a=32 &amp; (\text{termo independente}) \end{cases}\]</div>
+          A primeira linha <strong>já é a resposta</strong>: \(a+b+c=0\).
+        </li>
+        <li><strong>Achando cada um</strong> (para conferir): \(-4a=32\Rightarrow a=-8\); \(-2b+2c=0\Rightarrow b=c\); \(-8+2b=0\Rightarrow b=4\), \(c=4\).
+          <div class="formula">\[a+b+c=-8+4+4=0\ \checkmark\]</div>
+        </li>
+        <li><strong>Conferência num ponto</strong>, \(x=1\):
+          <div class="formula">\[\frac{32}{1-4}=-\frac{32}{3}\qquad \frac{-8}{1}+\frac{4}{3}+\frac{4}{-1}=-8+\frac43-4=-12+\frac43=-\frac{32}{3}\ \checkmark\]</div>
+        </li>
+      </ol>
+    </div>
+    <div class="ans-box">\(a=-8\), \(b=4\), \(c=4\) &nbsp;⇒&nbsp; \(a+b+c=0\)</div>
+  </div>
+
+  <!-- ===================== C13 ===================== -->
+  <div class="ex" id="ec13">
+    <div class="ex-header"><span class="ex-num">Complementar 13</span><span class="ex-src">UEG GO · p. 747</span><span class="badge-pratica">polinômios idênticos</span></div>
+    <p class="ex-q">Sabendo-se que \((5-x)^3-(x-4)^2=ax^3+bx^2-67x+c\), o valor de \(a-b+c\) é:</p>
+    <ul class="opts"><li>a) \(126\)</li><li>b) \(124\)</li><li>c) \(109\)</li><li>d) \(95\)</li><li>e) \(94\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> desenvolver o lado esquerdo, organizar por grau e comparar com o lado direito.</p>
+      <ol>
+        <li><strong>Cubo da diferença</strong> \((p-q)^3=p^3-3p^2q+3pq^2-q^3\), com \(p=5\), \(q=x\):
+          <div class="formula">\[(5-x)^3=5^3-3\cdot 5^2\cdot x+3\cdot 5\cdot x^2-x^3\]</div>
+          <div class="formula">\[(5-x)^3=125-75x+15x^2-x^3\]</div>
+        </li>
+        <li><strong>Quadrado da diferença:</strong>
+          <div class="formula">\[(x-4)^2=x^2-2\cdot x\cdot 4+4^2=x^2-8x+16\]</div>
+        </li>
+        <li><strong>Subtrair</strong> (o sinal de menos troca todos os sinais do segundo):
+          <div class="formula">\[(125-75x+15x^2-x^3)-(x^2-8x+16)\]</div>
+          <div class="formula">\[=125-75x+15x^2-x^3-x^2+8x-16\]</div>
+        </li>
+        <li><strong>Agrupar por grau:</strong>
+          <div class="formula">\[=-x^3+(15-1)x^2+(-75+8)x+(125-16)\]</div>
+          <div class="formula">\[=-x^3+14x^2-67x+109\]</div>
+        </li>
+        <li><strong>Comparar</strong> com \(ax^3+bx^2-67x+c\):
+          <div class="formula">\[a=-1,\qquad b=14,\qquad -67=-67\ \checkmark,\qquad c=109\]</div>
+          O coeficiente de \(x\) bateu com o \(-67\) do enunciado: sinal de que a conta está certa.
+        </li>
+        <li><strong>Pedido:</strong>
+          <div class="formula">\[a-b+c=-1-14+109=94\]</div>
+        </li>
+      </ol>
+      <div class="dica">Pegadinhas: \(c=109\) é a alternativa c (quem para no meio), e esquecer de trocar os sinais de \((x-4)^2\) muda tudo.</div>
+    </div>
+    <div class="ans-box">\(a=-1\), \(b=14\), \(c=109\) &nbsp;⇒&nbsp; \(a-b+c=94\) &nbsp; <span class="badge-gab">Alternativa e</span></div>
+  </div>
+
 </div>
 
 <footer>
-  Pack didático offline · Polinômios · B44 · Introdução ao Estudo dos Polinômios · Versa
+  Pack didático offline · Polinômios · B44 · Introdução ao Estudo dos Polinômios · Propostos (p. 746) e complementares (p. 747) · Versa
 </footer>
 
 <script>
