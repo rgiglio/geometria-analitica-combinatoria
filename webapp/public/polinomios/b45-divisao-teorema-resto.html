@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polinômios — Divisão e Teorema do Resto | B45</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --danger: #ef5350; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+  touch-action: none;
+}
+.controls { display: flex; flex-direction: column; gap: 0.7rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-size: 0.92rem;
+}
+.live-vals div { margin: 0.25rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.status-pill {
+  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+}
+.status-secante { background: rgba(79,195,247,.2); color: var(--accent); }
+.status-tangente { background: rgba(129,199,132,.2); color: var(--accent2); }
+.status-exterior { background: rgba(255,183,77,.2); color: var(--accent3); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow); overflow: hidden;
+}
+.theory-card h3 { margin-top: 0; color: var(--accent); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
+}
+.explain {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 0 0 1.5rem; box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(79,195,247,.15); color: var(--accent);
+  border: 1px solid rgba(79,195,247,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps, .ex.collapsed .ans-box { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+/* ---- B44 extras ---- */
+canvas#cvPoly { aspect-ratio: 4 / 3; max-width: 640px; }
+.formulario {
+  background: linear-gradient(160deg, #22301f 0%, #1a2332 55%);
+  border: 2px solid var(--accent3); border-radius: var(--radius);
+  padding: 1.25rem 1.3rem 1.4rem; margin: 0 0 1.75rem; box-shadow: 0 6px 28px rgba(255,183,77,.12);
+}
+.formulario-head { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+.formulario-head h2 { margin: 0; border: none; padding: 0; color: var(--accent3); font-size: 1.35rem; letter-spacing: .02em; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 0.9rem; }
+.form-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; }
+.form-item h4 { color: var(--accent3); font-size: 0.92rem; margin-bottom: 0.25rem; }
+.form-item h4 .n { display: inline-block; min-width: 1.6rem; color: var(--bg); background: var(--accent3); border-radius: 5px; text-align: center; margin-right: 0.4rem; font-size: 0.8rem; }
+.form-item p { color: var(--muted); font-size: 0.86rem; margin-top: 0.3rem; }
+.form-item .formula { border-left-color: var(--accent3); font-size: 0.98rem; }
+.fix {
+  margin: 0.75rem 0; padding: 0.65rem 0.9rem; border-radius: 8px;
+  background: rgba(239,83,80,.10); border: 1px solid rgba(239,83,80,.4); color: #ffab9f; font-size: 0.9rem;
+}
+.fix strong { color: #ffcdd2; }
+.fix .katex { color: inherit; }
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.lab-tabs button.on { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.coef-row { display: grid; grid-template-columns: 4.2rem 1fr 3.4rem; gap: 0.5rem; align-items: center; }
+.coef-row .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--text); font-size: 0.88rem; }
+.coef-row.dom label { color: var(--accent3); font-weight: 700; }
+.coef-row.zero label { opacity: .55; }
+.ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .ops-grid { grid-template-columns: 1fr; } }
+.poly-in { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; font-size: 0.9rem; color: var(--muted); }
+.poly-in input { width: 58px; }
+.mult-table { border-collapse: collapse; margin: 0.6rem 0; font-size: 0.92rem; }
+.mult-table th, .mult-table td { border: 1px solid var(--border); padding: 0.4rem 0.65rem; text-align: center; }
+.mult-table th { background: var(--surface2); color: var(--accent); }
+.mult-table td { background: var(--bg); }
+.work { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-top: 0.8rem; overflow-x: auto; }
+.work div { margin: 0.3rem 0; color: var(--muted); }
+.deg-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(255,183,77,.18); color: var(--accent3); }
+.deg-tag.nulo { background: rgba(239,83,80,.18); color: var(--danger); }
+.root-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(129,199,132,.2); color: var(--accent2); }
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.9rem 0; }
+.quiz-q .qt { margin-bottom: 0.6rem; }
+.quiz-opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.quiz-opts button.ok { background: rgba(129,199,132,.25); border-color: var(--accent2); color: var(--accent2); }
+.quiz-opts button.bad { background: rgba(239,83,80,.18); border-color: var(--danger); color: #ffab9f; }
+.quiz-fb { margin-top: 0.55rem; font-size: 0.9rem; color: var(--muted); display: none; }
+.quiz-q.done .quiz-fb { display: block; }
+.score { display: inline-block; font-weight: 800; color: var(--accent2); font-size: 1.05rem; }
+.sys { display: inline-block; }
+/* ---- B45/B46 extras ---- */
+canvas.cv-wide { aspect-ratio: 4 / 3; max-width: 640px; }
+.badge-prova {
+  display: inline-block; background: rgba(239,83,80,.18); color: #ff8a80; border: 1px solid rgba(239,83,80,.6);
+  padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: .03em;
+}
+.badge-prova.max { background: #c62828; color: #fff; border-color: #ff8a80; box-shadow: 0 0 12px rgba(239,83,80,.45); }
+.ex.prova { border-left: 4px solid #ef5350; }
+.ex.prova-max { border: 2px solid #ef5350; box-shadow: 0 0 24px rgba(239,83,80,.18); }
+.badge-gab { display: inline-block; background: rgba(129,199,132,.15); color: var(--accent2); border: 1px solid rgba(129,199,132,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.caderno {
+  margin-top: 0.85rem; padding: 0.7rem 0.95rem; border-radius: 8px; font-size: 0.9rem;
+  background: rgba(79,195,247,.08); border: 1px dashed rgba(79,195,247,.55); color: #b3e5fc;
+}
+.caderno strong { color: #e1f5fe; }
+.caderno.quase { background: rgba(255,183,77,.08); border-color: rgba(255,183,77,.6); color: #ffe0b2; }
+.caderno.quase strong { color: #fff3e0; }
+.caderno .katex { color: inherit; }
+.opts { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem 1.2rem; margin: 0.35rem 0 0.2rem; color: var(--muted); font-size: 0.93rem; }
+.prova-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+.prova-list a { display: block; background: var(--bg); border: 1px solid rgba(239,83,80,.45); border-radius: 8px; padding: 0.5rem 0.7rem; color: var(--text); text-decoration: none; font-size: 0.88rem; }
+.prova-list a:hover { border-color: #ef5350; }
+.prova-list a .k { color: #ff8a80; font-weight: 800; margin-right: 0.35rem; }
+/* tabela de Briot-Ruffini */
+.briot { border-collapse: collapse; margin: 0.6rem auto; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.briot td { padding: 0.35rem 0.7rem; text-align: center; min-width: 2.6rem; color: var(--text); }
+.briot td.root { border-right: 2px solid var(--accent3); color: var(--accent3); font-weight: 700; }
+.briot tr.top td { border-bottom: 2px solid var(--accent3); }
+.briot td.rest { border-left: 2px solid var(--accent3); }
+.briot tr.bot td.rest { color: var(--accent2); font-weight: 800; }
+.briot td.hi { background: rgba(79,195,247,.22); border-radius: 6px; outline: 1px solid var(--accent); }
+.briot td.src { background: rgba(255,183,77,.16); border-radius: 6px; }
+.briot td.ghost { color: transparent; }
+.briot caption { caption-side: bottom; color: var(--muted); font-size: 0.8rem; padding-top: 0.3rem; }
+.steps .briot { margin-left: 0; }
+.step-msg { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.85rem; margin-top: 0.6rem; color: var(--muted); min-height: 2.6rem; }
+.step-msg strong { color: var(--accent); }
+.inp-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.35rem 0; }
+.inp-row input[type="text"], .inp-row input[type="number"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.35rem 0.55rem; border-radius: 8px; font-size: 0.92rem;
+}
+.inp-row input[type="text"] { min-width: 210px; flex: 1; }
+.inp-row input[type="number"] { width: 70px; }
+.inp-row select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.3rem 0.4rem; border-radius: 8px; }
+.err { color: #ff8a80; font-size: 0.85rem; }
+.chave { font-size: 0.98rem; }
+.chave .katex-display { margin: 0.15em 0; text-align: left; }
+.root-ctl { display: grid; grid-template-columns: 2.2rem 1fr 3rem 4.6rem; gap: 0.45rem; align-items: center; }
+.root-ctl .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.88rem; }
+.mult-pill { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin: 0.1rem 0.15rem; }
+.mult-pill.cruza { background: rgba(79,195,247,.18); color: var(--accent); }
+.mult-pill.toca { background: rgba(255,183,77,.2); color: var(--accent3); }
+.mult-pill.inflex { background: rgba(206,147,216,.2); color: var(--accent4); }
+.graph-fig { display: block; margin: 0.6rem auto; max-width: 100%; }
+.ex.collapsed .caderno { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .caderno { display: block !important; }
+
+.formula { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.formula .katex-display { position: relative; }
+.briot-wrap { max-width: 100%; overflow-x: auto; }
+@media (max-width: 520px) { .briot td { padding: 0.3rem 0.45rem; } }
+@media print {
+  body.print-form nav, body.print-form .treino-banner, body.print-form .wrap > *:not(.formulario), body.print-form footer, body.print-form .no-print { display: none !important; }
+  body.print-form { background: #fff; color: #000; }
+  body.print-form .formulario { border-color: #999; background: #fff; box-shadow: none; }
+  body.print-form .form-item { background: #fff; border-color: #bbb; break-inside: avoid; }
+  body.print-form .form-item h4, body.print-form .formulario-head h2 { color: #000; }
+  body.print-form .form-item p { color: #333; }
+}
+
+</style>
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "\\[", right: "\\]", display: true},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">Polinômios · B45</span>
+  <a href="index.html">Index</a>
+  <a href="b44-introducao.html">B44</a>
+  <a href="b45-divisao-teorema-resto.html" class="active">B45 Divisão</a>
+  <a href="b46-equacoes-algebricas.html">B46 Equações</a>
+  <a href="#formulario">Formulário</a>
+  <a href="#laboratorio">Laboratório</a>
+  <a href="#teste">Teste</a>
+  <a href="#exercicios">Exercícios</a>
+</nav>
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+  <h1>Divisão de Polinômios e Teorema do Resto</h1>
+  <p class="subtitle">B45 · Divisão · Método da chave · Briot-Ruffini (\(x-a\) e \(ax-b\)) · Teorema do resto · Teorema de D'Alembert · Divisão por \((x-a)(x-b)\) · Versa</p>
+
+  <span class="section-label">(A) De onde vem a divisão</span>
+  <div class="explain">
+    <p class="lead">Em 2017 a cidade de São Paulo chegou a 6 milhões de carros registrados. Um estudo acompanhou carros e pessoas de 2010 (\(x=0\)) a 2016 (\(x=6\)), em milhares:</p>
+    <div class="formula">\[V(x)=9x+100\ \ (\text{automóveis})\]</div>
+    <div class="formula">\[P(x)=1{,}8x^2+47x+300\ \ (\text{habitantes})\]</div>
+    <p>Para saber quantos <strong>habitantes por automóvel</strong> havia em cada ano, dividimos \(P(x)\) por \(V(x)\). Fazendo a divisão (pelo método da chave, que você aprende logo abaixo):</p>
+    <div class="formula">\[\frac{1{,}8x^2}{9x}=0{,}2x\ \Rightarrow\ 0{,}2x\cdot(9x+100)=1{,}8x^2+20x\ \Rightarrow\ \text{sobra } 27x+300\]</div>
+    <div class="formula">\[\frac{27x}{9x}=3\ \Rightarrow\ 3\cdot(9x+100)=27x+300\ \Rightarrow\ \text{sobra } 0\]</div>
+    <div class="formula">\[\frac{P(x)}{V(x)}=0{,}2x+3\quad(\text{resto } 0)\]</div>
+    <p>Em 2010: \(0{,}2\cdot 0+3=3\) habitantes por carro. Em 2016: \(0{,}2\cdot 6+3=4{,}2\). É uma <strong>divisão exata</strong>: o resto deu zero. Neste módulo vamos aprender a dividir polinômios, a achar o resto sem dividir (teorema do resto) e a usar isso para descobrir raízes.</p>
+  </div>
+
+  <span class="section-label">(B) Conceitos, passo a passo</span>
+  <div class="explain">
+    <h3 style="margin-top:0">1. O que é dividir \(A(x)\) por \(B(x)\)</h3>
+    <p>Dados \(A(x)\) e \(B(x)\neq 0\), dividir \(A\) por \(B\) é achar dois polinômios, o <strong>quociente</strong> \(Q(x)\) e o <strong>resto</strong> \(R(x)\), tais que</p>
+    <div class="formula">\[\begin{array}{l|l} A(x) &amp; B(x)\\ \hline R(x) &amp; Q(x)\end{array}\qquad\Longrightarrow\qquad \begin{cases} A(x)=B(x)\cdot Q(x)+R(x)\\ \operatorname{gr}(R)&lt;\operatorname{gr}(B)\ \text{ ou }\ R(x)\equiv 0\end{cases}\]</div>
+    <p>\(A\): dividendo · \(B\): divisor · \(Q\): quociente · \(R\): resto. É igual à divisão de números: \(17=5\cdot 3+2\), com o resto \(2\) menor que o divisor \(5\).</p>
+    <p><strong>Consequência do grau.</strong> \(\operatorname{gr}(Q)=\operatorname{gr}(A)-\operatorname{gr}(B)\). E o resto tem grau <strong>menor</strong> que o divisor: dividindo por um polinômio de grau 1, o resto é um <strong>número</strong>; dividindo por um de grau 2, o resto é do tipo \(ax+b\).</p>
+    <p><strong>Divisível.</strong> \(A(x)\) é divisível por \(B(x)\) se, e somente se, o resto \(R(x)\) é identicamente nulo (\(R\equiv 0\)).</p>
+
+    <h3>2. Método da chave (vale para qualquer divisor)</h3>
+    <p>É o mesmo algoritmo da divisão de números. <strong>Exemplo do livro:</strong> \(A(x)=2x^3+8x^2+5x-7\) por \(B(x)=x^2+3x-2\).</p>
+    <ol style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li>Organize os dois em potências decrescentes de \(x\) (complete com \(0\) os termos que faltarem).</li>
+      <li>Divida o termo de maior grau de \(A\) pelo termo de maior grau de \(B\): \(\dfrac{2x^3}{x^2}=2x\). Esse é o 1º termo de \(Q\).</li>
+      <li>Multiplique \(2x\) por <strong>todo</strong> o \(B\) e escreva o <strong>oposto</strong> embaixo de \(A\): \(2x\cdot(x^2+3x-2)=2x^3+6x^2-4x\), oposto \(-2x^3-6x^2+4x\).</li>
+      <li>Some: \((2x^3-2x^3)+(8x^2-6x^2)+(5x+4x)-7=2x^2+9x-7\) (1º resto parcial).</li>
+      <li>Repita: \(\dfrac{2x^2}{x^2}=2\); \(2\cdot(x^2+3x-2)=2x^2+6x-4\), oposto \(-2x^2-6x+4\); somando: \((9x-6x)+(-7+4)=3x-3\).</li>
+      <li>Pare quando o resto tiver grau menor que o divisor: \(\operatorname{gr}(3x-3)=1&lt;2\).</li>
+    </ol>
+    <div class="formula">\[\begin{array}{rrrr|l} 2x^3 &amp; +8x^2 &amp; +5x &amp; -7 &amp; x^2+3x-2\\ \hline -2x^3 &amp; -6x^2 &amp; +4x &amp; &amp; 2x+2\\ \hline &amp; 2x^2 &amp; +9x &amp; -7 &amp; \\ &amp; -2x^2 &amp; -6x &amp; +4 &amp; \\ \hline &amp; &amp; 3x &amp; -3 &amp; \end{array}\qquad Q(x)=2x+2,\quad R(x)=3x-3.\]</div>
+    <p><strong>Tira-prova:</strong> \((x^2+3x-2)(2x+2)+(3x-3)=2x^3+2x^2+6x^2+6x-4x-4+3x-3=2x^3+8x^2+5x-7\ \checkmark\)</p>
+
+    <h3>3. Briot-Ruffini, 1º caso: divisor \(x-a\)</h3>
+    <p>Quando o divisor é do 1º grau, existe um atalho que usa <strong>só os coeficientes</strong>. A raiz do divisor \(x-a\) é \(a\) (vai na esquerda); os coeficientes de \(P\) vão em cima, <strong>todos</strong>, inclusive os zeros.</p>
+    <div class="formula">\[\begin{array}{c|c|c} \text{raiz de } x-a &amp; \text{coeficientes de } x \text{ de } P(x) &amp; \text{termo indep.}\\ \hline &amp; \text{coeficientes do quociente} &amp; \text{resto}\end{array}\]</div>
+    <p><strong>Exemplo do livro:</strong> \(P(x)=3x^4-2x^2-x+4\) por \(x-2\). Atenção: <strong>não tem \(x^3\)</strong>, então o coeficiente de \(x^3\) é \(0\) e ele <strong>tem que aparecer</strong> na tabela.</p>
+    <ol style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li><strong>1º passo:</strong> escreva a raiz \(2\) e os coeficientes \(3,\ 0,\ -2,\ -1,\ 4\).</li>
+      <li><strong>2º passo:</strong> desça o 1º coeficiente: \(3\).</li>
+      <li><strong>3º passo:</strong> multiplique pela raiz e some com o próximo: \(3\cdot 2+0=6\).</li>
+      <li><strong>4º passo:</strong> repita até o fim: \(6\cdot 2+(-2)=10\); \(10\cdot 2+(-1)=19\); \(19\cdot 2+4=42\).</li>
+      <li><strong>5º passo:</strong> todos os números de baixo, menos o último, são os coeficientes do quociente; o último é o resto.</li>
+    </ol>
+    <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(2\)</td><td>\(3\)</td><td>\(0\)</td><td>\(-2\)</td><td>\(-1\)</td><td class="rest">\(4\)</td></tr><tr class="bot"><td class="root"></td><td>\(3\)</td><td>\(6\)</td><td>\(10\)</td><td>\(19\)</td><td class="rest">\(42\)</td></tr></table></div>
+    <div class="formula">\[Q(x)=3x^3+6x^2+10x+19\qquad R=42\]</div>
+    <p>O quociente tem <strong>um grau a menos</strong> que \(P\) (grau 4 \(\to\) grau 3). O resto é um <strong>número</strong>, porque o divisor tem grau 1. Faça esse exemplo passo a passo no Laboratório (aba 1, botão "Livro").</p>
+
+    <h3>4. Briot-Ruffini, 2º caso: divisor \(ax-b\)</h3>
+    <p>Quando o \(x\) do divisor tem coeficiente \(a\neq 1\), colocamos \(a\) em evidência:</p>
+    <div class="formula">\[ax-b=a\left(x-\frac{b}{a}\right)\quad\Rightarrow\quad P(x)=(ax-b)\cdot Q(x)+R=\left(x-\frac{b}{a}\right)\cdot\underbrace{a\,Q(x)}_{Q'(x)}+R\]</div>
+    <ul style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li><strong>1º passo:</strong> faça Briot-Ruffini com a raiz \(\dfrac{b}{a}\) (a raiz de \(ax-b\)). Você obtém \(Q'(x)=a\cdot Q(x)\) e o resto \(R\).</li>
+      <li><strong>2º passo:</strong> <strong>divida todos os coeficientes de \(Q'(x)\) por \(a\)</strong> para obter \(Q(x)\). O <strong>resto não muda</strong>.</li>
+    </ul>
+    <div class="fix"><strong>Correção do livro.</strong> Na página 720 o livro troca \(a\) e \(b\): escreve \(P(x)=b\cdot\left(x-\frac{a}{b}\right)\cdot Q(x)+R\), manda dividir por \(x-\frac{a}{b}\) e depois dividir \(Q'(x)\) por \(b\). Mas \(b\left(x-\frac{a}{b}\right)=bx-a\), que não é \(ax-b\). O certo é \(ax-b=a\left(x-\frac{b}{a}\right)\): divide-se por \(x-\frac{b}{a}\) e depois divide-se \(Q'(x)\) por \(a\). Exemplo: \(2x-2=2(x-1)\), raiz \(1\), e depois divide-se por \(2\) (é o Proposto 04).</div>
+
+    <h3>5. Teorema do resto</h3>
+    <p>O resto da divisão de \(P(x)\) por \(x-a\) é \(P(a)\).</p>
+    <div class="formula">\[P(x)=(x-a)\cdot Q(x)+R\ \xrightarrow{\ x=a\ }\ P(a)=\underbrace{(a-a)}_{0}\cdot Q(a)+R\ \Rightarrow\ \boxed{R=P(a)}\]</div>
+    <p>Ou seja: para achar só o resto, <strong>não precisa dividir</strong>. Basta substituir a raiz do divisor em \(P\). Para o divisor \(ax-b\), o resto é \(P\!\left(\frac{b}{a}\right)\). No gráfico, \(R=P(a)\) é a <strong>altura</strong> da curva em \(x=a\) (Laboratório, aba 3).</p>
+
+    <h3>6. Teorema de D'Alembert</h3>
+    <p>\(P(x)\) é divisível por \(x-a\) se, e somente se, \(a\) é raiz de \(P(x)\).</p>
+    <div class="formula">\[P(x)\ \text{divisível por}\ x-a\iff R=0\iff P(a)=0\iff a\ \text{é raiz de } P\]</div>
+    <p>É o que resolve quase todo "determine \(k\) (ou \(m\)) para que \(P\) seja divisível por \(x-a\)": iguale \(P(a)\) a zero.</p>
+
+    <h3>7. Divisão pelo produto \((x-a)(x-b)\)</h3>
+    <p>Com \(a\neq b\): \(P(x)\) é divisível por \((x-a)(x-b)\) se, e somente se, é divisível por \(x-a\) <strong>e</strong> por \(x-b\), isto é, \(P(a)=0\) e \(P(b)=0\).</p>
+    <p>E quando <strong>não</strong> é divisível? O divisor \((x-a)(x-b)\) tem grau 2, então o resto tem grau no máximo 1: \(R(x)=cx+d\). Substituindo \(x=a\) e \(x=b\) na identidade, o produto zera e sobra um sistema:</p>
+    <div class="formula">\[P(x)=(x-a)(x-b)\,Q(x)+cx+d\ \Rightarrow\ \begin{cases} P(a)=ca+d\\ P(b)=cb+d\end{cases}\]</div>
+    <p>É o Proposto 07.</p>
+  </div>
+
+  <section class="formulario" id="formulario">
+    <div class="formulario-head">
+      <h2>(C) FORMULÁRIO · B45 Divisão e Teorema do Resto</h2>
+      <button type="button" class="primary no-print" id="btnPrintForm">Imprimir só o formulário</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-item">
+        <h4><span class="n">1</span>Algoritmo da divisão</h4>
+        <div class="formula">\[A(x)=B(x)\cdot Q(x)+R(x)\]</div>
+        <div class="formula">\[\operatorname{gr}(R)&lt;\operatorname{gr}(B)\ \ \text{ou}\ \ R\equiv 0\]</div>
+        <p>Dividendo = divisor × quociente + resto. Serve também de <strong>tira-prova</strong>.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">2</span>Graus</h4>
+        <div class="formula">\[\operatorname{gr}(Q)=\operatorname{gr}(A)-\operatorname{gr}(B)\]</div>
+        <p>Divisor de grau 1 \(\Rightarrow\) resto é <strong>número</strong>. Divisor de grau 2 \(\Rightarrow\) resto \(R(x)=cx+d\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">3</span>Divisível</h4>
+        <div class="formula">\[A \text{ divisível por } B\iff R(x)\equiv 0\]</div>
+        <p>Divisão exata: \(A(x)=B(x)\cdot Q(x)\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">4</span>Método da chave (o ciclo)</h4>
+        <div class="formula">\[\frac{\text{maior termo do resto}}{\text{maior termo de } B}\ \to\ \times B\ \to\ \text{oposto}\ \to\ \text{soma}\]</div>
+        <p>Complete com \(0\) os termos que faltam. Pare quando \(\operatorname{gr}(\text{resto})&lt;\operatorname{gr}(B)\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">5</span>Briot-Ruffini (\(x-a\))</h4>
+        <div class="formula">\[\begin{array}{c|cccc|c} a &amp; a_n &amp; a_{n-1} &amp; \cdots &amp; a_1 &amp; a_0\\ \hline &amp; q_{n-1} &amp; q_{n-2} &amp; \cdots &amp; q_0 &amp; R\end{array}\]</div>
+        <div class="formula">\[q_{n-1}=a_n\]</div>
+        <div class="formula">\[\text{próximo}=(\text{anterior})\cdot a+(\text{de cima})\]</div>
+        <p><strong>Desce o 1º, multiplica pela raiz, soma com o de cima.</strong> Coeficiente que falta = \(0\). Divisor \(x+3\): raiz \(-3\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">6</span>Briot-Ruffini (\(ax-b\))</h4>
+        <div class="formula">\[ax-b=a\left(x-\tfrac{b}{a}\right)\]</div>
+        <div class="formula">\[\text{Briot com raiz } \tfrac{b}{a}\ \Rightarrow\ Q'(x),\ R\]</div>
+        <div class="formula">\[Q(x)=\frac{Q'(x)}{a},\quad R \text{ igual}\]</div>
+        <p>Divide <strong>só o quociente</strong> por \(a\). O resto fica como está.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">7</span>Teorema do resto</h4>
+        <div class="formula">\[\text{resto de } P(x)\div(x-a)=P(a)\]</div>
+        <div class="formula">\[\text{resto de } P(x)\div(ax-b)=P\!\left(\tfrac{b}{a}\right)\]</div>
+        <p>Substitua a <strong>raiz do divisor</strong> em \(P\). Não precisa dividir.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">8</span>Teorema de D'Alembert</h4>
+        <div class="formula">\[P \text{ divisível por } (x-a)\iff P(a)=0\]</div>
+        <p>"Para que valor de \(k\) é divisível por \(x-a\)?" \(\Rightarrow\) faça \(P(a)=0\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">9</span>Divisível por \((x-a)(x-b)\), \(a\neq b\)</h4>
+        <div class="formula">\[P \text{ divisível por } (x-a)(x-b)\]</div>
+        <div class="formula">\[\iff P(a)=0\ \text{ e }\ P(b)=0\]</div>
+        <p>Dois "divisível por" no enunciado \(\Rightarrow\) duas equações (Complementar 08, 12).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">10</span>Resto por \((x-a)(x-b)\)</h4>
+        <div class="formula">\[R(x)=cx+d,\qquad \begin{cases} ca+d=P(a)\\ cb+d=P(b)\end{cases}\]</div>
+        <p>\(P(a)\) e \(P(b)\) são os restos das divisões por \(x-a\) e por \(x-b\) (Proposto 07).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">11</span>Valores especiais (do B44)</h4>
+        <div class="formula">\[P(1)=\text{soma dos coeficientes}\]</div>
+        <div class="formula">\[P(0)=\text{termo independente}\]</div>
+        <p>Resto da divisão por \(x-1\) = soma dos coeficientes. Por \(x\) = termo independente.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">12</span>Restos iguais por \(x-a\) e \(x-b\)</h4>
+        <div class="formula">\[P(a)=P(b)\]</div>
+        <p>"Os restos são iguais" vira uma equação só (Complementar 11). Resto dado: \(P(a)=\) valor dado (Complementar 12).</p>
+      </div>
+    </div>
+  </section>
+
+  <span class="section-label" id="laboratorio">(D) Laboratório interativo</span>
+  <div class="lab-tabs">
+    <button type="button" class="on" id="tabLab1">1 · Briot-Ruffini passo a passo</button>
+    <button type="button" id="tabLab2">2 · Método da chave passo a passo</button>
+    <button type="button" id="tabLab3">3 · Teorema do resto no gráfico</button>
+  </div>
+
+  <div class="playground" id="lab1">
+    <div class="inp-row"><label for="brCoefs">Coeficientes de \(P(x)\), do maior grau para o menor (use 0 no termo que falta; frações como 1/2):</label></div>
+    <div class="inp-row"><input type="text" id="brCoefs" value="3 0 -2 -1 4"></div>
+    <div class="inp-row"><label>Divisor:</label><input type="number" id="brA" value="1" step="1"><span>\(x\ +\)</span><input type="number" id="brC" value="-2" step="1"><span id="brDivTex" class="hl3"></span></div>
+    <div class="ctrl-row" style="margin:0.5rem 0">
+      <button type="button" id="brPrev">◀ Voltar</button>
+      <button type="button" class="primary" id="brNext">Próximo passo ▶</button>
+      <button type="button" id="brAll">Mostrar tudo</button>
+      <button type="button" id="brReset">Recomeçar</button>
+    </div>
+    <div class="ctrl-row">
+      <span style="color:var(--muted);font-size:0.85rem">Exemplos:</span>
+      <button type="button" data-br="livro">Livro (p. 719)</button>
+      <button type="button" data-br="p02">Prop. 02</button>
+      <button type="button" data-br="p03">Prop. 03</button>
+      <button type="button" data-br="p04">Prop. 04 (\(2x-2\))</button>
+      <button type="button" data-br="c04">Compl. 04</button>
+      <button type="button" data-br="c06b">Compl. 06 b</button>
+      <button type="button" data-br="c10">Compl. 10 (\(x-\tfrac12\))</button>
+    </div>
+    <div id="brOut" style="margin-top:0.6rem"></div>
+    <div class="step-msg" id="brMsg" aria-live="polite"></div>
+    <div class="work" id="brSum"></div>
+  </div>
+
+  <div class="playground" id="lab2" style="display:none">
+    <div class="ops-grid">
+      <div><label for="chA">Dividendo \(A(x)\) (coeficientes):</label><div class="inp-row"><input type="text" id="chA" value="2 8 5 -7"></div></div>
+      <div><label for="chB">Divisor \(B(x)\) (coeficientes):</label><div class="inp-row"><input type="text" id="chB" value="1 3 -2"></div></div>
+    </div>
+    <div class="ctrl-row" style="margin:0.5rem 0">
+      <button type="button" id="chPrev">◀ Voltar</button>
+      <button type="button" class="primary" id="chNext">Próximo passo ▶</button>
+      <button type="button" id="chAll">Mostrar tudo</button>
+      <span style="flex:1"></span>
+      <button type="button" data-ch="livro">Livro (p. 719)</button>
+      <button type="button" data-ch="p01">Prop. 01</button>
+      <button type="button" data-ch="c01">Compl. 01</button>
+      <button type="button" data-ch="c02">Compl. 02</button>
+      <button type="button" data-ch="sp">Abertura (carros)</button>
+    </div>
+    <div class="work chave" id="chOut" aria-live="polite"></div>
+  </div>
+
+  <div class="playground" id="lab3" style="display:none">
+    <div class="play-grid">
+      <div>
+        <canvas id="cvResto" class="cv-wide" width="640" height="480" aria-label="Gráfico de P(x) e do resto"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem;font-style:normal">
+          <span class="hl">azul = \(y=P(x)\)</span> &nbsp;|&nbsp; <span class="hl3">âmbar = ponto \((a,\,P(a))\)</span> &nbsp;|&nbsp; <span class="hl2">verde = altura \(=\) resto</span>
+        </p>
+      </div>
+      <div class="controls">
+        <label for="rsCoefs">Coeficientes de \(P(x)\):</label>
+        <div class="inp-row"><input type="text" id="rsCoefs" value="1 -1 3 5"></div>
+        <label for="rsA">Divisor \(x-a\), com \(a=\) <span id="rsALbl" class="hl3">2</span></label>
+        <input type="range" id="rsA" min="-4" max="4" step="0.5" value="2">
+        <label for="rsY">Escala vertical \(Y=\) <span id="rsYLbl" class="hl">20</span></label>
+        <input type="range" id="rsY" min="0" max="5" step="1" value="2">
+        <div class="ctrl-row">
+          <button type="button" data-rs="p05">Prop. 05</button>
+          <button type="button" data-rs="p02">Prop. 02 (\(k=-22\))</button>
+          <button type="button" data-rs="p06">Prop. 06 (\(m=2\))</button>
+          <button type="button" data-rs="c10">Compl. 10</button>
+          <button type="button" data-rs="c11">Compl. 11 (\(m=2\))</button>
+        </div>
+        <div class="live-vals" id="rsVals" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <span class="section-label" id="teste">(E) Teste rápido</span>
+  <div class="explain">
+    <p>Clique na alternativa. A explicação aparece logo depois. Acertos: <span class="score" id="quizScore">0 / 0</span> &nbsp; <button type="button" id="quizReset">Recomeçar</button></p>
+    <div id="quizBox"></div>
+  </div>
+
+  <h2 id="exercicios">(F) Exercícios</h2>
+  <div class="explain">
+    <p class="lead"><span class="badge-prova">★ Cai na prova</span> &nbsp;marca os exercícios que a Gica marcou no livro para a prova (lista do caderno: "721 todos os marcados" e "722 todos os marcados"). Os outros também estão resolvidos, para treino.</p>
+    <div class="prova-list">
+      <a href="#p01"><span class="k">★</span>Proposto 01 · método da chave</a>
+      <a href="#p02"><span class="k">★</span>Proposto 02 · D'Alembert</a>
+      <a href="#p03"><span class="k">★</span>Proposto 03 · Briot ao contrário</a>
+      <a href="#p04"><span class="k">★</span>Proposto 04 · Briot com \(2x-2\)</a>
+      <a href="#p05"><span class="k">★</span>Proposto 05 · teorema do resto</a>
+      <a href="#p06"><span class="k">★</span>Proposto 06 · D'Alembert</a>
+      <a href="#p07"><span class="k">★</span>Proposto 07 · resto por \((x-2)(x+1)\)</a>
+      <a href="#c01"><span class="k">★</span>Complementar 01 · UFMG</a>
+      <a href="#c02"><span class="k">★</span>Complementar 02 · UFPE</a>
+      <a href="#c06"><span class="k">★</span>Complementar 06 · esquemas de Briot</a>
+      <a href="#c07"><span class="k">★</span>Complementar 07 · UPE</a>
+      <a href="#c08"><span class="k">★</span>Complementar 08 · ESPM</a>
+    </div>
+    <p class="note">As caixas azuis tracejadas "Caderno da Gica" comentam as resoluções que já estavam escritas a lápis no livro.</p>
+  </div>
+
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+  <h3>Exercícios propostos · p. 721</h3>
+
+  <!-- P01 -->
+  <div class="ex prova" id="p01">
+    <div class="ex-header"><span class="ex-num">Proposto 01</span><span class="ex-src">Versa B45 · p. 721</span><span class="badge-pratica">método da chave</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Determine o quociente e o resto da divisão de \(A(x)=x^4+2x^3-4x^2+2x-12\) por \(B(x)=x^2+4x+3\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> o divisor tem grau 2, então Briot-Ruffini não serve. Usamos o método da chave. O quociente terá grau \(4-2=2\) e o resto grau menor que 2 (do tipo \(cx+d\)).</p>
+      <ol>
+        <li><strong>Os dois já estão completos e em ordem decrescente.</strong>
+          <div class="formula">\[A(x)=x^4+2x^3-4x^2+2x-12\qquad B(x)=x^2+4x+3\]</div></li>
+        <li><strong>1º termo do quociente:</strong> maior termo de \(A\) dividido pelo maior termo de \(B\):
+          <div class="formula">\[\frac{x^4}{x^2}=x^2\]</div></li>
+        <li><strong>Multiplique \(x^2\) por todo o \(B\)</strong>:
+          <div class="formula">\[x^2\cdot(x^2+4x+3)=x^4+4x^3+3x^2\]</div>
+          O oposto (que vai embaixo de \(A\)) é \(-x^4-4x^3-3x^2\).</li>
+        <li><strong>Some com \(A\)</strong>, termo a termo:
+          <div class="formula">\[(x^4-x^4)+(2x^3-4x^3)+(-4x^2-3x^2)+2x-12\]</div>
+          <div class="formula">\[=0-2x^3-7x^2+2x-12=-2x^3-7x^2+2x-12\quad(\text{1}^{\text{o}}\text{ resto parcial})\]</div>
+          Grau 3, ainda não é menor que 2: continua.</li>
+        <li><strong>2º termo do quociente:</strong>
+          <div class="formula">\[\frac{-2x^3}{x^2}=-2x\]</div>
+          <div class="formula">\[-2x\cdot(x^2+4x+3)=-2x^3-8x^2-6x\quad\Rightarrow\quad\text{oposto: } +2x^3+8x^2+6x\]</div></li>
+        <li><strong>Some com o 1º resto parcial:</strong>
+          <div class="formula">\[(-2x^3+2x^3)+(-7x^2+8x^2)+(2x+6x)-12\]</div>
+          <div class="formula">\[=0+x^2+8x-12=x^2+8x-12\quad(\text{2}^{\text{o}}\text{ resto parcial})\]</div>
+          Grau 2, ainda não é menor que 2: continua.</li>
+        <li><strong>3º termo do quociente:</strong>
+          <div class="formula">\[\frac{x^2}{x^2}=1\]</div>
+          <div class="formula">\[1\cdot(x^2+4x+3)=x^2+4x+3\quad\Rightarrow\quad\text{oposto: } -x^2-4x-3\]</div></li>
+        <li><strong>Some com o 2º resto parcial:</strong>
+          <div class="formula">\[(x^2-x^2)+(8x-4x)+(-12-3)=0+4x-15=4x-15\]</div>
+          Grau 1, menor que 2: <strong>acabou</strong>.</li>
+        <li><strong>A chave completa:</strong>
+          <div class="formula">\[\begin{array}{rrrrr|l} x^4 &amp; +2x^3 &amp; -4x^2 &amp; +2x &amp; -12 &amp; x^2+4x+3\\ \hline -x^4 &amp; -4x^3 &amp; -3x^2 &amp; &amp; &amp; x^2-2x+1\\ \hline &amp; -2x^3 &amp; -7x^2 &amp; +2x &amp; -12 &amp;\\ &amp; +2x^3 &amp; +8x^2 &amp; +6x &amp; &amp;\\ \hline &amp; &amp; x^2 &amp; +8x &amp; -12 &amp;\\ &amp; &amp; -x^2 &amp; -4x &amp; -3 &amp;\\ \hline &amp; &amp; &amp; 4x &amp; -15 &amp; \end{array}\]</div></li>
+        <li><strong>Tira-prova</strong> (\(B\cdot Q+R\) tem que dar \(A\)):
+          <div class="formula">\[(x^2+4x+3)(x^2-2x+1)=x^4-2x^3+x^2+4x^3-8x^2+4x+3x^2-6x+3\]</div>
+          <div class="formula">\[=x^4+(-2+4)x^3+(1-8+3)x^2+(4-6)x+3=x^4+2x^3-4x^2-2x+3\]</div>
+          <div class="formula">\[x^4+2x^3-4x^2-2x+3+(4x-15)=x^4+2x^3-4x^2+2x-12=A(x)\ \checkmark\]</div></li>
+      </ol>
+      <div class="dica">Repare: \(Q(x)=x^2-2x+1=(x-1)^2\). Teste no Laboratório, aba 2, botão "Prop. 01".</div>
+    </div>
+    <div class="ans-box">\(Q(x)=x^2-2x+1\) &nbsp;&nbsp; e &nbsp;&nbsp; \(R(x)=4x-15\)</div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> você chegou em \(Q(x)=x^2-2x+1\) e \(R(x)=4x-15\). Está certinho! As três rodadas da chave estão corretas.</div>
+  </div>
+
+  <!-- P02 -->
+  <div class="ex prova" id="p02">
+    <div class="ex-header"><span class="ex-num">Proposto 02</span><span class="ex-src">Versa B45 · p. 721</span><span class="badge-pratica">D'Alembert</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Determine o valor de \(k\) para que o polinômio \(A(x)=x^3+3x^2+x+k\) seja divisível por \(B(x)=x-2\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> pelo teorema de D'Alembert, \(A\) é divisível por \(x-2\) se, e somente se, \(A(2)=0\).</p>
+      <ol>
+        <li><strong>Raiz do divisor:</strong>
+          <div class="formula">\[x-2=0\ \Rightarrow\ x=2\]</div></li>
+        <li><strong>Substitua \(x=2\) em \(A\):</strong>
+          <div class="formula">\[A(2)=2^3+3\cdot 2^2+2+k\]</div>
+          <div class="formula">\[A(2)=8+3\cdot 4+2+k=8+12+2+k=22+k\]</div></li>
+        <li><strong>Divisível \(\Rightarrow\) resto zero:</strong>
+          <div class="formula">\[22+k=0\ \Rightarrow\ k=-22\]</div></li>
+        <li><strong>Conferência por Briot-Ruffini</strong> com \(k=-22\) (o resto tem que dar 0):
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(2\)</td><td>\(1\)</td><td>\(3\)</td><td>\(1\)</td><td class="rest">\(-22\)</td></tr><tr class="bot"><td class="root"></td><td>\(1\)</td><td>\(5\)</td><td>\(11\)</td><td class="rest">\(0\)</td></tr></table></div><ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o primeiro coeficiente: \(1\).</li><li>\(1\cdot 2 + 3 = 2 + 3 = 5\)</li><li>\(5\cdot 2 + 1 = 10 + 1 = 11\)</li><li>\(11\cdot 2 + (-22) = 22 + (-22) = 0\)</li></ul>
+          Resto \(0\ \checkmark\), e o quociente é \(x^2+5x+11\).</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(k=-22\)</div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> \(2^3+3\cdot 2^2+2+k=0\Rightarrow 8+12+2+k=0\Rightarrow k=-22\). Perfeito, foi exatamente o caminho mais rápido.</div>
+  </div>
+
+  <!-- P03 -->
+  <div class="ex prova" id="p03">
+    <div class="ex-header"><span class="ex-num">Proposto 03</span><span class="ex-src">Versa B45 · p. 721</span><span class="badge-pratica">Briot-Ruffini ao contrário</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Ao dividir o polinômio \(P(x)\) por \(x-a\) no dispositivo prático de Briot-Ruffini, tem-se:</p>
+    <table class="briot"><tr class="top"><td class="root">\(a\)</td><td>\(3\)</td><td>\(-5\)</td><td>\(1\)</td><td class="rest">\(-2\)</td></tr><tr class="bot"><td class="root"></td><td>\(3\)</td><td>\(1\)</td><td>\(3\)</td><td class="rest">\(R\)</td></tr></table>
+    <p class="ex-q">Determine os valores de \(a\) e \(R\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> cada número de baixo é "o de baixo anterior \(\times\) raiz \(+\) o de cima". Escrevemos essa regra em cada coluna e resolvemos.</p>
+      <ol>
+        <li><strong>1ª coluna:</strong> o 1º coeficiente só desce: \(3\) em cima, \(3\) embaixo \(\checkmark\).</li>
+        <li><strong>2ª coluna</strong> (achamos \(a\)):
+          <div class="formula">\[3\cdot a+(-5)=1\]</div>
+          <div class="formula">\[3a=1+5=6\]</div>
+          <div class="formula">\[a=\frac{6}{3}=2\]</div></li>
+        <li><strong>3ª coluna</strong> (só para conferir \(a=2\)):
+          <div class="formula">\[1\cdot a+1=1\cdot 2+1=3\ \checkmark\ (\text{bate com o } 3 \text{ de baixo})\]</div></li>
+        <li><strong>4ª coluna</strong> (achamos \(R\)):
+          <div class="formula">\[3\cdot a+(-2)=R\]</div>
+          <div class="formula">\[3\cdot 2-2=R\]</div>
+          <div class="formula">\[R=6-2=4\]</div></li>
+        <li><strong>Conferência pelo teorema do resto.</strong> Os coeficientes de cima dão \(P(x)=3x^3-5x^2+x-2\). O resto da divisão por \(x-2\) é \(P(2)\):
+          <div class="formula">\[P(2)=3\cdot 2^3-5\cdot 2^2+2-2=3\cdot 8-5\cdot 4+2-2=24-20+0=4\ \checkmark\]</div></li>
+      </ol>
+      <div class="dica">O quociente é \(Q(x)=3x^2+x+3\) (os números de baixo, menos o último).</div>
+    </div>
+    <div class="ans-box">\(a=2\) &nbsp;&nbsp; e &nbsp;&nbsp; \(R=4\)</div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> \(3a+(-5)=1\Rightarrow 3a=6\Rightarrow a=2\) e \(3\cdot a+(-2)=R\Rightarrow 6-2=R\Rightarrow R=4\). Tudo certo!</div>
+  </div>
+
+  <!-- P04 -->
+  <div class="ex prova" id="p04">
+    <div class="ex-header"><span class="ex-num">Proposto 04</span><span class="ex-src">Versa B45 · p. 721</span><span class="badge-pratica">Briot-Ruffini · 2º caso</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Utilizando o dispositivo de Briot-Ruffini, obtenha o quociente \(Q(x)\) e o resto \(R\) da divisão de \(P(x)=2x^3+3x^2-x-2\) por \(B(x)=2x-2\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> o divisor é do tipo \(ax-b\), com \(a=2\). Fazemos Briot com a raiz de \(2x-2\) e, no fim, <strong>dividimos o quociente por 2</strong>. O resto não muda.</p>
+      <ol>
+        <li><strong>Raiz do divisor:</strong>
+          <div class="formula">\[2x-2=0\ \Rightarrow\ 2x=2\ \Rightarrow\ x=1\]</div></li>
+        <li><strong>Briot-Ruffini com a raiz 1</strong> (coeficientes \(2,\ 3,\ -1,\ -2\)):
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(1\)</td><td>\(2\)</td><td>\(3\)</td><td>\(-1\)</td><td class="rest">\(-2\)</td></tr><tr class="bot"><td class="root"></td><td>\(2\)</td><td>\(5\)</td><td>\(4\)</td><td class="rest">\(2\)</td></tr></table></div><ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o primeiro coeficiente: \(2\).</li><li>\(2\cdot 1 + 3 = 2 + 3 = 5\)</li><li>\(5\cdot 1 + (-1) = 5 + (-1) = 4\)</li><li>\(4\cdot 1 + (-2) = 4 + (-2) = 2\)</li></ul></li>
+        <li><strong>O que essa tabela deu:</strong> o quociente da divisão por \(x-1\) e o resto:
+          <div class="formula">\[Q'(x)=2x^2+5x+4\qquad R=2\]</div></li>
+        <li><strong>Por que ainda falta dividir por 2:</strong>
+          <div class="formula">\[P(x)=(x-1)\cdot(2x^2+5x+4)+2\]</div>
+          <div class="formula">\[(x-1)\cdot(2x^2+5x+4)=(x-1)\cdot 2\cdot\left(x^2+\tfrac52x+2\right)=(2x-2)\cdot\left(x^2+\tfrac52x+2\right)\]</div>
+          <div class="formula">\[\Rightarrow\ P(x)=(2x-2)\cdot\left(x^2+\tfrac52x+2\right)+2\]</div></li>
+        <li><strong>Divida cada coeficiente de \(Q'\) por 2:</strong>
+          <div class="formula">\[\frac{2}{2}=1,\qquad \frac{5}{2},\qquad \frac{4}{2}=2\ \Rightarrow\ Q(x)=x^2+\frac52x+2\]</div>
+          O resto continua \(R=2\).</li>
+        <li><strong>Tira-prova:</strong>
+          <div class="formula">\[(2x-2)\left(x^2+\tfrac52x+2\right)=2x^3+5x^2+4x-2x^2-5x-4=2x^3+3x^2-x-4\]</div>
+          <div class="formula">\[2x^3+3x^2-x-4+2=2x^3+3x^2-x-2=P(x)\ \checkmark\]</div></li>
+      </ol>
+      <div class="dica">Pelo teorema do resto: \(R=P(1)=2+3-1-2=2\ \checkmark\). Veja no Laboratório, aba 1, botão "Prop. 04".</div>
+    </div>
+    <div class="ans-box">\(Q(x)=x^2+\dfrac{5}{2}x+2\) &nbsp;&nbsp; e &nbsp;&nbsp; \(R=2\)</div>
+    <div class="caderno quase"><strong>Caderno da Gica:</strong> a tabela de Briot (\(2,\ 5,\ 4\ |\ 2\)) e o resto \(R=2\) estão certos! Só faltou o último passo: como o divisor é \(2x-2\) (e não \(x-1\)), o \(2x^2+5x+4\) é o \(Q'(x)\) e ainda precisa ser dividido por 2. O quociente final é \(x^2+\frac52x+2\).</div>
+  </div>
+
+  <!-- P05 -->
+  <div class="ex prova" id="p05">
+    <div class="ex-header"><span class="ex-num">Proposto 05</span><span class="ex-src">Versa B45 · p. 721</span><span class="badge-pratica">teorema do resto</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Calcule o resto da divisão de \(P(x)=x^3-x^2+3x+5\) por \(x-2\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> pelo teorema do resto, o resto da divisão por \(x-2\) é \(P(2)\). Não precisa dividir.</p>
+      <ol>
+        <li><strong>Raiz do divisor:</strong> \(x-2=0\Rightarrow x=2\).</li>
+        <li><strong>Substitua:</strong>
+          <div class="formula">\[P(2)=2^3-2^2+3\cdot 2+5\]</div>
+          <div class="formula">\[P(2)=8-4+6+5\]</div>
+          <div class="formula">\[P(2)=4+6+5=10+5=15\]</div></li>
+        <li><strong>Conferência por Briot-Ruffini:</strong>
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(2\)</td><td>\(1\)</td><td>\(-1\)</td><td>\(3\)</td><td class="rest">\(5\)</td></tr><tr class="bot"><td class="root"></td><td>\(1\)</td><td>\(1\)</td><td>\(5\)</td><td class="rest">\(15\)</td></tr></table></div><ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o primeiro coeficiente: \(1\).</li><li>\(1\cdot 2 + (-1) = 2 + (-1) = 1\)</li><li>\(1\cdot 2 + 3 = 2 + 3 = 5\)</li><li>\(5\cdot 2 + 5 = 10 + 5 = 15\)</li></ul>
+          O último número é \(15\ \checkmark\).</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(R=P(2)=15\)</div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> \(P(2)=8-4+6+5=15\). Certo! (Na foto o último número parece um 15; se estiver escrito 13, foi só uma conta: \(8-4=4\), \(4+6=10\), \(10+5=15\).)</div>
+  </div>
+
+  <!-- P06 -->
+  <div class="ex prova" id="p06">
+    <div class="ex-header"><span class="ex-num">Proposto 06</span><span class="ex-src">Versa B45 · p. 721</span><span class="badge-pratica">D'Alembert</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Para qual valor de \(m\) o polinômio \(P(x)=3x^5-5x^4+m\) seja divisível por \(x-1\)?</p>
+    <div class="steps">
+      <ol>
+        <li><strong>Raiz do divisor:</strong> \(x-1=0\Rightarrow x=1\).</li>
+        <li><strong>Divisível \(\Rightarrow P(1)=0\)</strong> (D'Alembert):
+          <div class="formula">\[P(1)=3\cdot 1^5-5\cdot 1^4+m\]</div>
+          <div class="formula">\[P(1)=3\cdot 1-5\cdot 1+m=3-5+m=-2+m\]</div>
+          <div class="formula">\[-2+m=0\ \Rightarrow\ m=2\]</div></li>
+        <li><strong>Conferência por Briot-Ruffini</strong> com \(m=2\). Atenção: \(P\) não tem \(x^3\), \(x^2\) nem \(x\), então entram três zeros:
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(1\)</td><td>\(3\)</td><td>\(-5\)</td><td>\(0\)</td><td>\(0\)</td><td>\(0\)</td><td class="rest">\(2\)</td></tr><tr class="bot"><td class="root"></td><td>\(3\)</td><td>\(-2\)</td><td>\(-2\)</td><td>\(-2\)</td><td>\(-2\)</td><td class="rest">\(0\)</td></tr></table></div><ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o primeiro coeficiente: \(3\).</li><li>\(3\cdot 1 + (-5) = 3 + (-5) = -2\)</li><li>\((-2)\cdot 1 + 0 = (-2) + 0 = -2\)</li><li>\((-2)\cdot 1 + 0 = (-2) + 0 = -2\)</li><li>\((-2)\cdot 1 + 0 = (-2) + 0 = -2\)</li><li>\((-2)\cdot 1 + 2 = (-2) + 2 = 0\)</li></ul>
+          Resto \(0\ \checkmark\).</li>
+      </ol>
+      <div class="dica">\(P(1)\) é a soma dos coeficientes: \(3-5+m\). Divisível por \(x-1\) \(\iff\) soma dos coeficientes \(=0\).</div>
+    </div>
+    <div class="ans-box">\(m=2\)</div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> \(3(1)^5-5(1)^4+m=0\Rightarrow 3-5+m=0\Rightarrow m=2\). Certo! (Tem uma linha solta "\(P(1)=3\)" no rascunho: \(P(1)\) é \(3-5+m\), não 3. Mas a resposta final \(m=2\) está correta.)</div>
+  </div>
+
+  <!-- P07 -->
+  <div class="ex prova" id="p07">
+    <div class="ex-header"><span class="ex-num">Proposto 07</span><span class="ex-src">Versa B45 · p. 721</span><span class="badge-pratica">resto por \((x-a)(x-b)\)</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Dividindo-se um polinômio \(P(x)\) por \(x-2\), obtém-se resto 6; dividindo-se \(P(x)\) por \(x+1\), obtém-se resto 3. Determine o resto da divisão de \(P(x)\) por \(D(x)=(x-2)\cdot(x+1)\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> não sabemos quem é \(P\), mas sabemos \(P(2)\) e \(P(-1)\) (teorema do resto). O divisor tem grau 2, então o resto é \(R(x)=ax+b\).</p>
+      <ol>
+        <li><strong>Traduza os dados pelo teorema do resto:</strong>
+          <div class="formula">\[\text{resto por } x-2 \text{ é } 6\ \Rightarrow\ P(2)=6\]</div>
+          <div class="formula">\[\text{resto por } x+1 \text{ é } 3\ \Rightarrow\ P(-1)=3\quad(\text{raiz de } x+1 \text{ é } -1)\]</div></li>
+        <li><strong>Escreva a divisão por \(D(x)\):</strong> como \(\operatorname{gr}(D)=2\), o resto tem grau no máximo 1:
+          <div class="formula">\[P(x)=(x-2)(x+1)\cdot Q(x)+ax+b\]</div></li>
+        <li><strong>Substitua \(x=2\)</strong> (o produto zera):
+          <div class="formula">\[P(2)=(2-2)(2+1)\cdot Q(2)+a\cdot 2+b=0+2a+b\]</div>
+          <div class="formula">\[2a+b=6\quad\text{(I)}\]</div></li>
+        <li><strong>Substitua \(x=-1\):</strong>
+          <div class="formula">\[P(-1)=(-1-2)(-1+1)\cdot Q(-1)+a\cdot(-1)+b=0-a+b\]</div>
+          <div class="formula">\[-a+b=3\quad\text{(II)}\]</div></li>
+        <li><strong>Resolva o sistema</strong> fazendo (I) \(-\) (II):
+          <div class="formula">\[(2a+b)-(-a+b)=6-3\]</div>
+          <div class="formula">\[2a+b+a-b=3\ \Rightarrow\ 3a=3\ \Rightarrow\ a=1\]</div>
+          Em (II):
+          <div class="formula">\[-1+b=3\ \Rightarrow\ b=4\]</div></li>
+        <li><strong>Conferência:</strong> \(R(2)=2+4=6\ \checkmark\) e \(R(-1)=-1+4=3\ \checkmark\).</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(R(x)=x+4\)</div>
+  </div>
+
+  <h3>Exercícios complementares · p. 722</h3>
+
+  <!-- C01 -->
+  <div class="ex prova" id="c01">
+    <div class="ex-header"><span class="ex-num">Complementar 01</span><span class="ex-src">UFMG · p. 722</span><span class="badge-pratica">método da chave</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">O quociente da divisão de \(P(x)=4x^4-4x^3+x-1\) por \(q(x)=4x^3+1\) é</p>
+    <ul class="opts"><li>a) \(x-5\)</li><li>b) \(x-1\)</li><li>c) \(x+5\)</li><li>d) \(4x-5\)</li><li>e) \(4x+8\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Complete com zeros:</strong>
+          <div class="formula">\[P(x)=4x^4-4x^3+0x^2+x-1\qquad q(x)=4x^3+0x^2+0x+1\]</div></li>
+        <li><strong>1º termo:</strong> \(\dfrac{4x^4}{4x^3}=x\).
+          <div class="formula">\[x\cdot(4x^3+1)=4x^4+x\quad\Rightarrow\quad\text{oposto: } -4x^4-x\]</div>
+          <div class="formula">\[(4x^4-4x^4)-4x^3+0x^2+(x-x)-1=-4x^3-1\]</div></li>
+        <li><strong>2º termo:</strong> \(\dfrac{-4x^3}{4x^3}=-1\).
+          <div class="formula">\[-1\cdot(4x^3+1)=-4x^3-1\quad\Rightarrow\quad\text{oposto: } +4x^3+1\]</div>
+          <div class="formula">\[(-4x^3+4x^3)+(-1+1)=0\]</div></li>
+        <li><strong>Resultado:</strong> \(Q(x)=x-1\), \(R=0\) (divisão exata).</li>
+        <li><strong>Tira-prova:</strong> \((4x^3+1)(x-1)=4x^4-4x^3+x-1=P(x)\ \checkmark\)</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(Q(x)=x-1\) &nbsp; <span class="badge-gab">Alternativa b</span></div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> você circulou a alternativa b. Certo!</div>
+  </div>
+
+  <!-- C02 -->
+  <div class="ex prova" id="c02">
+    <div class="ex-header"><span class="ex-num">Complementar 02</span><span class="ex-src">UFPE · p. 722</span><span class="badge-pratica">método da chave</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Qual o resto da divisão do polinômio \(x^3-2x^2+x+1\) por \(x^2-x+2\)?</p>
+    <ul class="opts"><li>a) \(x+1\)</li><li>b) \(3x+2\)</li><li>c) \(-2x+3\)</li><li>d) \(x-1\)</li><li>e) \(x-2\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>1º termo:</strong> \(\dfrac{x^3}{x^2}=x\).
+          <div class="formula">\[x\cdot(x^2-x+2)=x^3-x^2+2x\quad\Rightarrow\quad\text{oposto: } -x^3+x^2-2x\]</div>
+          <div class="formula">\[(x^3-x^3)+(-2x^2+x^2)+(x-2x)+1=-x^2-x+1\]</div></li>
+        <li><strong>2º termo:</strong> \(\dfrac{-x^2}{x^2}=-1\).
+          <div class="formula">\[-1\cdot(x^2-x+2)=-x^2+x-2\quad\Rightarrow\quad\text{oposto: } +x^2-x+2\]</div>
+          <div class="formula">\[(-x^2+x^2)+(-x-x)+(1+2)=-2x+3\]</div>
+          Grau 1 \(&lt;\) 2: acabou.</li>
+        <li><strong>A chave:</strong>
+          <div class="formula">\[\begin{array}{rrrr|l} x^3 &amp; -2x^2 &amp; +x &amp; +1 &amp; x^2-x+2\\ \hline -x^3 &amp; +x^2 &amp; -2x &amp; &amp; x-1\\ \hline &amp; -x^2 &amp; -x &amp; +1 &amp;\\ &amp; +x^2 &amp; -x &amp; +2 &amp;\\ \hline &amp; &amp; -2x &amp; +3 &amp;\end{array}\]</div></li>
+        <li><strong>Tira-prova:</strong> \((x^2-x+2)(x-1)=x^3-x^2-x^2+x+2x-2=x^3-2x^2+3x-2\); somando \(-2x+3\): \(x^3-2x^2+x+1\ \checkmark\)</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(R(x)=-2x+3\) &nbsp; <span class="badge-gab">Alternativa c</span></div>
+  </div>
+
+  <!-- C03 -->
+  <div class="ex" id="c03">
+    <div class="ex-header"><span class="ex-num">Complementar 03</span><span class="ex-src">IBMEC RJ · p. 722</span><span class="badge-pratica">chave com letras</span></div>
+    <p class="ex-q">Se o resto da divisão do polinômio \(P(x)=x^3+ax+b\) pelo polinômio \(Q(x)=x^2+x+2\) é igual a 4, então podemos afirmar que \(a+b\) vale</p>
+    <ul class="opts"><li>a) \(2\)</li><li>b) \(-2\)</li><li>c) \(3\)</li><li>d) \(-3\)</li><li>e) \(4\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Complete com zero:</strong> \(P(x)=x^3+0x^2+ax+b\).</li>
+        <li><strong>1º termo:</strong> \(\dfrac{x^3}{x^2}=x\).
+          <div class="formula">\[x\cdot(x^2+x+2)=x^3+x^2+2x\quad\Rightarrow\quad\text{oposto: } -x^3-x^2-2x\]</div>
+          <div class="formula">\[(x^3-x^3)+(0x^2-x^2)+(ax-2x)+b=-x^2+(a-2)x+b\]</div></li>
+        <li><strong>2º termo:</strong> \(\dfrac{-x^2}{x^2}=-1\).
+          <div class="formula">\[-1\cdot(x^2+x+2)=-x^2-x-2\quad\Rightarrow\quad\text{oposto: } +x^2+x+2\]</div>
+          <div class="formula">\[(-x^2+x^2)+\big((a-2)x+x\big)+(b+2)=(a-1)x+(b+2)\]</div></li>
+        <li><strong>O resto é \((a-1)x+(b+2)\) e tem que ser idêntico a 4</strong> (\(=0x+4\)). Igualando coeficientes (B44, polinômios idênticos):
+          <div class="formula">\[\begin{cases} a-1=0\ \Rightarrow\ a=1\\ b+2=4\ \Rightarrow\ b=2\end{cases}\]</div></li>
+        <li><strong>Pedido:</strong> \(a+b=1+2=3\).</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(a+b=3\) &nbsp; <span class="badge-gab">Alternativa c</span></div>
+  </div>
+
+  <!-- C04 -->
+  <div class="ex" id="c04">
+    <div class="ex-header"><span class="ex-num">Complementar 04</span><span class="ex-src">Unesp SP · p. 722</span><span class="badge-pratica">Briot-Ruffini</span></div>
+    <p class="ex-q">Seja \(x\) um número real positivo. O volume de um paralelepípedo reto-retângulo é dado, em função de \(x\), pelo polinômio \(x^3+7x^2+14x+8\). Se uma aresta do paralelepípedo mede \(x+1\), a área da face perpendicular a essa aresta pode ser expressa por</p>
+    <ul class="opts"><li>a) \(x^2-6x+8\)</li><li>b) \(x^2+14x+8\)</li><li>c) \(x^2+7x+8\)</li><li>d) \(x^2-7x+8\)</li><li>e) \(x^2+6x+8\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> volume = (área da base) \(\times\) (altura). A face perpendicular à aresta \(x+1\) é a "base" e \(x+1\) é a "altura". Então área \(=\dfrac{\text{volume}}{x+1}\).</p>
+      <ol>
+        <li><strong>Raiz do divisor:</strong> \(x+1=0\Rightarrow x=-1\).</li>
+        <li><strong>Briot-Ruffini:</strong>
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(-1\)</td><td>\(1\)</td><td>\(7\)</td><td>\(14\)</td><td class="rest">\(8\)</td></tr><tr class="bot"><td class="root"></td><td>\(1\)</td><td>\(6\)</td><td>\(8\)</td><td class="rest">\(0\)</td></tr></table></div><ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o primeiro coeficiente: \(1\).</li><li>\(1\cdot (-1) + 7 = (-1) + 7 = 6\)</li><li>\(6\cdot (-1) + 14 = (-6) + 14 = 8\)</li><li>\(8\cdot (-1) + 8 = (-8) + 8 = 0\)</li></ul></li>
+        <li><strong>Resto 0</strong> (divisão exata, como tinha que ser). Quociente: \(x^2+6x+8\).</li>
+        <li><strong>Conferência:</strong> \((x+1)(x^2+6x+8)=x^3+6x^2+8x+x^2+6x+8=x^3+7x^2+14x+8\ \checkmark\)</li>
+      </ol>
+      <div class="dica">Bônus: \(x^2+6x+8=(x+2)(x+4)\), então as três arestas são \(x+1\), \(x+2\) e \(x+4\).</div>
+    </div>
+    <div class="ans-box">Área \(=x^2+6x+8\) &nbsp; <span class="badge-gab">Alternativa e</span></div>
+  </div>
+
+  <!-- C05 -->
+  <div class="ex" id="c05">
+    <div class="ex-header"><span class="ex-num">Complementar 05</span><span class="ex-src">UnB DF · p. 722</span><span class="badge-pratica">Briot-Ruffini (raciocínio)</span></div>
+    <p class="ex-q">Na divisão do polinômio \(5x^6+\dots+8x+13\) por \(x-2\) encontrou-se o quociente \(5x^5+\dots+3\). Determine o resto dessa divisão.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> não conhecemos os coeficientes do meio, mas só precisamos da <strong>última coluna</strong> de Briot-Ruffini.</p>
+      <ol>
+        <li><strong>Monte só as pontas da tabela</strong> (raiz 2):
+          <table class="briot"><tr class="top"><td class="root">\(2\)</td><td>\(5\)</td><td>\(\cdots\)</td><td>\(8\)</td><td class="rest">\(13\)</td></tr><tr class="bot"><td class="root"></td><td>\(5\)</td><td>\(\cdots\)</td><td>\(3\)</td><td class="rest">\(R\)</td></tr></table>
+          O último número antes do resto é o termo independente do quociente: \(3\).</li>
+        <li><strong>Regra da última coluna:</strong> (de baixo anterior) \(\times\) raiz \(+\) (de cima):
+          <div class="formula">\[R=3\cdot 2+13\]</div>
+          <div class="formula">\[R=6+13=19\]</div></li>
+        <li><strong>Outro jeito (identidade):</strong> \(P(x)=(x-2)\cdot Q(x)+R\). Comparando só os termos independentes:
+          <div class="formula">\[13=(-2)\cdot 3+R\ \Rightarrow\ 13=-6+R\ \Rightarrow\ R=19\ \checkmark\]</div></li>
+      </ol>
+    </div>
+    <div class="ans-box">\(R=19\)</div>
+  </div>
+
+  <!-- C06 -->
+  <div class="ex prova" id="c06">
+    <div class="ex-header"><span class="ex-num">Complementar 06</span><span class="ex-src">p. 722</span><span class="badge-pratica">Briot-Ruffini ao contrário</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">O dispositivo de Briot-Ruffini recebeu este nome em homenagem ao matemático francês Charles A. Briot (1817 – 1882) e ao matemático italiano Paolo Ruffini (1765 – 1822). Dividindo o polinômio \(P(x)\) por um binômio do tipo \(x-a\) por meio desse dispositivo, têm-se os seguintes esquemas. Determine os valores de \(a\), \(b\), \(c\) e \(d\).</p>
+    <div style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:center">
+      <div><span class="ex-q">a)</span><table class="briot"><tr class="top"><td class="root">\(2\)</td><td>\(a\)</td><td>\(b\)</td><td>\(c\)</td><td class="rest">\(d\)</td></tr><tr class="bot"><td class="root"></td><td>\(3\)</td><td>\(1\)</td><td>\(3\)</td><td class="rest">\(4\)</td></tr></table></div>
+      <div><span class="ex-q">b)</span><table class="briot"><tr class="top"><td class="root">\(3\)</td><td>\(a\)</td><td>\(b\)</td><td>\(c\)</td><td class="rest">\(d\)</td></tr><tr class="bot"><td class="root"></td><td>\(1\)</td><td>\(-1\)</td><td>\(-2\)</td><td class="rest">\(0\)</td></tr></table></div>
+    </div>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> em cada coluna vale (de baixo anterior) \(\times\) raiz \(+\) (de cima) \(=\) (de baixo). Agora as incógnitas estão em cima: isolamos cada uma.</p>
+      <ol>
+        <li><strong>Item a), raiz 2.</strong>
+          <div class="formula">\[\text{1}^{\text{a}}\text{ coluna: o primeiro só desce}\ \Rightarrow\ a=3\]</div>
+          <div class="formula">\[\text{2}^{\text{a}}\text{: } 3\cdot 2+b=1\ \Rightarrow\ 6+b=1\ \Rightarrow\ b=-5\]</div>
+          <div class="formula">\[\text{3}^{\text{a}}\text{: } 1\cdot 2+c=3\ \Rightarrow\ 2+c=3\ \Rightarrow\ c=1\]</div>
+          <div class="formula">\[\text{4}^{\text{a}}\text{: } 3\cdot 2+d=4\ \Rightarrow\ 6+d=4\ \Rightarrow\ d=-2\]</div>
+          Conferência: \(P(x)=3x^3-5x^2+x-2\), \(P(2)=24-20+2-2=4\ \checkmark\) (é o mesmo polinômio do Proposto 03!).</li>
+        <li><strong>Item b), raiz 3.</strong>
+          <div class="formula">\[\text{1}^{\text{a}}\text{: } a=1\]</div>
+          <div class="formula">\[\text{2}^{\text{a}}\text{: } 1\cdot 3+b=-1\ \Rightarrow\ 3+b=-1\ \Rightarrow\ b=-4\]</div>
+          <div class="formula">\[\text{3}^{\text{a}}\text{: } (-1)\cdot 3+c=-2\ \Rightarrow\ -3+c=-2\ \Rightarrow\ c=1\]</div>
+          <div class="formula">\[\text{4}^{\text{a}}\text{: } (-2)\cdot 3+d=0\ \Rightarrow\ -6+d=0\ \Rightarrow\ d=6\]</div>
+          Conferência: \(P(x)=x^3-4x^2+x+6\), \(P(3)=27-36+3+6=0\ \checkmark\) (resto 0: 3 é raiz).</li>
+      </ol>
+    </div>
+    <div class="ans-box">a) \(a=3,\ b=-5,\ c=1,\ d=-2\) &nbsp;&nbsp;&nbsp; b) \(a=1,\ b=-4,\ c=1,\ d=6\)</div>
+  </div>
+
+  <!-- C07 -->
+  <div class="ex prova" id="c07">
+    <div class="ex-header"><span class="ex-num">Complementar 07</span><span class="ex-src">UPE PE · p. 722</span><span class="badge-pratica">D'Alembert</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Para que o polinômio \(6x^3-4x^2+2mx-(m+1)\) seja divisível por \(x-3\), o valor da raiz quadrada do módulo de \(m\) deve ser igual a</p>
+    <ul class="opts"><li>a) \(0\)</li><li>b) \(1\)</li><li>c) \(2\)</li><li>d) \(3\)</li><li>e) \(5\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Divisível por \(x-3\) \(\Rightarrow P(3)=0\):</strong>
+          <div class="formula">\[6\cdot 3^3-4\cdot 3^2+2m\cdot 3-(m+1)=0\]</div>
+          <div class="formula">\[6\cdot 27-4\cdot 9+6m-m-1=0\]</div>
+          <div class="formula">\[162-36+6m-m-1=0\]</div>
+          <div class="formula">\[125+5m=0\ \Rightarrow\ 5m=-125\ \Rightarrow\ m=-25\]</div>
+          Cuidado com o sinal: \(-(m+1)=-m-1\).</li>
+        <li><strong>O que se pede:</strong>
+          <div class="formula">\[\sqrt{|m|}=\sqrt{|-25|}=\sqrt{25}=5\]</div></li>
+      </ol>
+    </div>
+    <div class="ans-box">\(m=-25\Rightarrow\sqrt{|m|}=5\) &nbsp; <span class="badge-gab">Alternativa e</span></div>
+  </div>
+
+  <!-- C08 -->
+  <div class="ex prova" id="c08">
+    <div class="ex-header"><span class="ex-num">Complementar 08</span><span class="ex-src">ESPM SP · p. 722</span><span class="badge-pratica">divisível por dois binômios</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">O trinômio \(x^2+ax+b\) é divisível por \(x+2\) e por \(x-1\). O valor de \(a-b\) é</p>
+    <ul class="opts"><li>a) \(0\)</li><li>b) \(1\)</li><li>c) \(2\)</li><li>d) \(3\)</li><li>e) \(4\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Divisível por \(x+2\) \(\Rightarrow P(-2)=0\):</strong>
+          <div class="formula">\[(-2)^2+a\cdot(-2)+b=0\ \Rightarrow\ 4-2a+b=0\ \Rightarrow\ -2a+b=-4\quad\text{(I)}\]</div></li>
+        <li><strong>Divisível por \(x-1\) \(\Rightarrow P(1)=0\):</strong>
+          <div class="formula">\[1^2+a\cdot 1+b=0\ \Rightarrow\ 1+a+b=0\ \Rightarrow\ a+b=-1\quad\text{(II)}\]</div></li>
+        <li><strong>(II) \(-\) (I):</strong>
+          <div class="formula">\[(a+b)-(-2a+b)=-1-(-4)\ \Rightarrow\ 3a=3\ \Rightarrow\ a=1\]</div>
+          Em (II): \(1+b=-1\Rightarrow b=-2\).</li>
+        <li><strong>Pedido:</strong> \(a-b=1-(-2)=1+2=3\).</li>
+        <li><strong>Outro jeito:</strong> um trinômio do 2º grau com raízes \(-2\) e \(1\) (e coeficiente dominante 1) é \((x+2)(x-1)=x^2+x-2\). Logo \(a=1\), \(b=-2\ \checkmark\)</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(a-b=3\) &nbsp; <span class="badge-gab">Alternativa d</span></div>
+  </div>
+
+  <!-- C09 -->
+  <div class="ex" id="c09">
+    <div class="ex-header"><span class="ex-num">Complementar 09</span><span class="ex-src">Fuvest SP · p. 722</span><span class="badge-pratica">algoritmo da divisão + resto</span></div>
+    <p class="ex-q">Dividindo-se o polinômio \(P(x)\) por \(2x^2-3x+1\), obtém-se quociente \(3x^2+1\) e resto \(-x+2\). Nessas condições, calcule o resto da divisão de \(P(x)\) por \(x-1\).</p>
+    <div class="steps">
+      <ol>
+        <li><strong>Algoritmo da divisão:</strong>
+          <div class="formula">\[P(x)=(2x^2-3x+1)\cdot(3x^2+1)+(-x+2)\]</div></li>
+        <li><strong>Resto por \(x-1\) é \(P(1)\)</strong> (teorema do resto):
+          <div class="formula">\[P(1)=(2\cdot 1^2-3\cdot 1+1)\cdot(3\cdot 1^2+1)+(-1+2)\]</div>
+          <div class="formula">\[P(1)=(2-3+1)\cdot(3+1)+1=0\cdot 4+1=1\]</div></li>
+      </ol>
+      <div class="dica">Não precisou montar \(P(x)\) inteiro (que seria \(6x^4-9x^3+5x^2-4x+3\)). Repare que \(1\) é raiz de \(2x^2-3x+1\), por isso o produto zerou.</div>
+    </div>
+    <div class="ans-box">Resto \(=P(1)=1\)</div>
+  </div>
+
+  <!-- C10 -->
+  <div class="ex" id="c10">
+    <div class="ex-header"><span class="ex-num">Complementar 10</span><span class="ex-src">IFAL · p. 722</span><span class="badge-pratica">teorema do resto</span></div>
+    <p class="ex-q">Seja \(P(x)=x^3-2x^2+3x-5\) um polinômio. O resto da divisão de \(P(x)\) pelo binômio \(B(x)=x-\frac{1}{2}\) é</p>
+    <ul class="opts"><li>a) um número natural.</li><li>b) um número inteiro negativo.</li><li>c) um número racional positivo.</li><li>d) um número racional negativo.</li><li>e) um número irracional.</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Resto \(=P\!\left(\frac12\right)\):</strong>
+          <div class="formula">\[P\!\left(\tfrac12\right)=\left(\tfrac12\right)^3-2\left(\tfrac12\right)^2+3\cdot\tfrac12-5\]</div>
+          <div class="formula">\[=\tfrac18-2\cdot\tfrac14+\tfrac32-5=\tfrac18-\tfrac12+\tfrac32-5\]</div></li>
+        <li><strong>Denominador comum 8:</strong>
+          <div class="formula">\[=\tfrac18-\tfrac48+\tfrac{12}{8}-\tfrac{40}{8}=\frac{1-4+12-40}{8}=-\frac{31}{8}\]</div></li>
+        <li><strong>Classificação:</strong> \(-\frac{31}{8}=-3{,}875\) é fração (não inteira) e negativa: racional negativo.</li>
+        <li><strong>Conferência por Briot-Ruffini</strong> com raiz \(\frac12\):
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(\tfrac{1}{2}\)</td><td>\(1\)</td><td>\(-2\)</td><td>\(3\)</td><td class="rest">\(-5\)</td></tr><tr class="bot"><td class="root"></td><td>\(1\)</td><td>\(-\tfrac{3}{2}\)</td><td>\(\tfrac{9}{4}\)</td><td class="rest">\(-\tfrac{31}{8}\)</td></tr></table></div><ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o primeiro coeficiente: \(1\).</li><li>\(1\cdot \tfrac{1}{2} + (-2) = \tfrac{1}{2} + (-2) = -\tfrac{3}{2}\)</li><li>\((-\tfrac{3}{2})\cdot \tfrac{1}{2} + 3 = (-\tfrac{3}{4}) + 3 = \tfrac{9}{4}\)</li><li>\(\tfrac{9}{4}\cdot \tfrac{1}{2} + (-5) = \tfrac{9}{8} + (-5) = -\tfrac{31}{8}\)</li></ul></li>
+      </ol>
+    </div>
+    <div class="ans-box">\(R=-\dfrac{31}{8}\) (racional negativo) &nbsp; <span class="badge-gab">Alternativa d</span></div>
+  </div>
+
+  <!-- C11 -->
+  <div class="ex" id="c11">
+    <div class="ex-header"><span class="ex-num">Complementar 11</span><span class="ex-src">UFTM MG · p. 722</span><span class="badge-pratica">restos iguais</span></div>
+    <p class="ex-q">Dividindo-se o polinômio \(p(x)=3x^4-2x^3+mx+1\) por \((x-1)\) ou por \((x+1)\), os restos são iguais. Nesse caso, o valor de \(m\) é igual a</p>
+    <ul class="opts"><li>a) \(-2\)</li><li>b) \(-1\)</li><li>c) \(1\)</li><li>d) \(2\)</li><li>e) \(3\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Resto por \(x-1\):</strong>
+          <div class="formula">\[p(1)=3\cdot 1^4-2\cdot 1^3+m\cdot 1+1=3-2+m+1=m+2\]</div></li>
+        <li><strong>Resto por \(x+1\):</strong>
+          <div class="formula">\[p(-1)=3\cdot(-1)^4-2\cdot(-1)^3+m\cdot(-1)+1=3\cdot 1-2\cdot(-1)-m+1=3+2-m+1=6-m\]</div></li>
+        <li><strong>Restos iguais:</strong>
+          <div class="formula">\[m+2=6-m\ \Rightarrow\ m+m=6-2\ \Rightarrow\ 2m=4\ \Rightarrow\ m=2\]</div></li>
+      </ol>
+      <div class="dica">Cuidado com \((-1)^3=-1\): \(-2\cdot(-1)^3=-2\cdot(-1)=+2\).</div>
+    </div>
+    <div class="ans-box">\(m=2\) &nbsp; <span class="badge-gab">Alternativa d</span></div>
+  </div>
+
+  <!-- C12 -->
+  <div class="ex" id="c12">
+    <div class="ex-header"><span class="ex-num">Complementar 12</span><span class="ex-src">Unesp SP · p. 722</span><span class="badge-pratica">sistema com restos</span></div>
+    <p class="ex-q">O polinômio \(P(x)=ax^3+2x+b\) é divisível por \(x-2\) e, quando divisível por \(x+3\), deixa resto \(-45\). Nessas condições, os valores de \(a\) e \(b\), respectivamente, são</p>
+    <ul class="opts"><li>a) 1 e 4</li><li>b) 1 e 12</li><li>c) −1 e 12</li><li>d) 2 e 16</li><li>e) 1 e −12</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Divisível por \(x-2\) \(\Rightarrow P(2)=0\):</strong>
+          <div class="formula">\[a\cdot 2^3+2\cdot 2+b=0\ \Rightarrow\ 8a+4+b=0\ \Rightarrow\ 8a+b=-4\quad\text{(I)}\]</div></li>
+        <li><strong>Resto \(-45\) por \(x+3\) \(\Rightarrow P(-3)=-45\):</strong>
+          <div class="formula">\[a\cdot(-3)^3+2\cdot(-3)+b=-45\ \Rightarrow\ -27a-6+b=-45\ \Rightarrow\ -27a+b=-39\quad\text{(II)}\]</div></li>
+        <li><strong>(I) \(-\) (II):</strong>
+          <div class="formula">\[(8a+b)-(-27a+b)=-4-(-39)\ \Rightarrow\ 35a=35\ \Rightarrow\ a=1\]</div>
+          Em (I): \(8\cdot 1+b=-4\Rightarrow b=-12\).</li>
+        <li><strong>Conferência:</strong> \(P(x)=x^3+2x-12\): \(P(2)=8+4-12=0\ \checkmark\); \(P(-3)=-27-6-12=-45\ \checkmark\)</li>
+      </ol>
+      <div class="dica">O enunciado diz "quando divisível por \(x+3\)"; o sentido é "quando dividido por \(x+3\)".</div>
+    </div>
+    <div class="ans-box">\(a=1\) e \(b=-12\) &nbsp; <span class="badge-gab">Alternativa e</span></div>
+  </div>
+
+</div>
+
+<footer>
+  Pack didático offline · Polinômios · B45 · Divisão de Polinômios e Teorema do Resto · Versa
+</footer>
+
+<script>
+/* ---------- utilidades de formatação ---------- */
+var PolyFmt = (function () {
+  function isInt(n) { return Math.abs(n - Math.round(n)) < 1e-9; }
+  function num(n) {
+    if (Math.abs(n) < 1e-12) n = 0;
+    if (isInt(n)) return String(Math.round(n));
+    var t = Math.round(n * 10000) / 10000;
+    return String(t).replace('.', '{,}');
+  }
+  function par(n) { return n < 0 ? '(' + num(n) + ')' : num(n); }
+  function xpow(k) { return k === 0 ? '' : (k === 1 ? 'x' : 'x^{' + k + '}'); }
+  function deg(c) { for (var k = c.length - 1; k >= 0; k--) if (Math.abs(c[k]) > 1e-12) return k; return -1; }
+  function mono(v, k, first) {
+    var a = Math.abs(v), s = '';
+    var cs = (a === 1 && k > 0) ? '' : num(a);
+    if (first) s = (v < 0 ? '-' : '') + cs + xpow(k);
+    else s = (v < 0 ? ' - ' : ' + ') + cs + xpow(k);
+    return s;
+  }
+  // opts.dom: cor do termo dominante; opts.ind: cor do termo independente
+  function tex(c, opts) {
+    opts = opts || {};
+    var out = '', first = true, d = deg(c);
+    if (d < 0) return '0';
+    for (var k = d; k >= 0; k--) {
+      var v = c[k];
+      if (Math.abs(v) < 1e-12) continue;
+      var m = mono(v, k, first);
+      if (k === d && opts.dom) m = '\\color{' + opts.dom + '}{' + m + '}';
+      else if (k === 0 && opts.ind) m = '\\color{' + opts.ind + '}{' + m + '}';
+      out += m; first = false;
+    }
+    return out;
+  }
+  function evalP(c, x) { var s = 0; for (var k = c.length - 1; k >= 0; k--) s = s * x + c[k]; return s; }
+  return { num: num, par: par, xpow: xpow, deg: deg, tex: tex, evalP: evalP, mono: mono };
+})();
+
+/* ---------- frações exatas (para Briot-Ruffini e afins) ---------- */
+var Fr = (function () {
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = a % b; a = b; b = t; } return a || 1; }
+  function mk(n, d) {
+    if (d === undefined) d = 1;
+    if (d < 0) { n = -n; d = -d; }
+    var g = gcd(n, d); return { n: n / g, d: d / g };
+  }
+  function parse(s) {
+    s = String(s).trim().replace('−', '-');
+    if (s === '' || s === '+' || s === '-') return null;
+    if (s.indexOf('/') >= 0) {
+      var p = s.split('/'); var a = parse(p[0]), b = parse(p[1]);
+      if (!a || !b || b.n === 0) return null; return div(a, b);
+    }
+    if (!/^[-+]?\d*\.?\d+$/.test(s)) return null;
+    var dec = s.indexOf('.') >= 0 ? s.split('.')[1].length : 0;
+    var den = Math.pow(10, dec);
+    return mk(Math.round(parseFloat(s) * den), den);
+  }
+  function add(a, b) { return mk(a.n * b.d + b.n * a.d, a.d * b.d); }
+  function sub(a, b) { return mk(a.n * b.d - b.n * a.d, a.d * b.d); }
+  function mul(a, b) { return mk(a.n * b.n, a.d * b.d); }
+  function div(a, b) { return mk(a.n * b.d, a.d * b.n); }
+  function neg(a) { return mk(-a.n, a.d); }
+  function isZero(a) { return a.n === 0; }
+  function val(a) { return a.n / a.d; }
+  function tex(a) { if (a.d === 1) return String(a.n); return (a.n < 0 ? '-' : '') + '\\tfrac{' + Math.abs(a.n) + '}{' + a.d + '}'; }
+  function par(a) { return a.n < 0 ? '(' + tex(a) + ')' : tex(a); }
+  function txt(a) { return a.d === 1 ? String(a.n) : a.n + '/' + a.d; }
+  // polinômio (lista decrescente de frações) em TeX
+  function poly(cs, v) {
+    v = v || 'x'; var n = cs.length - 1, out = '', first = true;
+    for (var i = 0; i < cs.length; i++) {
+      var c = cs[i], k = n - i; if (isZero(c)) continue;
+      var a = mk(Math.abs(c.n), c.d), neg_ = c.n < 0;
+      var cs_ = (a.n === 1 && a.d === 1 && k > 0) ? '' : tex(a);
+      var xp = k === 0 ? '' : (k === 1 ? v : v + '^{' + k + '}');
+      out += (first ? (neg_ ? '-' : '') : (neg_ ? ' - ' : ' + ')) + cs_ + xp; first = false;
+    }
+    return first ? '0' : out;
+  }
+  return { mk: mk, parse: parse, add: add, sub: sub, mul: mul, div: div, neg: neg, isZero: isZero, val: val, tex: tex, par: par, txt: txt, poly: poly };
+})();
+function parseList(s) {
+  var parts = String(s).replace(/,/g, ' ').split(/[\s;]+/).filter(function (t) { return t.trim() !== ''; });
+  var out = [];
+  for (var i = 0; i < parts.length; i++) { var f = Fr.parse(parts[i]); if (!f) return null; out.push(f); }
+  return out.length ? out : null;
+}
+/* Briot-Ruffini: devolve a linha de baixo (quociente + resto) e as contas */
+function briotRows(coefs, r) {
+  var bot = [coefs[0]], ops = ['Desce o primeiro coeficiente: \\(' + Fr.tex(coefs[0]) + '\\).'];
+  for (var i = 1; i < coefs.length; i++) {
+    var prod = Fr.mul(bot[i - 1], r), s = Fr.add(prod, coefs[i]);
+    ops.push('\\(' + Fr.par(bot[i - 1]) + '\\cdot ' + Fr.par(r) + ' + ' + Fr.par(coefs[i]) + ' = ' + Fr.par(prod) + ' + ' + Fr.par(coefs[i]) + ' = ' + Fr.tex(s) + '\\)');
+    bot.push(s);
+  }
+  return { bot: bot, ops: ops };
+}
+function briotHTML(root, coefs, bot, upto, hi) {
+  // upto: quantas células da linha de baixo mostrar; hi: índice destacado
+  var n = coefs.length, h = '<table class="briot"><tr class="top"><td class="root">\\(' + Fr.tex(root) + '\\)</td>';
+  for (var i = 0; i < n; i++) h += '<td class="' + (i === n - 1 ? 'rest' : '') + (hi === i && i > 0 ? ' src' : '') + '">\\(' + Fr.tex(coefs[i]) + '\\)</td>';
+  h += '</tr><tr class="bot"><td class="root"></td>';
+  for (var j = 0; j < n; j++) {
+    var cls = (j === n - 1 ? 'rest' : '') + (j === hi ? ' hi' : '') + (hi === j + 1 ? ' src' : '');
+    h += '<td class="' + cls + '">' + (j < upto ? '\\(' + Fr.tex(bot[j]) + '\\)' : '&nbsp;') + '</td>';
+  }
+  return '<div class="briot-wrap">' + h + '</tr></table></div>';
+}
+
+/* ---------- Lab 1: Briot-Ruffini passo a passo ---------- */
+(function () {
+  function el(id) { return document.getElementById(id); }
+  var st = { coefs: null, root: null, a: null, bot: null, ops: null, step: 0, max: 0 };
+  function setup() {
+    var cs = parseList(el('brCoefs').value);
+    var a = Fr.parse(el('brA').value), c = Fr.parse(el('brC').value);
+    if (!cs || cs.length < 2 || !a || !c || Fr.isZero(a)) {
+      el('brOut').innerHTML = '<p class="err">Digite pelo menos dois coeficientes (ex.: 3 0 -2 -1 4) e um divisor com coeficiente de \\(x\\) diferente de 0.</p>';
+      el('brMsg').innerHTML = ''; el('brSum').innerHTML = ''; st.coefs = null; if (window.renderKatex) window.renderKatex(el('brOut')); return;
+    }
+    if (Fr.isZero(cs[0])) { while (cs.length > 1 && Fr.isZero(cs[0])) cs.shift(); }
+    st.coefs = cs; st.a = a; st.root = Fr.div(Fr.neg(c), a);
+    var r = briotRows(cs, st.root); st.bot = r.bot; st.ops = r.ops;
+    st.max = cs.length + (a.n === a.d ? 1 : 2);
+    st.step = Math.min(st.step, st.max);
+    var div = Fr.poly([a, c]);
+    el('brDivTex').innerHTML = '\\(D(x)=' + div + '\\), raiz \\(x=' + Fr.tex(st.root) + '\\)';
+    if (window.renderKatex) window.renderKatex(el('brDivTex'));
+  }
+  function render() {
+    if (!st.coefs) return;
+    var n = st.coefs.length, s = st.step, msg = '', sum = '';
+    var upto = Math.min(s, n), hi = (s >= 1 && s <= n) ? s - 1 : -1;
+    el('brOut').innerHTML = briotHTML(st.root, st.coefs, st.bot, upto, hi);
+    var Pt = Fr.poly(st.coefs), aOne = (st.a.n === st.a.d);
+    if (s === 0) msg = '<strong>1º passo:</strong> raiz do divisor na esquerda (\\(' + Fr.tex(st.root) + '\\)) e <strong>todos</strong> os coeficientes de \\(P(x)=' + Pt + '\\) em cima. Clique em "Próximo passo".';
+    else if (s === 1) msg = '<strong>Passo 1:</strong> ' + st.ops[0];
+    else if (s < n) msg = '<strong>Passo ' + s + ':</strong> (de baixo anterior) × raiz + (de cima): ' + st.ops[s - 1];
+    else if (s === n) msg = '<strong>Última coluna = resto:</strong> ' + st.ops[n - 1] + ' &nbsp;⇒&nbsp; \\(R=' + Fr.tex(st.bot[n - 1]) + '\\)';
+    else if (s === n + 1 && !aOne) {
+      var qd = st.bot.slice(0, n - 1).map(function (q) { return Fr.div(q, st.a); });
+      msg = '<strong>2º caso (\\(ax-b\\)):</strong> divida cada coeficiente de \\(Q\'(x)=' + Fr.poly(st.bot.slice(0, n - 1)) + '\\) por \\(' + Fr.tex(st.a) + '\\): \\(Q(x)=' + Fr.poly(qd) + '\\). O resto não muda.';
+    } else msg = '<strong>Pronto!</strong> Veja o resumo abaixo.';
+    if (s >= n) {
+      var Q1 = st.bot.slice(0, n - 1), R = st.bot[n - 1];
+      var Q = aOne ? Q1 : Q1.map(function (q) { return Fr.div(q, st.a); });
+      var D = Fr.poly([st.a, Fr.neg(Fr.mul(st.a, st.root))]);
+      sum += '<div>' + (aOne ? 'Quociente' : 'Quociente da divisão por \\(x-' + Fr.par(st.root) + '\\)') + ': \\(' + (aOne ? 'Q' : "Q'") + '(x)=' + Fr.poly(Q1) + '\\) &nbsp; resto \\(R=' + Fr.tex(R) + '\\)</div>';
+      if (!aOne && s >= n + 1) sum += '<div>Dividindo por \\(' + Fr.tex(st.a) + '\\): \\(Q(x)=' + Fr.poly(Q) + '\\)</div>';
+      if (aOne || s >= n + 1) {
+        sum += '<div class="hl2">\\(' + Pt + '=(' + D + ')\\cdot(' + Fr.poly(Q) + ')' + (Fr.isZero(R) ? '' : (R.n < 0 ? '' : '+') + Fr.tex(R)) + '\\)</div>';
+        sum += '<div>Teorema do resto: \\(P(' + Fr.tex(st.root) + ')=' + Fr.tex(R) + '\\)' + (Fr.isZero(R) ? ' &nbsp;<span class="root-tag">resto 0 ⇒ divisível ⇒ \\(' + Fr.tex(st.root) + '\\) é raiz</span>' : '') + '</div>';
+      }
+    }
+    el('brMsg').innerHTML = msg; el('brSum').innerHTML = sum || '<span class="note">O resumo aparece quando a tabela termina.</span>';
+    el('brSum').style.display = '';
+    if (window.renderKatex) { window.renderKatex(el('brOut')); window.renderKatex(el('brMsg')); window.renderKatex(el('brSum')); }
+  }
+  var presets = {
+    livro: ['3 0 -2 -1 4', 1, -2], p02: ['1 3 1 -22', 1, -2], p03: ['3 -5 1 -2', 1, -2], p04: ['2 3 -1 -2', 2, -2],
+    c04: ['1 7 14 8', 1, 1], c06b: ['1 -4 1 6', 1, -3], c10: ['1 -2 3 -5', 2, -1]
+  };
+  document.addEventListener('DOMContentLoaded', function () {
+    ['brCoefs', 'brA', 'brC'].forEach(function (id) { el(id).addEventListener('input', function () { st.step = 0; setup(); render(); }); });
+    el('brNext').addEventListener('click', function () { if (st.step < st.max) st.step++; render(); });
+    el('brPrev').addEventListener('click', function () { if (st.step > 0) st.step--; render(); });
+    el('brAll').addEventListener('click', function () { st.step = st.max; render(); });
+    el('brReset').addEventListener('click', function () { st.step = 0; render(); });
+    document.querySelectorAll('[data-br]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var p = presets[b.dataset.br]; el('brCoefs').value = p[0]; el('brA').value = p[1]; el('brC').value = p[2];
+        st.step = 0; setup(); render();
+      });
+    });
+    setup(); render();
+  });
+})();
+
+/* ---------- Lab 2: método da chave ---------- */
+(function () {
+  function el(id) { return document.getElementById(id); }
+  var steps = [], shown = 0, A = null, B = null;
+  function lead(cs) { var i = 0; while (i < cs.length && Fr.isZero(cs[i])) i++; return i; }
+  function trim(cs) { var i = lead(cs); return i >= cs.length ? [Fr.mk(0)] : cs.slice(i); }
+  function deg(cs) { var t = trim(cs); return (t.length === 1 && Fr.isZero(t[0])) ? -1 : t.length - 1; }
+  function mono(c, k) { return Fr.poly([c].concat(Array(k).fill(Fr.mk(0)))); }
+  function compute() {
+    A = parseList(el('chA').value); B = parseList(el('chB').value); steps = [];
+    if (!A || !B) return false;
+    A = trim(A); B = trim(B);
+    if (deg(B) < 0) return false;
+    var dB = deg(B), rem = A.slice(), Q = Array(Math.max(deg(A) - dB + 1, 1)).fill(Fr.mk(0));
+    var guard = 0;
+    while (deg(rem) >= dB && guard++ < 20) {
+      rem = trim(rem);
+      var dR = deg(rem), k = dR - dB, t = Fr.div(rem[0], B[0]);
+      Q[Q.length - 1 - k] = t;
+      var prod = B.map(function (b) { return Fr.mul(b, t); }).concat(Array(k).fill(Fr.mk(0)));
+      var opp = prod.map(Fr.neg);
+      var nr = rem.map(function (r, i) { return Fr.add(r, opp[i]); });
+      steps.push({ rem: rem.slice(), t: t, k: k, prod: prod, opp: opp, nr: trim(nr), Q: Q.slice() });
+      rem = trim(nr);
+    }
+    steps.final = { Q: Q, R: rem };
+    return true;
+  }
+  function render() {
+    var out = el('chOut');
+    if (!A || !B || deg(B) < 0) { out.innerHTML = '<p class="err">Digite os coeficientes (ex.: 2 8 5 -7 e 1 3 -2). O divisor não pode ser nulo.</p>'; return; }
+    var h = '<div>\\(A(x)=' + Fr.poly(A) + '\\qquad B(x)=' + Fr.poly(B) + '\\)</div>';
+    if (deg(A) < deg(B)) h += '<div class="hl3">\\(\\operatorname{gr}(A)&lt;\\operatorname{gr}(B)\\): o quociente é 0 e o resto é o próprio \\(A\\).</div>';
+    for (var i = 0; i < Math.min(shown, steps.length); i++) {
+      var s = steps[i], lt = mono(s.rem[0], deg(s.rem)), lb = mono(B[0], deg(B)), tt = mono(s.t, s.k);
+      h += '<div style="margin-top:0.7rem;color:var(--accent3);font-weight:700">Rodada ' + (i + 1) + '</div>';
+      h += '<div>① Divida os maiores termos: \\(\\dfrac{' + lt + '}{' + lb + '}=' + tt + '\\) &nbsp;(termo do quociente)</div>';
+      h += '<div>② Multiplique por todo o divisor: \\(' + (s.k === 0 && s.t.d === 1 && Math.abs(s.t.n) === 1 ? Fr.tex(s.t) : '(' + tt + ')') + '\\cdot(' + Fr.poly(B) + ')=' + Fr.poly(s.prod) + '\\)</div>';
+      h += '<div>③ Escreva o oposto embaixo: \\(' + Fr.poly(s.opp) + '\\)</div>';
+      h += '<div>④ Some: \\((' + Fr.poly(s.rem) + ')+(' + Fr.poly(s.opp) + ')=\\boldsymbol{' + Fr.poly(s.nr) + '}\\)</div>';
+      var dn = deg(s.nr);
+      h += '<div class="note" style="margin:0">Novo resto com grau ' + (dn < 0 ? '— (nulo)' : dn) + (dn >= deg(B) ? ' ≥ ' + deg(B) + ': continua.' : ' &lt; ' + deg(B) + ': para aqui.') + '</div>';
+    }
+    if (shown >= steps.length) {
+      var f = steps.final;
+      h += '<div style="margin-top:0.8rem" class="hl2">\\(Q(x)=' + Fr.poly(trim(f.Q)) + '\\qquad R(x)=' + Fr.poly(f.R) + '\\)</div>';
+      h += '<div>Tira-prova: \\(A(x)=B(x)\\cdot Q(x)+R(x)\\)' + (deg(f.R) < 0 ? ' &nbsp;<span class="root-tag">resto 0 ⇒ divisão exata</span>' : '') + '</div>';
+    } else h += '<div class="note">Clique em "Próximo passo" (' + shown + ' de ' + steps.length + ' rodadas).</div>';
+    out.innerHTML = h;
+    if (window.renderKatex) window.renderKatex(out);
+  }
+  var presets = { livro: ['2 8 5 -7', '1 3 -2'], p01: ['1 2 -4 2 -12', '1 4 3'], c01: ['4 -4 0 1 -1', '4 0 0 1'], c02: ['1 -2 1 1', '1 -1 2'], sp: ['9/5 47 300', '9 100'] };
+  document.addEventListener('DOMContentLoaded', function () {
+    ['chA', 'chB'].forEach(function (id) { el(id).addEventListener('input', function () { compute(); shown = 0; render(); }); });
+    el('chNext').addEventListener('click', function () { if (shown < steps.length) shown++; render(); });
+    el('chPrev').addEventListener('click', function () { if (shown > 0) shown--; render(); });
+    el('chAll').addEventListener('click', function () { shown = steps.length; render(); });
+    document.querySelectorAll('[data-ch]').forEach(function (b) {
+      b.addEventListener('click', function () { var p = presets[b.dataset.ch]; el('chA').value = p[0]; el('chB').value = p[1]; compute(); shown = 0; render(); });
+    });
+    compute(); shown = 0; render();
+  });
+})();
+
+/* ---------- Lab 3: teorema do resto no gráfico ---------- */
+(function () {
+  function el(id) { return document.getElementById(id); }
+  var YS = [5, 10, 20, 50, 100, 200];
+  function draw() {
+    var canvas = el('cvResto'); if (!canvas) return;
+    var ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height, XMIN = -5, XMAX = 5;
+    var cs = parseList(el('rsCoefs').value), a = parseFloat(el('rsA').value), Ym = YS[+el('rsY').value];
+    el('rsALbl').textContent = String(a).replace('.', ','); el('rsYLbl').textContent = Ym;
+    function px(x, y) { return [(x - XMIN) / (XMAX - XMIN) * W, H / 2 - y / Ym * (H / 2)]; }
+    ctx.fillStyle = '#0a0e14'; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#1a2332'; ctx.lineWidth = 1;
+    for (var gx = XMIN; gx <= XMAX; gx++) { var g = px(gx, 0); ctx.beginPath(); ctx.moveTo(g[0], 0); ctx.lineTo(g[0], H); ctx.stroke(); }
+    for (var gy = -Ym; gy <= Ym + 1e-9; gy += Ym / 5) { var g2 = px(0, gy); ctx.beginPath(); ctx.moveTo(0, g2[1]); ctx.lineTo(W, g2[1]); ctx.stroke(); }
+    var o = px(0, 0);
+    ctx.strokeStyle = '#3a4a62'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, o[1]); ctx.lineTo(W, o[1]); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(o[0], 0); ctx.lineTo(o[0], H); ctx.stroke();
+    ctx.fillStyle = '#8b9bb4'; ctx.font = '11px Segoe UI, sans-serif';
+    for (var tx = XMIN + 1; tx < XMAX; tx++) { if (!tx) continue; var q = px(tx, 0); ctx.fillText(String(tx), q[0] - 4, o[1] + 13); }
+    for (var ty = -Ym + Ym / 5; ty < Ym; ty += Ym / 5) { if (Math.abs(ty) < 1e-9) continue; var r = px(0, ty); ctx.fillText(String(Math.round(ty)), o[0] + 4, r[1] + 4); }
+    var box = el('rsVals');
+    if (!cs) { box.innerHTML = '<p class="err">Coeficientes inválidos.</p>'; return; }
+    var cn = cs.map(Fr.val);
+    function P(x) { var s = 0; for (var i = 0; i < cn.length; i++) s = s * x + cn[i]; return s; }
+    ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2.5; ctx.beginPath();
+    for (var i = 0; i <= W; i++) { var x = XMIN + (XMAX - XMIN) * i / W, y = Math.max(-Ym * 4, Math.min(Ym * 4, P(x))), p = px(x, y); if (!i) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]); }
+    ctx.stroke();
+    var Pa = P(a), pa = px(a, Pa), pb = px(a, 0);
+    ctx.strokeStyle = '#81c784'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(pb[0], pb[1]); ctx.lineTo(pa[0], Math.max(-5, Math.min(H + 5, pa[1]))); ctx.stroke();
+    ctx.setLineDash([5, 4]); ctx.strokeStyle = '#81c784'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, pa[1]); ctx.lineTo(W, pa[1]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#ffb74d'; ctx.beginPath(); ctx.arc(pa[0], pa[1], 6.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffb74d'; ctx.beginPath(); ctx.arc(pb[0], pb[1], 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#e8eef7'; ctx.font = '13px Segoe UI, sans-serif';
+    ctx.fillText('R = P(' + String(a).replace('.', ',') + ') = ' + String(Math.round(Pa * 1000) / 1000).replace('.', ','), Math.min(pa[0] + 9, W - 170), Math.max(16, Math.min(H - 8, pa[1] - 9)));
+    var af = Fr.parse(String(a)), br = briotRows(cs, af), R = br.bot[br.bot.length - 1];
+    var sub = [], first = true, n = cs.length - 1;
+    cs.forEach(function (c, i) { var k = n - i; if (Fr.isZero(c)) return; var ab = Fr.mk(Math.abs(c.n), c.d); var t = (k === 0) ? Fr.tex(ab) : (ab.n === ab.d ? '' : Fr.tex(ab) + '\\cdot ') + Fr.par(af) + (k > 1 ? '^{' + k + '}' : ''); sub.push((c.n < 0 ? '-' : (first ? '' : '+')) + t); first = false; });
+    var h = '<div>\\(P(x)=' + Fr.poly(cs) + '\\)</div>';
+    h += '<div>Divisor: \\(x-' + Fr.par(af) + '\\)</div>';
+    h += '<div style="margin-top:0.4rem">Substituindo (teorema do resto):</div><div>\\(P(' + Fr.tex(af) + ')=' + sub.join('') + '=' + Fr.tex(R) + '\\)</div>';
+    h += '<div style="margin-top:0.4rem">Briot-Ruffini:</div>' + briotHTML(af, cs, br.bot, cs.length, -1);
+    h += '<div class="hl2">O último número da tabela (resto) \\(=' + Fr.tex(R) + '=P(' + Fr.tex(af) + ')\\): é a altura do ponto âmbar.</div>';
+    h += Fr.isZero(R) ? '<div><span class="root-tag">\\(R=0\\): divisível por \\(x-' + Fr.par(af) + '\\) e \\(' + Fr.tex(af) + '\\) é raiz (D\'Alembert)</span></div>' : '<div class="note" style="margin:0">\\(R\\neq 0\\): não é divisível; o gráfico não passa por \\((' + Fr.tex(af) + ',0)\\).</div>';
+    box.innerHTML = h; if (window.renderKatex) window.renderKatex(box);
+  }
+  var presets = { p05: ['1 -1 3 5', 2, 2], p02: ['1 3 1 -22', 2, 3], p06: ['3 -5 0 0 0 2', 1, 1], c10: ['1 -2 3 -5', 0.5, 1], c11: ['3 -2 0 2 1', 1, 1] };
+  document.addEventListener('DOMContentLoaded', function () {
+    ['rsCoefs', 'rsA', 'rsY'].forEach(function (id) { el(id).addEventListener('input', draw); });
+    document.querySelectorAll('[data-rs]').forEach(function (b) {
+      b.addEventListener('click', function () { var p = presets[b.dataset.rs]; el('rsCoefs').value = p[0]; el('rsA').value = p[1]; el('rsY').value = p[2]; draw(); });
+    });
+    function tab(n) {
+      [1, 2, 3].forEach(function (k) { el('lab' + k).style.display = k === n ? '' : 'none'; el('tabLab' + k).classList.toggle('on', k === n); });
+      if (n === 3) draw();
+    }
+    [1, 2, 3].forEach(function (k) { el('tabLab' + k).addEventListener('click', function () { tab(k); }); });
+    el('btnPrintForm').addEventListener('click', function () {
+      document.body.classList.add('print-form'); window.print();
+      setTimeout(function () { document.body.classList.remove('print-form'); }, 500);
+    });
+    draw();
+  });
+})();
+
+(function () {
+var Q = [
+  { q: 'Dividindo um polinômio de grau 5 por um de grau 2, o quociente tem grau', o: ['\\(7\\)', '\\(3\\)', '\\(2{,}5\\)', '\\(10\\)'], a: 1,
+    e: '\\(\\operatorname{gr}(Q)=\\operatorname{gr}(A)-\\operatorname{gr}(B)=5-2=3\\).' },
+  { q: 'Dividindo por \\(x^2+1\\), o resto pode ser', o: ['\\(x^2+3\\)', '\\(2x-5\\)', '\\(x^3\\)', 'só um número'], a: 1,
+    e: 'O resto tem grau menor que o divisor (grau 2): no máximo grau 1, do tipo \\(cx+d\\).' },
+  { q: 'O resto da divisão de \\(P(x)=x^3+2x-1\\) por \\(x-1\\) é', o: ['\\(0\\)', '\\(1\\)', '\\(2\\)', '\\(-4\\)'], a: 2,
+    e: 'Teorema do resto: \\(R=P(1)=1+2-1=2\\).' },
+  { q: 'Em Briot-Ruffini, para dividir por \\(x+3\\), o número da esquerda é', o: ['\\(3\\)', '\\(-3\\)', '\\(\\tfrac13\\)', '\\(x\\)'], a: 1,
+    e: 'Vai a raiz do divisor: \\(x+3=0\\Rightarrow x=-3\\).' },
+  { q: 'Para dividir \\(x^4-2x+1\\) por Briot, a linha de cima é', o: ['\\(1\\ \\ -2\\ \\ 1\\)', '\\(1\\ \\ 0\\ \\ 0\\ \\ -2\\ \\ 1\\)', '\\(1\\ \\ 0\\ \\ -2\\ \\ 1\\)', '\\(4\\ \\ -2\\ \\ 1\\)'], a: 1,
+    e: 'Faltam \\(x^3\\) e \\(x^2\\): entram dois zeros. \\(1x^4+0x^3+0x^2-2x+1\\).' },
+  { q: 'Dividindo por \\(2x-4\\) com Briot, depois da tabela você deve', o: ['dividir o resto por 2', 'dividir o quociente por 2', 'multiplicar o quociente por 2', 'nada'], a: 1,
+    e: '\\(2x-4=2(x-2)\\): Briot com raiz 2 dá \\(Q\'=2Q\\); divida só o quociente por 2. O resto fica igual.' },
+  { q: '\\(P(x)=x^2+kx+6\\) é divisível por \\(x-2\\) quando \\(k\\) vale', o: ['\\(5\\)', '\\(-5\\)', '\\(3\\)', '\\(-3\\)'], a: 1,
+    e: 'D\'Alembert: \\(P(2)=4+2k+6=0\\Rightarrow 2k=-10\\Rightarrow k=-5\\).' },
+  { q: 'Se \\(P(3)=0\\), então', o: ['\\(P\\) é divisível por \\(x+3\\)', '\\(P\\) é divisível por \\(x-3\\)', 'o resto por \\(x-3\\) é 3', 'o termo independente é 3'], a: 1,
+    e: '\\(3\\) é raiz \\(\\iff\\) \\(P\\) é divisível por \\(x-3\\).' }
+];
+
+  var right = 0, answered = 0;
+  function score() { document.getElementById('quizScore').textContent = right + ' / ' + answered + ' (de ' + Q.length + ')'; }
+  function render() {
+    right = 0; answered = 0;
+    var box = document.getElementById('quizBox'), h = '';
+    Q.forEach(function (it, i) {
+      h += '<div class="quiz-q" data-i="' + i + '"><div class="qt"><strong>' + (i + 1) + '.</strong> ' + it.q + '</div><div class="quiz-opts">';
+      it.o.forEach(function (op, j) { h += '<button type="button" data-j="' + j + '">' + op + '</button>'; });
+      h += '</div><div class="quiz-fb"></div></div>';
+    });
+    box.innerHTML = h;
+    box.querySelectorAll('.quiz-q').forEach(function (qq) {
+      var it = Q[+qq.dataset.i];
+      qq.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (qq.classList.contains('done')) return;
+          qq.classList.add('done'); answered++;
+          var j = +b.dataset.j, ok = j === it.a;
+          if (ok) right++;
+          b.classList.add(ok ? 'ok' : 'bad');
+          qq.querySelectorAll('button')[it.a].classList.add('ok');
+          var fb = qq.querySelector('.quiz-fb');
+          fb.innerHTML = (ok ? '<strong style="color:var(--accent2)">Certo!</strong> ' : '<strong style="color:var(--danger)">Ainda não.</strong> ') + it.e;
+          if (window.renderKatex) window.renderKatex(fb);
+          score();
+        });
+      });
+    });
+    if (window.renderKatex) window.renderKatex(box);
+    score();
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    render();
+    document.getElementById('quizReset').addEventListener('click', render);
+  });
+
+})();
+(function () {
+  var KEY = 'b45-poli-treino';
+  function loadPref() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v === null) return true;
+      return v === 'true';
+    } catch (e) { return true; }
+  }
+  function savePref(on) {
+    try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {}
+  }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal');
+    var btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) {
+    ex.classList.remove('collapsed');
+    ex.dataset.userRevealed = '1';
+    syncButtons(ex);
+  }
+  function hide(ex) {
+    ex.classList.add('collapsed');
+    delete ex.dataset.userRevealed;
+    syncButtons(ex);
+  }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner');
+    var chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) {
+        if (!ex.dataset.userRevealed) ex.classList.add('collapsed');
+      } else {
+        ex.classList.remove('collapsed');
+      }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var steps = ex.querySelector('.steps');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (steps) {
+          steps.parentNode.insertBefore(box, steps);
+          steps.parentNode.insertBefore(row, steps);
+        } else {
+          ex.appendChild(box);
+          ex.appendChild(row);
+        }
+      }
+      var br = ex.querySelector('.btn-reveal');
+      var bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) {
+      chk.checked = on;
+      chk.addEventListener('change', function () { setMode(chk.checked); });
+    }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) {
+          if (all.checked) reveal(ex); else hide(ex);
+        });
+      });
+    }
+    setMode(on);
+  });
+})();
+
+</script>
+</body>
+</html>
