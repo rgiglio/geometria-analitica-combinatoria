@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C45 · Tabelas de Frequência</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --danger: #ef5350; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+  touch-action: none;
+}
+.controls { display: flex; flex-direction: column; gap: 0.7rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-size: 0.92rem;
+}
+.live-vals div { margin: 0.25rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.status-pill {
+  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+}
+.status-secante { background: rgba(79,195,247,.2); color: var(--accent); }
+.status-tangente { background: rgba(129,199,132,.2); color: var(--accent2); }
+.status-exterior { background: rgba(255,183,77,.2); color: var(--accent3); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow); overflow: hidden;
+}
+.theory-card h3 { margin-top: 0; color: var(--accent); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
+}
+.explain {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 0 0 1.5rem; box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(79,195,247,.15); color: var(--accent);
+  border: 1px solid rgba(79,195,247,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps, .ex.collapsed .ans-box { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+/* ---- B44 extras ---- */
+canvas#cvPoly { aspect-ratio: 4 / 3; max-width: 640px; }
+.formulario {
+  background: linear-gradient(160deg, #22301f 0%, #1a2332 55%);
+  border: 2px solid var(--accent3); border-radius: var(--radius);
+  padding: 1.25rem 1.3rem 1.4rem; margin: 0 0 1.75rem; box-shadow: 0 6px 28px rgba(255,183,77,.12);
+}
+.formulario-head { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+.formulario-head h2 { margin: 0; border: none; padding: 0; color: var(--accent3); font-size: 1.35rem; letter-spacing: .02em; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 0.9rem; }
+.form-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; }
+.form-item h4 { color: var(--accent3); font-size: 0.92rem; margin-bottom: 0.25rem; }
+.form-item h4 .n { display: inline-block; min-width: 1.6rem; color: var(--bg); background: var(--accent3); border-radius: 5px; text-align: center; margin-right: 0.4rem; font-size: 0.8rem; }
+.form-item p { color: var(--muted); font-size: 0.86rem; margin-top: 0.3rem; }
+.form-item .formula { border-left-color: var(--accent3); font-size: 0.98rem; }
+.fix {
+  margin: 0.75rem 0; padding: 0.65rem 0.9rem; border-radius: 8px;
+  background: rgba(239,83,80,.10); border: 1px solid rgba(239,83,80,.4); color: #ffab9f; font-size: 0.9rem;
+}
+.fix strong { color: #ffcdd2; }
+.fix .katex { color: inherit; }
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.lab-tabs button.on { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.coef-row { display: grid; grid-template-columns: 4.2rem 1fr 3.4rem; gap: 0.5rem; align-items: center; }
+.coef-row .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--text); font-size: 0.88rem; }
+.coef-row.dom label { color: var(--accent3); font-weight: 700; }
+.coef-row.zero label { opacity: .55; }
+.ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .ops-grid { grid-template-columns: 1fr; } }
+.poly-in { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; font-size: 0.9rem; color: var(--muted); }
+.poly-in input { width: 58px; }
+.mult-table { border-collapse: collapse; margin: 0.6rem 0; font-size: 0.92rem; }
+.mult-table th, .mult-table td { border: 1px solid var(--border); padding: 0.4rem 0.65rem; text-align: center; }
+.mult-table th { background: var(--surface2); color: var(--accent); }
+.mult-table td { background: var(--bg); }
+.work { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-top: 0.8rem; overflow-x: auto; }
+.work div { margin: 0.3rem 0; color: var(--muted); }
+.deg-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(255,183,77,.18); color: var(--accent3); }
+.deg-tag.nulo { background: rgba(239,83,80,.18); color: var(--danger); }
+.root-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(129,199,132,.2); color: var(--accent2); }
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.9rem 0; }
+.quiz-q .qt { margin-bottom: 0.6rem; }
+.quiz-opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.quiz-opts button.ok { background: rgba(129,199,132,.25); border-color: var(--accent2); color: var(--accent2); }
+.quiz-opts button.bad { background: rgba(239,83,80,.18); border-color: var(--danger); color: #ffab9f; }
+.quiz-fb { margin-top: 0.55rem; font-size: 0.9rem; color: var(--muted); display: none; }
+.quiz-q.done .quiz-fb { display: block; }
+.score { display: inline-block; font-weight: 800; color: var(--accent2); font-size: 1.05rem; }
+.sys { display: inline-block; }
+/* ---- B45/B46 extras ---- */
+canvas.cv-wide { aspect-ratio: 4 / 3; max-width: 640px; }
+.badge-prova {
+  display: inline-block; background: rgba(239,83,80,.18); color: #ff8a80; border: 1px solid rgba(239,83,80,.6);
+  padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: .03em;
+}
+.badge-prova.max { background: #c62828; color: #fff; border-color: #ff8a80; box-shadow: 0 0 12px rgba(239,83,80,.45); }
+.ex.prova { border-left: 4px solid #ef5350; }
+.ex.prova-max { border: 2px solid #ef5350; box-shadow: 0 0 24px rgba(239,83,80,.18); }
+.badge-gab { display: inline-block; background: rgba(129,199,132,.15); color: var(--accent2); border: 1px solid rgba(129,199,132,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.caderno {
+  margin-top: 0.85rem; padding: 0.7rem 0.95rem; border-radius: 8px; font-size: 0.9rem;
+  background: rgba(79,195,247,.08); border: 1px dashed rgba(79,195,247,.55); color: #b3e5fc;
+}
+.caderno strong { color: #e1f5fe; }
+.caderno.quase { background: rgba(255,183,77,.08); border-color: rgba(255,183,77,.6); color: #ffe0b2; }
+.caderno.quase strong { color: #fff3e0; }
+.caderno .katex { color: inherit; }
+.opts { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem 1.2rem; margin: 0.35rem 0 0.2rem; color: var(--muted); font-size: 0.93rem; }
+.prova-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+.prova-list a { display: block; background: var(--bg); border: 1px solid rgba(239,83,80,.45); border-radius: 8px; padding: 0.5rem 0.7rem; color: var(--text); text-decoration: none; font-size: 0.88rem; }
+.prova-list a:hover { border-color: #ef5350; }
+.prova-list a .k { color: #ff8a80; font-weight: 800; margin-right: 0.35rem; }
+/* tabela de Briot-Ruffini */
+.briot { border-collapse: collapse; margin: 0.6rem auto; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.briot td { padding: 0.35rem 0.7rem; text-align: center; min-width: 2.6rem; color: var(--text); }
+.briot td.root { border-right: 2px solid var(--accent3); color: var(--accent3); font-weight: 700; }
+.briot tr.top td { border-bottom: 2px solid var(--accent3); }
+.briot td.rest { border-left: 2px solid var(--accent3); }
+.briot tr.bot td.rest { color: var(--accent2); font-weight: 800; }
+.briot td.hi { background: rgba(79,195,247,.22); border-radius: 6px; outline: 1px solid var(--accent); }
+.briot td.src { background: rgba(255,183,77,.16); border-radius: 6px; }
+.briot td.ghost { color: transparent; }
+.briot caption { caption-side: bottom; color: var(--muted); font-size: 0.8rem; padding-top: 0.3rem; }
+.steps .briot { margin-left: 0; }
+.step-msg { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.85rem; margin-top: 0.6rem; color: var(--muted); min-height: 2.6rem; }
+.step-msg strong { color: var(--accent); }
+.inp-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.35rem 0; }
+.inp-row input[type="text"], .inp-row input[type="number"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.35rem 0.55rem; border-radius: 8px; font-size: 0.92rem;
+}
+.inp-row input[type="text"] { min-width: 210px; flex: 1; }
+.inp-row input[type="number"] { width: 70px; }
+.inp-row select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.3rem 0.4rem; border-radius: 8px; }
+.err { color: #ff8a80; font-size: 0.85rem; }
+.chave { font-size: 0.98rem; }
+.chave .katex-display { margin: 0.15em 0; text-align: left; }
+.root-ctl { display: grid; grid-template-columns: 2.2rem 1fr 3rem 4.6rem; gap: 0.45rem; align-items: center; }
+.root-ctl .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.88rem; }
+.mult-pill { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin: 0.1rem 0.15rem; }
+.mult-pill.cruza { background: rgba(79,195,247,.18); color: var(--accent); }
+.mult-pill.toca { background: rgba(255,183,77,.2); color: var(--accent3); }
+.mult-pill.inflex { background: rgba(206,147,216,.2); color: var(--accent4); }
+.graph-fig { display: block; margin: 0.6rem auto; max-width: 100%; }
+.ex.collapsed .caderno { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .caderno { display: block !important; }
+
+.formula { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.formula .katex-display { position: relative; }
+.briot-wrap { max-width: 100%; overflow-x: auto; }
+@media (max-width: 520px) { .briot td { padding: 0.3rem 0.45rem; } }
+@media print {
+  body.print-form nav, body.print-form .treino-banner, body.print-form .wrap > *:not(.formulario), body.print-form footer, body.print-form .no-print { display: none !important; }
+  body.print-form { background: #fff; color: #000; }
+  body.print-form .formulario { border-color: #999; background: #fff; box-shadow: none; }
+  body.print-form .form-item { background: #fff; border-color: #bbb; break-inside: avoid; }
+  body.print-form .form-item h4, body.print-form .formulario-head h2 { color: #000; }
+  body.print-form .form-item p { color: #333; }
+}
+
+
+/* ---- Estatística (C45–C47) extras ---- */
+.ftab { border-collapse: collapse; margin: 0.6rem 0; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.ftab th, .ftab td { border: 1px solid var(--border); padding: 0.38rem 0.7rem; text-align: center; }
+.ftab th { background: #3a2230; color: #ffcdd2; font-weight: 700; }
+.ftab td { background: var(--bg); color: var(--text); }
+.ftab tr.hi td { background: rgba(79,195,247,.16); }
+.ftab tr.hi2 td { background: rgba(255,183,77,.16); }
+.ftab tr.tot td { background: var(--surface2); font-weight: 700; color: var(--accent2); }
+.ftab td.l { text-align: left; }
+.ftab .katex { color: inherit; }
+.tab-wrap { max-width: 100%; overflow-x: auto; }
+.chart { display: block; margin: 0.7rem auto; max-width: 100%; height: auto; background: #0a0e14; border: 1px solid var(--border); border-radius: 10px; }
+.fig { text-align: center; margin: 0.6rem 0; }
+.fig .note { margin-top: 0.25rem; }
+.badge-marc {
+  display: inline-block; background: rgba(239,83,80,.18); color: #ff8a80; border: 1px solid rgba(239,83,80,.6);
+  padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: .03em;
+}
+.datab { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.9rem; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; margin: 0.45rem 0; overflow-x: auto; white-space: pre-wrap; word-spacing: 0.35rem; }
+textarea.data-in { width: 100%; min-height: 80px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0.5rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.88rem; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.seg button { border: none; border-radius: 0; }
+.seg button.on { background: #0d47a1; color: #fff; }
+.cat-row { display: grid; grid-template-columns: 6.5rem 1fr 3.2rem; gap: 0.45rem; align-items: center; }
+.cat-row input[type="text"] { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.25rem 0.4rem; border-radius: 6px; width: 100%; font-size: 0.82rem; }
+.cat-row .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.88rem; }
+.sw { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 3px; vertical-align: -1px; margin-right: 0.3rem; }
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+@media (max-width: 860px) { .chart-grid { grid-template-columns: 1fr; } }
+.ler { margin-top: 0.85rem; padding: 0.65rem 0.9rem; border-radius: 8px; background: rgba(206,147,216,.10); border: 1px solid rgba(206,147,216,.45); color: #e1bee7; font-size: 0.9rem; }
+.ler strong { color: #f3e5f5; }
+.ler .katex { color: inherit; }
+.ex.collapsed .ler { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .ler { display: block !important; }
+svg.drag { touch-action: none; cursor: default; }
+svg.drag circle.pt { cursor: grab; }
+.pill { display:inline-block; padding: 0.1rem 0.55rem; border-radius: 999px; font-weight: 700; font-size: 0.82rem; margin: 0.1rem 0.15rem; }
+.pill.media { background: rgba(239,83,80,.2); color: #ff8a80; }
+.pill.mediana { background: rgba(79,195,247,.2); color: var(--accent); }
+.pill.moda { background: rgba(129,199,132,.2); color: var(--accent2); }
+</style>
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "\\[", right: "\\]", display: true},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">Estatística · C45</span>
+  <a href="index.html">Index</a>
+  <a href="c45-tabelas-frequencia.html" class="active">C45 Tabelas</a>
+  <a href="c46-graficos-histogramas.html">C46 Gráficos</a>
+  <a href="c47-tendencia-central.html">C47 Média, mediana, moda</a>
+  <a href="#formulario">Formulário</a>
+  <a href="#laboratorio">Laboratório</a>
+  <a href="#teste">Teste</a>
+  <a href="#exercicios">Exercícios</a>
+</nav>
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+
+  <h1>Tabelas de Frequência</h1>
+  <p class="subtitle">C45 · População e amostra · Variáveis · Rol · Amplitude · Frequência absoluta, relativa e acumuladas · Dados agrupados em classes · Versa</p>
+
+  <span class="section-label">(A) Para que serve uma tabela de frequências</span>
+  <div class="explain">
+    <p class="lead">Quando alguém mede 20, 40 ou 3 600 coisas, a lista crua de números não diz nada de cara. A <strong>tabela de frequências</strong> organiza: para cada valor (ou para cada faixa de valores) ela conta <em>quantas vezes</em> ele aparece e <em>que fração do total</em> isso representa.</p>
+    <p>É o primeiro passo de tudo que vem depois: o gráfico (C46) é desenho dessa tabela, e média, mediana e moda (C47) são calculadas a partir dela. Na prova, quase sempre a pergunta é de <strong>leitura</strong>: "quantos ficaram abaixo de…", "que porcentagem…", "qual o valor de \(f_i\) que falta…".</p>
+  </div>
+
+  <span class="section-label">(B) Conceitos</span>
+  <div class="theory-grid">
+    <div class="theory-card">
+      <h3>1. População, amostra e variável</h3>
+      <p><strong>População</strong>: o conjunto inteiro que interessa (todos os eleitores, todas as peças da fábrica). <strong>Amostra</strong>: a parte que foi de fato observada.</p>
+      <p><strong>Variável</strong>: a característica observada.</p>
+      <ul>
+        <li><strong>Qualitativa</strong>: resposta é uma categoria (cor, time, curso). Nominal (sem ordem) ou ordinal (com ordem: ruim / bom / ótimo).</li>
+        <li><strong>Quantitativa discreta</strong>: contagem (nº de filhos, dias internado).</li>
+        <li><strong>Quantitativa contínua</strong>: medida (massa, altura, espessura). Normalmente vira tabela com <em>intervalos</em>.</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>2. Rol e amplitude total</h3>
+      <p><strong>Rol</strong> é a lista dos dados em ordem crescente (ou decrescente). Exemplo do livro (p. 742):</p>
+      <div class="datab">58 62 70 52 48 77 58 81 55 66</div>
+      <p>Rol: </p>
+      <div class="datab">48 52 55 58 58 62 66 70 77 81</div>
+      <p><strong>Amplitude total</strong> = maior − menor:</p>
+      <div class="formula">\[A = x_{\text{máx}}-x_{\text{mín}}\]</div>
+      <p>No exemplo das massas do livro: \(205-188=17\) g.</p>
+    </div>
+    <div class="theory-card">
+      <h3>3. As quatro frequências</h3>
+      <ul>
+        <li>\(f_i\) <strong>absoluta</strong>: quantas vezes o valor aparece. \(\sum f_i = n\).</li>
+        <li>\(f_r\) <strong>relativa</strong>: \(f_r=\dfrac{f_i}{n}\) (em fração, decimal ou %). Soma 100%.</li>
+        <li>\(F_i\) <strong>absoluta acumulada</strong>: soma de \(f_i\) da 1ª linha até a linha atual. A última é \(n\).</li>
+        <li>\(F_r\) <strong>relativa acumulada</strong>: soma das \(f_r\) até a linha atual (ou \(F_i/n\)). A última é 100%.</li>
+      </ul>
+    </div>
+    <div class="theory-card">
+      <h3>4. Dados agrupados em classes</h3>
+      <p>Com muitos valores diferentes (ou variável contínua), agrupamos em <strong>classes</strong> de mesma <strong>amplitude</strong> \(h\).</p>
+      <p>Notação: \(a \vdash b\) (o livro escreve <code>a |— b</code>) significa \([a,\,b[\): <strong>inclui \(a\), não inclui \(b\)</strong>. Na última classe o livro costuma fechar: \([a,\,b]\).</p>
+      <div class="formula">\[h=b-a,\qquad \text{ponto médio}=\frac{a+b}{2}\]</div>
+      <p>Exemplo 2 (p. 744): salários de 800 a 1500 em classes de 100 → \(f_i=7,6,1,2,4,3,2\) (\(n=25\)).</p>
+    </div>
+  </div>
+
+  <h3>Exemplo 1 do livro (p. 743): notas de 25 alunos</h3>
+  <div class="explain">
+    <div class="datab">50 40 60 80 30 50 70 60 80 40 60 90 70
+50 70 50 60 80 70 90 40 60 60 80 70</div>
+    <p>Contando cada nota (dica: risque cada número da lista quando contar, para não contar duas vezes):</p>
+    <div class="tab-wrap"><table class="ftab"><tr><th>Nota</th><th>f<sub>i</sub></th><th>F<sub>i</sub></th><th>f<sub>r</sub></th><th>F<sub>r</sub></th></tr><tr><td>30</td><td>1</td><td>1</td><td>1/25 = 4%</td><td>4%</td></tr><tr><td>40</td><td>3</td><td>4</td><td>3/25 = 12%</td><td>16%</td></tr><tr><td>50</td><td>4</td><td>8</td><td>4/25 = 16%</td><td>32%</td></tr><tr><td>60</td><td>6</td><td>14</td><td>6/25 = 24%</td><td>56%</td></tr><tr><td>70</td><td>5</td><td>19</td><td>5/25 = 20%</td><td>76%</td></tr><tr><td>80</td><td>4</td><td>23</td><td>4/25 = 16%</td><td>92%</td></tr><tr><td>90</td><td>2</td><td>25</td><td>2/25 = 8%</td><td>92% + 8% = 100%</td></tr><tr class="tot"><td>Total</td><td>25</td><td>—</td><td>100%</td><td>—</td></tr></table></div>
+    <p><strong>Como ler a linha do 60:</strong> \(f_i=6\): seis alunos tiraram exatamente 60. \(F_i=14\): catorze alunos tiraram <em>até</em> 60. \(F_r=56\%\): 56% da turma tirou 60 ou menos. Então \(100\%-56\%=44\%\) tirou <em>mais</em> que 60.</p>
+    <div class="fix"><strong>Correção do livro (p. 743).</strong> (1) Na definição de <em>frequência relativa acumulada</em> o texto diz "soma da frequência relativa com as frequências <em>absolutas</em> anteriores". O certo é "com as frequências <strong>relativas</strong> anteriores" (senão você somaria porcentagem com quantidade de alunos). (2) Na última linha da tabela está impresso "92% = 8% = 100%". O certo é <strong>92% + 8% = 100%</strong>.</div>
+  </div>
+
+  <h3>Dicas de leitura (é aqui que a prova pega)</h3>
+  <div class="explain">
+    <ul style="color:var(--muted);padding-left:1.2rem">
+      <li><strong>"até \(x\)"</strong> ou <strong>"no máximo \(x\)"</strong>: inclui \(x\) → use \(F_i\) da linha de \(x\).</li>
+      <li><strong>"menos de \(x\)"</strong>: não inclui \(x\) → \(F_i\) da linha <em>anterior</em>. Com classes \(a\vdash b\), "menos de \(b\)" é exatamente o \(F_i\) da classe que termina em \(b\).</li>
+      <li><strong>"pelo menos \(x\)"</strong> ou <strong>"\(x\) ou mais"</strong>: \(n-\)("menos de \(x\)").</li>
+      <li><strong>Tabela só com \(F_i\)?</strong> Volte para \(f_i\) subtraindo: \(f_i=F_i-F_{i-1}\) (Complementar 01).</li>
+      <li><strong>Tabela só com %?</strong> \(f_i=f_r\cdot n\). Se \(n\) não foi dado, procure o menor \(n\) que deixa tudo inteiro (Complementar 06).</li>
+    </ul>
+  </div>
+  <section class="formulario" id="formulario">
+    <div class="formulario-head">
+      <h2>(C) FORMULÁRIO · C45 Tabelas de Frequência</h2>
+      <button type="button" class="primary no-print" id="btnPrintForm">Imprimir só o formulário</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-item">
+        <h4><span class="n">1</span>Amplitude total</h4>
+        <div class="formula">\[A=x_{\text{máx}}-x_{\text{mín}}\]</div><p>Maior menos menor. Ex.: \(91-50=41\) kg (Proposto 03).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">2</span>Frequência absoluta</h4>
+        <div class="formula">\[f_i=\text{número de vezes},\qquad \sum f_i=n\]</div><p>Sempre confira se a soma dá o total de dados.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">3</span>Frequência relativa</h4>
+        <div class="formula">\[f_r=\frac{f_i}{n}\ \ (\times 100\%)\]</div><p>Soma das \(f_r\) = 1 = 100%.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">4</span>Absoluta acumulada</h4>
+        <div class="formula">\[F_i=f_1+f_2+\dots+f_i\]</div><p>Última linha: \(F_k=n\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">5</span>Relativa acumulada</h4>
+        <div class="formula">\[F_r=\frac{F_i}{n}=f_{r,1}+\dots+f_{r,i}\]</div><p>Última linha: 100%.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">6</span>Do acumulado para o simples</h4>
+        <div class="formula">\[f_i=F_i-F_{i-1}\]</div><p>Ex.: \(26-12=14\) (Complementar 01, EEAR).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">7</span>Classes</h4>
+        <div class="formula">\[a\vdash b=[a,\,b[\]</div><div class="formula">\[h=b-a,\quad \bar x_{\text{classe}}=\frac{a+b}{2}\]</div><p>Inclui \(a\), exclui \(b\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">8</span>Quantos abaixo de um limite</h4>
+        <div class="formula">\[\%\,(\text{menos de } b)=\frac{F_i(\text{classe que termina em } b)}{n}\]</div><p>Ex.: \(1440/3600=40\%\) (Complementar 03).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">9</span>Pelo menos / mais de</h4>
+        <div class="formula">\[\#(\ge x)=n-\#(&lt;x)\]</div><p>Complemento: às vezes é mais rápido.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">10</span>De porcentagem para quantidade</h4>
+        <div class="formula">\[f_i=f_r\cdot n\]</div><p>\(n\) mínimo: o menor que deixa todos os \(f_i\) inteiros (Complementar 06: \(n=40\)).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">11</span>Tipos de variável</h4>
+        <p><strong>Qualitativa</strong> (categoria) · <strong>quantitativa discreta</strong> (contagem) · <strong>quantitativa contínua</strong> (medida).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">12</span>Rol</h4>
+        <p>Dados em ordem crescente. Faça o rol <em>antes</em> de contar: fica impossível pular um valor.</p>
+      </div>
+    </div>
+  </section>
+
+  <span class="section-label" id="laboratorio">(D) Laboratório interativo</span>
+  <div class="lab-tabs">
+    <button type="button" class="on" id="tabLab1">1 · Monte a tabela \(f_i,\ f_r,\ F_i,\ F_r\) com os seus dados</button>
+    <button type="button" id="tabLab2">2 · Leitor de tabela com classes ("menos de", "pelo menos")</button>
+  </div>
+
+  <div class="playground" id="lab1">
+    <div class="play-grid">
+      <div>
+        <label for="ftData" style="color:var(--muted);font-size:0.85rem">Dados (separe por espaço; pode editar à vontade):</label>
+        <textarea class="data-in" id="ftData" spellcheck="false"></textarea>
+        <div class="datab" id="ftRol" aria-live="polite"></div>
+        <div id="ftTable" aria-live="polite"></div>
+        <div id="ftChart"></div>
+        <div class="live-vals" id="ftVals" aria-live="polite"></div>
+      </div>
+      <div class="controls">
+        <label>Tipo de tabela:</label>
+        <div class="seg"><button type="button" class="on" id="ftModeV">Valor por valor</button><button type="button" id="ftModeC">Intervalos de classe</button></div>
+        <div id="ftClassCtl">
+          <label for="ftS">Início da 1ª classe: <span id="ftSLbl" class="hl3"></span></label>
+          <input type="range" id="ftS" min="0" max="100" step="1" value="0">
+          <label for="ftH">Amplitude de cada classe \(h=\) <span id="ftHLbl" class="hl3"></span></label>
+          <input type="range" id="ftH" min="1" max="30" step="1" value="3">
+        </div>
+        <label for="ftNew">Valor novo para acrescentar: <span id="ftNewLbl" class="hl"></span></label>
+        <input type="range" id="ftNew" min="0" max="200" step="1" value="60">
+        <div class="ctrl-row">
+          <button type="button" class="primary" id="ftAdd">+ Acrescentar</button>
+          <button type="button" id="ftDel">− Tirar o último</button>
+          <button type="button" id="ftSort">Ordenar (rol)</button>
+        </div>
+        <label>Exemplos prontos:</label>
+        <div class="ctrl-row">
+          <button type="button" data-ft="ex1">Livro: notas (p. 743)</button>
+          <button type="button" data-ft="p01">Prop. 01 chuva</button>
+          <button type="button" data-ft="p02">Prop. 02 internação</button>
+          <button type="button" data-ft="p03">Prop. 03 massas</button>
+          <button type="button" data-ft="c02">Compl. 02 EEAR</button>
+        </div>
+        <p class="note">Clique numa linha da tabela para ver como ler cada coluna.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="playground" id="lab2" style="display:none">
+    <div class="play-grid">
+      <div>
+        <div id="lrTable"></div>
+        <div id="lrChart"></div>
+        <div class="live-vals" id="lrVals" aria-live="polite"></div>
+      </div>
+      <div class="controls">
+        <label>Tabela:</label>
+        <div class="ctrl-row">
+          <button type="button" class="primary" data-lr="p04">Prop. 04 espessura</button>
+          <button type="button" data-lr="c03">Compl. 03 salários (EEAR)</button>
+          <button type="button" data-lr="c01">Compl. 01 (só \(F_i\))</button>
+          <button type="button" data-lr="p02">Prop. 02 internação</button>
+        </div>
+        <label for="lrX">Limite \(x\): <span id="lrXLbl" class="hl3"></span></label>
+        <input type="range" id="lrX" min="0" max="6" step="1" value="3">
+        <p class="note">O limite anda de fronteira em fronteira das classes. À esquerda dele: "menos de \(x\)". À direita: "\(x\) ou mais".</p>
+      </div>
+    </div>
+  </div>
+
+  <span class="section-label" id="teste">(E) Teste rápido</span>
+  <div class="explain">
+    <p>Clique na alternativa. A explicação aparece logo depois. Acertos: <span class="score" id="quizScore">0 / 0</span> &nbsp; <button type="button" id="quizReset">Recomeçar</button></p>
+    <div id="quizBox"></div>
+  </div>
+
+  <h2 id="exercicios">(F) Exercícios</h2>
+  <div class="explain">
+    <p class="lead"><span class="badge-prova">★ Cai na prova</span> &nbsp;marca os exercícios que a Gica circulou no livro. A prova (23/11) é dissertativa: escreva a conta e a frase de resposta, não só a letra.</p>
+    <div class="prova-list">
+      <a href="#e01"><span class="k">★</span>Proposto 01 · tabela completa (chuva)</a>
+      <a href="#f01"><span class="k">★</span>Complementar 01 · EEAR, \(F_i\to f_i\)</a>
+      <a href="#f03"><span class="k">★</span>Complementar 03 · EEAR, salários abaixo de R$ 125</a>
+      <a href="#f05"><span class="k">★</span>Complementar 05 · Pedro II, vagas</a>
+      <a href="#f06"><span class="k">★</span>Complementar 06 · Mackenzie, % → quantidade</a>
+    </div>
+  </div>
+
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+  <h3>Exercícios propostos · p. 745</h3>
+
+  <div class="ex prova" id="e01">
+    <div class="ex-header"><span class="ex-num">Proposto 01</span><span class="ex-src">Versa C45 · p. 745</span><span class="badge-pratica">tabela completa</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">As alturas pluviométricas (em mm) registradas em 20 dias foram:</p>
+    <div class="datab">144 147 142 144 142 147 142 141 146 147
+141 141 142 146 142 145 141 144 143 144</div>
+    <p class="ex-q">Construa a tabela de frequências (absoluta, relativa, absoluta acumulada e relativa acumulada).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> faça o rol (ordem crescente), conte cada valor, depois divida por \(n=20\) e vá somando.</p>
+      <ol>
+        <li><strong>Confira o total:</strong> são 2 linhas de 10 números \(\Rightarrow n=20\).</li>
+        <li><strong>Rol</strong> (riscando cada número da lista original ao copiar):
+          <div class="datab">141 141 141 141 142 142 142 142 142 143 144 144 144 144 145 146 146 147 147 147</div></li>
+        <li><strong>Conte (\(f_i\)):</strong> 141 aparece 4 vezes; 142, 5 vezes; 143, 1 vez; 144, 4 vezes; 145, 1 vez; 146, 2 vezes; 147, 3 vezes.
+          <div class="formula">\[4+5+1+4+1+2+3=20\ \checkmark\]</div></li>
+        <li><strong>Relativa \(f_r=f_i/20\):</strong> dividir por 20 é o mesmo que multiplicar por 5 para ter a porcentagem: \(4\cdot5=20\%\), \(5\cdot5=25\%\), \(1\cdot 5=5\%\), \(2\cdot5=10\%\), \(3\cdot5=15\%\).</li>
+        <li><strong>Absoluta acumulada \(F_i\):</strong> vá somando de cima para baixo:
+          <div class="formula">\[4,\ \ 4+5=9,\ \ 9+1=10,\ \ 10+4=14,\ \ 14+1=15,\ \ 15+2=17,\ \ 17+3=20\]</div>
+          A última tem que dar \(n=20\ \checkmark\)</li>
+        <li><strong>Relativa acumulada \(F_r=F_i/20\):</strong> \(20\%,\ 45\%,\ 50\%,\ 70\%,\ 75\%,\ 85\%,\ 100\%\).</li>
+        <li><strong>Tabela final:</strong><div class="tab-wrap"><table class="ftab"><tr><th>Altura (mm)</th><th>f<sub>i</sub></th><th>F<sub>i</sub></th><th>f<sub>r</sub></th><th>F<sub>r</sub></th></tr><tr><td>141</td><td>4</td><td>4</td><td>4/20 = 20%</td><td>4/20 = 20%</td></tr><tr><td>142</td><td>5</td><td>9</td><td>5/20 = 25%</td><td>9/20 = 45%</td></tr><tr><td>143</td><td>1</td><td>10</td><td>1/20 = 5%</td><td>10/20 = 50%</td></tr><tr><td>144</td><td>4</td><td>14</td><td>4/20 = 20%</td><td>14/20 = 70%</td></tr><tr><td>145</td><td>1</td><td>15</td><td>1/20 = 5%</td><td>15/20 = 75%</td></tr><tr><td>146</td><td>2</td><td>17</td><td>2/20 = 10%</td><td>17/20 = 85%</td></tr><tr><td>147</td><td>3</td><td>20</td><td>3/20 = 15%</td><td>20/20 = 100%</td></tr><tr class="tot"><td>Total</td><td>20</td><td>—</td><td>100%</td><td>—</td></tr></table></div></li>
+      </ol>
+      <div class="dica">Leitura rápida: em metade dos dias (\(F_r=50\%\)) choveu até 143 mm. O valor mais frequente é 142 mm (25% dos dias).</div>
+    </div>
+    <div class="ans-box">Tabela acima. Conferências: \(\sum f_i=20\), \(\sum f_r=100\%\), último \(F_i=20\), último \(F_r=100\%\).</div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> esse foi circulado. Na prova, monte as 5 colunas nessa ordem (valor, \(f_i\), \(F_i\), \(f_r\), \(F_r\)) e escreva as conferências embaixo: elas mostram ao professor que a tabela fecha.</div>
+  </div>
+
+  <div class="ex" id="e02">
+    <div class="ex-header"><span class="ex-num">Proposto 02</span><span class="ex-src">Versa C45 · p. 745</span><span class="badge-pratica">classes</span><span class="badge-pratica">tabela completa</span></div>
+    <p class="ex-q">Número de dias de internação de 40 pacientes de um hospital:</p>
+    <div class="datab">7 8 1 7 13 6 12 12 3 17
+4 2 4 15 2 14 3 5 10 8
+9 8 5 3 2 7 14 12 10 8
+1 6 4 7 7 11 8 11 18 9</div>
+    <p class="ex-q">Organize os dados numa tabela de frequências com classes.</p>
+    <div class="fix"><strong>Atenção: o enunciado não fixa as classes.</strong> O livro traz uma tabela em branco com cerca de 6 linhas. Usamos 6 classes de amplitude 3 começando no menor valor. Outra escolha (por exemplo, amplitude 4) também está correta se for bem feita. Teste outras no Laboratório 1 (botão "Prop. 02").</div>
+    <div class="steps">
+      
+      <ol>
+        <li><strong>Total:</strong> 4 linhas de 10 \(\Rightarrow n=40\).</li>
+        <li><strong>Menor e maior:</strong> \(x_{\text{mín}}=1\), \(x_{\text{máx}}=18\). Amplitude total \(A=18-1=17\).</li>
+        <li><strong>Escolha das classes:</strong> com 6 classes, \(h\ge 17/6\approx 2{,}8\), então usamos \(h=3\): \(1\vdash4,\ 4\vdash7,\ 7\vdash10,\ 10\vdash13,\ 13\vdash16,\ 16\vdash19\).</li>
+        <li><strong>Rol:</strong>
+          <div class="datab">1 1 2 2 2 3 3 3 | 4 4 4 5 5 6 6 | 7 7 7 7 7 8 8 8 8 8 9 9 | 10 10 11 11 12 12 12 | 13 14 14 15 | 17 18</div>
+          As barras "|" já separam as classes.</li>
+        <li><strong>Conte cada classe</strong> (lembre: \(4\vdash7\) inclui 4, 5, 6 e <em>não</em> inclui 7):
+          <div class="formula">\[1\vdash4:\ 8\qquad 4\vdash7:\ 7\qquad 7\vdash10:\ 12\]</div>
+          <div class="formula">\[10\vdash13:\ 7\qquad 13\vdash16:\ 4\qquad 16\vdash19:\ 2\]</div>
+          <div class="formula">\[8+7+12+7+4+2=40\ \checkmark\]</div></li>
+        <li><strong>\(f_r=f_i/40\)</strong> (dividir por 40 = multiplicar por 2,5 para ter %): \(20\%,\ 17{,}5\%,\ 30\%,\ 17{,}5\%,\ 10\%,\ 5\%\).</li>
+        <li><strong>Acumuladas:</strong> \(F_i=8,15,27,34,38,40\) e \(F_r=20\%,\ 37{,}5\%,\ 67{,}5\%,\ 85\%,\ 95\%,\ 100\%\).</li>
+        <li><strong>Tabela final:</strong><div class="tab-wrap"><table class="ftab"><tr><th>Dias internado</th><th>f<sub>i</sub></th><th>F<sub>i</sub></th><th>f<sub>r</sub></th><th>F<sub>r</sub></th></tr><tr><td>1 ⊢ 4</td><td>8</td><td>8</td><td>20%</td><td>20%</td></tr><tr><td>4 ⊢ 7</td><td>7</td><td>15</td><td>17,5%</td><td>37,5%</td></tr><tr><td>7 ⊢ 10</td><td>12</td><td>27</td><td>30%</td><td>67,5%</td></tr><tr><td>10 ⊢ 13</td><td>7</td><td>34</td><td>17,5%</td><td>85%</td></tr><tr><td>13 ⊢ 16</td><td>4</td><td>38</td><td>10%</td><td>95%</td></tr><tr><td>16 ⊢ 19</td><td>2</td><td>40</td><td>5%</td><td>100%</td></tr><tr class="tot"><td>Total</td><td>40</td><td>—</td><td>100%</td><td>—</td></tr></table></div></li>
+      </ol>
+      <div class="dica">Leitura: 67,5% dos pacientes ficaram menos de 10 dias internados. A classe mais cheia é \(7\vdash10\).</div>
+    </div>
+    <div class="ans-box">Tabela com classes \(1\vdash4,\dots,16\vdash19\): \(f_i=8,7,12,7,4,2\) (\(n=40\)).</div>
+    
+  </div>
+
+  <div class="ex" id="e03">
+    <div class="ex-header"><span class="ex-num">Proposto 03</span><span class="ex-src">Versa C45 · p. 745</span><span class="badge-pratica">amplitude</span><span class="badge-pratica">f<sub>i</sub> e f<sub>r</sub></span></div>
+    <p class="ex-q">Massas (kg) de 20 pessoas:</p>
+    <div class="datab">65 52 73 80 65 50 70 75 80 65
+70 77 82 91 75 57 68 80 70 80</div>
+    <p class="ex-q">a) Qual é a amplitude total? &nbsp; b) Qual é a frequência absoluta de 65 kg? &nbsp; c) Qual é a frequência relativa de 80 kg?</p>
+    <div class="fix"><strong>Dado pouco legível na foto.</strong> O "73" da 1ª linha e o "57" da 2ª linha estão borrados (poderiam ser 71 e 52). Nenhuma das três respostas depende deles: o menor (50), o maior (91), a contagem do 65 e a do 80 não mudam.</div>
+    <div class="steps">
+      
+      <ol>
+        <li><strong>a) Amplitude total:</strong> menor valor \(=50\) (1ª linha), maior valor \(=91\) (2ª linha).
+          <div class="formula">\[A=91-50=41\text{ kg}\]</div></li>
+        <li><strong>b) \(f_i(65)\):</strong> procure todos os 65: posições 1, 5 e 10 da 1ª linha. Nenhum na 2ª.
+          <div class="formula">\[f_i(65)=3\]</div></li>
+        <li><strong>c) \(f_r(80)\):</strong> os 80 aparecem nas posições 4 e 9 da 1ª linha e 8 e 10 da 2ª linha: \(f_i(80)=4\).
+          <div class="formula">\[f_r(80)=\frac{4}{20}=\frac{1}{5}=0{,}2=20\%\]</div></li>
+      </ol>
+    </div>
+    <div class="ans-box">a) \(41\) kg &nbsp; b) \(3\) &nbsp; c) \(20\%\)</div>
+    
+  </div>
+
+  <div class="ex" id="e04">
+    <div class="ex-header"><span class="ex-num">Proposto 04</span><span class="ex-src">Versa C45 · p. 745</span><span class="badge-pratica">classes</span><span class="badge-pratica">leitura</span></div>
+    <p class="ex-q">A tabela mostra a espessura (mm) de 50 peças:</p><div class="tab-wrap"><table class="ftab"><tr><th>Espessura (mm)</th><th>f<sub>i</sub></th></tr><tr><td>55 ⊢ 65</td><td>4</td></tr><tr><td>65 ⊢ 75</td><td>5</td></tr><tr><td>75 ⊢ 85</td><td>8</td></tr><tr><td>85 ⊢ 95</td><td>13</td></tr><tr><td>95 ⊢ 105</td><td>9</td></tr><tr><td>105 ⊢ 115</td><td>11</td></tr><tr class="tot"><td>Total</td><td>50</td></tr></table></div><p class="ex-q">a) Quantas peças têm espessura menor que 95 mm? &nbsp; b) Qual a porcentagem de peças com espessura de pelo menos 75 mm?</p>
+    <div class="steps">
+      <ol>
+        <li><strong>a) "menor que 95":</strong> são as classes que terminam em 95 ou antes: \(55\vdash65,\ 65\vdash75,\ 75\vdash85,\ 85\vdash95\). (A classe \(85\vdash95\) não inclui o 95, então todas as suas peças são menores que 95.)
+          <div class="formula">\[4+5+8+13=30\text{ peças}\]</div>
+          É o \(F_i\) da 4ª classe.</li>
+        <li><strong>b) "pelo menos 75":</strong> classes a partir de \(75\vdash85\):
+          <div class="formula">\[8+13+9+11=41\]</div>
+          Ou pelo complemento: \(50-(4+5)=41\ \checkmark\)</li>
+        <li><strong>Porcentagem:</strong>
+          <div class="formula">\[\frac{41}{50}=\frac{82}{100}=82\%\]</div></li>
+      </ol>
+    </div>
+    <div class="ans-box">a) \(30\) peças &nbsp; b) \(82\%\)</div>
+    
+  </div>
+
+  <h3>Exercícios complementares · p. 746</h3>
+
+  <div class="ex prova" id="f01">
+    <div class="ex-header"><span class="ex-num">Complementar 01</span><span class="ex-src">EEAR · Versa C45 · p. 746</span><span class="badge-pratica">F<sub>i</sub> → f<sub>i</sub></span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Uma tabela de distribuição de frequências tem 5 classes e as frequências absolutas acumuladas são 12, 26, 43, 57 e 70. A frequência absoluta da 2ª classe é:</p>
+    <ul class="opts"><li>a) 14</li><li>b) 15</li><li>c) 16</li><li>d) 17</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> \(F_i\) é "até aqui". Então o que entrou <em>só</em> na 2ª classe é a diferença entre o acumulado da 2ª e o da 1ª.</p>
+      <ol>
+        <li>\(F_1=12\): até a 1ª classe há 12 dados \(\Rightarrow f_1=12\).</li>
+        <li>\(F_2=26\): até a 2ª classe há 26 dados.
+          <div class="formula">\[f_2=F_2-F_1=26-12=14\]</div></li>
+        <li><strong>Bônus (tabela toda):</strong> \(f_3=43-26=17\), \(f_4=57-43=14\), \(f_5=70-57=13\). Conferência: \(12+14+17+14+13=70\ \checkmark\)</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(f_2=14\) &nbsp; <span class="badge-gab">Alternativa a</span></div>
+    
+  </div>
+
+  <div class="ex" id="f02">
+    <div class="ex-header"><span class="ex-num">Complementar 02</span><span class="ex-src">EEAR · Versa C45 · p. 746</span><span class="badge-pratica">amplitude</span></div>
+    <p class="ex-q">As notas de 15 alunos foram:</p>
+    <div class="datab">83 72 86 74 88
+57 81 91 65 82
+59 55 49 73 74</div>
+    <p class="ex-q">A amplitude total dessa amostra é:</p>
+    <ul class="opts"><li>a) 41</li><li>b) 42</li><li>c) 48</li><li>d) 50</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Maior nota:</strong> percorra as 3 linhas: 88 (1ª linha), 91 (2ª linha), 74 (3ª linha). Maior = 91.</li>
+        <li><strong>Menor nota:</strong> 72 (1ª), 57 (2ª), 49 (3ª). Menor = 49.</li>
+        <li><strong>Amplitude:</strong>
+          <div class="formula">\[A=91-49=42\]</div></li>
+      </ol>
+      <div class="dica">Cuidado com a alternativa c (48): é \(91-43\)? Não existe 43. Não chute: ache o maior e o menor de verdade.</div>
+    </div>
+    <div class="ans-box">\(A=42\) &nbsp; <span class="badge-gab">Alternativa b</span></div>
+    
+  </div>
+
+  <div class="ex prova" id="f03">
+    <div class="ex-header"><span class="ex-num">Complementar 03</span><span class="ex-src">EEAR · Versa C45 · p. 746</span><span class="badge-pratica">classes</span><span class="badge-pratica">porcentagem</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">A tabela mostra o salário semanal (R$) dos funcionários de uma empresa. A porcentagem de funcionários que ganham menos de R$ 125,00 por semana é:</p><div class="tab-wrap"><table class="ftab"><tr><th>Salário (R$)</th><th>f<sub>i</sub></th></tr><tr><td>50 ⊢ 75</td><td>300</td></tr><tr><td>75 ⊢ 100</td><td>640</td></tr><tr><td>100 ⊢ 125</td><td>500</td></tr><tr><td>125 ⊢ 150</td><td>1310</td></tr><tr><td>150 ⊢ 175</td><td>850</td></tr><tr class="tot"><td>Total</td><td>—</td></tr></table></div><ul class="opts"><li>a) 40%</li><li>b) 45%</li><li>c) 50%</li><li>d) 55%</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Total \(n\):</strong>
+          <div class="formula">\[300+640+500+1310+850=3600\]</div></li>
+        <li><strong>"Menos de 125":</strong> as três primeiras classes (a terceira, \(100\vdash125\), não inclui 125, então todos ali ganham menos de 125):
+          <div class="formula">\[300+640+500=1440\]</div></li>
+        <li><strong>Porcentagem:</strong> simplifique antes de dividir:
+          <div class="formula">\[\frac{1440}{3600}=\frac{144}{360}=\frac{2}{5}=0{,}4=40\%\]</div></li>
+      </ol>
+    </div>
+    <div class="ans-box">\(40\%\) &nbsp; <span class="badge-gab">Alternativa a</span></div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> esse foi circulado. O erro comum é incluir a classe \(125\vdash150\) (porque "começa em 125"). Quem ganha 125 ou mais <em>não</em> ganha menos de 125.</div>
+  </div>
+
+  <div class="ex" id="f04">
+    <div class="ex-header"><span class="ex-num">Complementar 04</span><span class="ex-src">Colégio Pedro II · Versa C45 · p. 746</span><span class="badge-pratica">leitura de tabela</span></div>
+    <p class="ex-q">Tabela de vagas do concurso de 2016 do Colégio Pedro II (usada também no Complementar 05):</p><div class="tab-wrap"><table class="ftab"><tr><th>Curso / série</th><th>Vagas</th></tr><tr><td>Educação Infantil · Grupo I</td><td>24</td></tr><tr><td>Educação Infantil · Grupo II</td><td>48</td></tr><tr class="hi"><td>1º ano EF</td><td>481</td></tr><tr><td>2º ano EF</td><td>56</td></tr><tr class="hi2"><td>6º ano EF</td><td>346</td></tr><tr class="hi"><td>1ª série EM Regular</td><td>580</td></tr><tr><td>EM Integrado · Informática</td><td>152</td></tr><tr><td>EM Integrado · Meio Ambiente</td><td>16</td></tr><tr><td>EM Integrado · Instrumento Musical</td><td>16</td></tr><tr><td>PROEJA · Administração</td><td>216</td></tr><tr><td>PROEJA · Informática</td><td>72</td></tr><tr class="tot"><td>Total</td><td>2007</td></tr></table></div>
+    <div class="fix"><strong>Ambiguidade do livro.</strong> No livro, o "04" é só o texto e a tabela que servem de base para o 05. Não há pergunta. Além disso, na foto a coluna de números está impressa uma linha acima dos nomes. Use a ordem dos números como na tabela acima (24, 48, 481, 56, 346, 580, 152, 16, 16, 216, 72). Abaixo vão perguntas de leitura para treinar com a mesma tabela.</div>
+    <div class="steps">
+      
+      <ol>
+        <li><strong>Total de vagas:</strong>
+          <div class="formula">\[24+48+481+56+346+580+152+16+16+216+72=2007\]</div>
+          Some em blocos: \(24+48=72\); \(481+56=537\); \(346+580=926\); \(152+16+16=184\); \(216+72=288\). Depois \(72+537+926+184+288=2007\).</li>
+        <li><strong>Qual tem mais vagas?</strong> 1ª série EM Regular (580). Representa \(580/2007\approx 28{,}9\%\) do total.</li>
+        <li><strong>Variável:</strong> "curso/série" é <em>qualitativa</em>. O número de vagas é a frequência de cada categoria.</li>
+      </ol>
+    </div>
+    <div class="ans-box">Sem pergunta própria (é a base do 05). Total de vagas: \(2007\).</div>
+    
+  </div>
+
+  <div class="ex prova" id="f05">
+    <div class="ex-header"><span class="ex-num">Complementar 05</span><span class="ex-src">Colégio Pedro II · Versa C45 · p. 746</span><span class="badge-pratica">leitura de tabela</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Com base na tabela do Complementar 04, o número de cursos/séries com mais vagas do que o 6º ano do Ensino Fundamental é:</p>
+    <ul class="opts"><li>a) 1</li><li>b) 2</li><li>c) 3</li><li>d) 4</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Referência:</strong> o 6º ano EF tem <strong>346</strong> vagas (linha laranja na tabela do 04).</li>
+        <li><strong>Compare linha a linha com 346:</strong> 24 não, 48 não, <strong>481 sim</strong>, 56 não, (346 é ele mesmo), <strong>580 sim</strong>, 152 não, 16 não, 16 não, 216 não, 72 não.</li>
+        <li><strong>Conte:</strong> 1º ano EF (481) e 1ª série EM Regular (580): 2 cursos (linhas azuis).</li>
+      </ol>
+    </div>
+    <div class="ans-box">2 cursos &nbsp; <span class="badge-gab">Alternativa b</span></div>
+    
+  </div>
+
+  <div class="ex prova" id="f06">
+    <div class="ex-header"><span class="ex-num">Complementar 06</span><span class="ex-src">Mackenzie · Versa C45 · p. 746</span><span class="badge-pratica">f<sub>r</sub> → f<sub>i</sub></span><span class="badge-pratica">n mínimo</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">A tabela mostra a distribuição de frequências relativas de uma amostra. Se a amostra tem o <strong>menor número possível</strong> de elementos, o número de elementos com valor maior que 1,5 é:</p><div class="tab-wrap"><table class="ftab"><tr><th>Valor</th><th>f<sub>r</sub> (%)</th></tr><tr><td>1,0</td><td>30</td></tr><tr><td>1,2</td><td>7,5</td></tr><tr><td>1,3</td><td>45</td></tr><tr class="hi"><td>1,7</td><td>12,5</td></tr><tr class="hi"><td>1,8</td><td>5</td></tr><tr class="tot"><td>Total</td><td>100</td></tr></table></div><ul class="opts"><li>a) 4</li><li>b) 7</li><li>c) 9</li><li>d) 14</li><li>e) 18</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> \(f_i=f_r\cdot n\) tem que ser número inteiro (não existe 3,5 pessoas). Procure o menor \(n\) que deixa os 5 produtos inteiros.</p>
+      <ol>
+        <li><strong>Escreva as porcentagens como frações irredutíveis:</strong>
+          <div class="formula">\[30\%=\tfrac{3}{10},\quad 7{,}5\%=\tfrac{75}{1000}=\tfrac{3}{40},\quad 45\%=\tfrac{9}{20},\quad 12{,}5\%=\tfrac{1}{8},\quad 5\%=\tfrac{1}{20}\]</div></li>
+        <li><strong>\(n\) precisa ser múltiplo de todos os denominadores</strong> 10, 40, 20, 8, 20:
+          <div class="formula">\[\text{mmc}(10,40,20,8)=40\ \Rightarrow\ n=40\]</div></li>
+        <li><strong>Quantidades:</strong>
+          <div class="formula">\[0{,}3\cdot40=12,\ \ 0{,}075\cdot40=3,\ \ 0{,}45\cdot40=18,\ \ 0{,}125\cdot40=5,\ \ 0{,}05\cdot40=2\]</div>
+          Conferência: \(12+3+18+5+2=40\ \checkmark\)</li>
+        <li><strong>Maiores que 1,5:</strong> só 1,7 e 1,8 (linhas azuis):
+          <div class="formula">\[5+2=7\]</div></li>
+      </ol>
+      <div class="dica">Atalho: 7,5% é o "pior" (\(=3/40\)). Ele sozinho já obriga \(n\) a ser múltiplo de 40.</div>
+    </div>
+    <div class="ans-box">\(7\) elementos &nbsp; <span class="badge-gab">Alternativa b</span></div>
+    
+  </div>
+
+</div>
+<footer>
+  Pack didático offline · Estatística · C45 · Tabelas de Frequência · Versa
+</footer>
+
+<script>
+
+var U = (function () {
+  function br(v, d) {
+    if (d === undefined) { var r = Math.round(v * 1000) / 1000; return String(r).replace('.', ','); }
+    return v.toFixed(d).replace('.', ',');
+  }
+  function parse(s) {
+    return String(s).replace(/;/g, ' ').replace(/\n/g, ' ').split(/[\s]+/).map(function (t) { return t.trim().replace(',', '.'); })
+      .filter(function (t) { return t !== '' && !isNaN(+t); }).map(Number);
+  }
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = a % b; a = b; b = t; } return a || 1; }
+  function frac(n, d) { var g = gcd(n, d); return [n / g, d / g]; }
+  function t(x, y, s, size, fill, anchor, weight) {
+    return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" fill="' + (fill || '#e8eef7') + '" font-size="' + (size || 12) + '" text-anchor="' + (anchor || 'middle') + '" font-weight="' + (weight || 'normal') + '" font-family="Segoe UI,sans-serif">' + s + '</text>';
+  }
+  function niceStep(max) {
+    var raw = max / 6, p = Math.pow(10, Math.floor(Math.log10(raw || 1))), m = raw / p;
+    var s = m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10;
+    return s * p;
+  }
+  return { br: br, parse: parse, frac: frac, gcd: gcd, t: t, niceStep: niceStep };
+})();
+
+(function () {
+  function el(id) { return document.getElementById(id); }
+  var PRE = {
+    ex1: { d: '50 40 60 80 30 50 70 60 80 40 60 90 70 50 70 50 60 80 70 90 40 60 60 80 70', m: 'v' },
+    p01: { d: '144 147 142 144 142 147 142 141 146 147 141 141 142 146 142 145 141 144 143 144', m: 'v' },
+    p02: { d: '7 8 1 7 13 6 12 12 3 17 4 2 4 15 2 14 3 5 10 8 9 8 5 3 2 7 14 12 10 8 1 6 4 7 7 11 8 11 18 9', m: 'c', s: 1, h: 3 },
+    p03: { d: '65 52 73 80 65 50 70 75 80 65 70 77 82 91 75 57 68 80 70 80', m: 'c', s: 50, h: 10 },
+    c02: { d: '83 72 86 74 88 57 81 91 65 82 59 55 49 73 74', m: 'c', s: 45, h: 10 }
+  };
+  var mode = 'v', selRow = -1;
+  function data() { return U.parse(el('ftData').value); }
+  function setMode(m) { mode = m; el('ftModeV').classList.toggle('on', m === 'v'); el('ftModeC').classList.toggle('on', m === 'c'); el('ftClassCtl').style.display = m === 'c' ? '' : 'none'; }
+  function rows(d) {
+    var n = d.length, out = [];
+    if (mode === 'v') {
+      var c = {}; d.forEach(function (x) { c[x] = (c[x] || 0) + 1; });
+      Object.keys(c).map(Number).sort(function (a, b) { return a - b; }).forEach(function (v) { out.push({ lab: U.br(v), lo: v, hi: v, f: c[v] }); });
+    } else {
+      var s = +el('ftS').value, h = +el('ftH').value, mx = Math.max.apply(null, d);
+      for (var a = s; a <= mx; a += h) {
+        var b = a + h, last = b > mx;
+        var f = d.filter(function (x) { return x >= a && (x < b || (last && x <= b)); }).length;
+        out.push({ lab: (last ? '[' + U.br(a) + ', ' + U.br(b) + ']' : U.br(a) + ' ⊢ ' + U.br(b)), lo: a, hi: b, f: f, last: last });
+      }
+      var below = d.filter(function (x) { return x < s; }).length;
+      if (below) out.unshift({ lab: 'abaixo de ' + U.br(s) + ' (!)', lo: -Infinity, hi: s, f: below, warn: true });
+    }
+    var acc = 0; out.forEach(function (r) { acc += r.f; r.F = acc; r.fr = r.f / n; r.Fr = acc / n; });
+    return out;
+  }
+  function pct(x) { return U.br(Math.round(x * 10000) / 100) + '%'; }
+  function draw() {
+    var d = data(), n = d.length;
+    if (!n) { el('ftTable').innerHTML = '<p class="note">Digite alguns números.</p>'; el('ftRol').textContent = ''; el('ftChart').innerHTML = ''; el('ftVals').innerHTML = ''; return; }
+    var mn = Math.min.apply(null, d), mx = Math.max.apply(null, d);
+    var sS = el('ftS'); sS.min = Math.floor(mn) - 10; sS.max = Math.floor(mn); if (+sS.value > +sS.max || +sS.value < +sS.min) sS.value = Math.floor(mn);
+    el('ftSLbl').textContent = U.br(+sS.value); el('ftHLbl').textContent = el('ftH').value;
+    var nw = el('ftNew'); nw.min = Math.floor(mn) - 20; nw.max = Math.ceil(mx) + 20; el('ftNewLbl').textContent = nw.value;
+    el('ftRol').textContent = 'Rol (n = ' + n + '): ' + d.slice().sort(function (a, b) { return a - b; }).map(function (x) { return U.br(x); }).join(' ');
+    var R = rows(d);
+    if (selRow >= R.length) selRow = -1;
+    var h = '<div class="tab-wrap"><table class="ftab"><tr><th>' + (mode === 'v' ? 'Valor' : 'Classe') + '</th><th>f<sub>i</sub></th><th>F<sub>i</sub></th><th>f<sub>r</sub></th><th>F<sub>r</sub></th></tr>';
+    R.forEach(function (r, i) {
+      var fr = U.frac(r.f, n);
+      h += '<tr data-r="' + i + '" style="cursor:pointer"' + (i === selRow ? ' class="hi"' : '') + '><td>' + r.lab + '</td><td>' + r.f + '</td><td>' + r.F + '</td><td>' + fr[0] + '/' + fr[1] + ' = ' + pct(r.fr) + '</td><td>' + pct(r.Fr) + '</td></tr>';
+    });
+    h += '<tr class="tot"><td>Total</td><td>' + n + '</td><td>—</td><td>100%</td><td>—</td></tr></table></div>';
+    el('ftTable').innerHTML = h;
+    el('ftTable').querySelectorAll('tr[data-r]').forEach(function (tr) { tr.addEventListener('click', function () { selRow = +tr.dataset.r; draw(); }); });
+    // chart
+    var W = 600, H = 230, pl = 40, pb = 34, pt = 14, fmax = Math.max.apply(null, R.map(function (r) { return r.f; }));
+    var st = Math.max(1, Math.ceil(fmax / 6)), ymax = Math.ceil(fmax / st) * st;
+    var s = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '">';
+    for (var y = 0; y <= ymax; y += st) { var yy = pt + (H - pt - pb) * (1 - y / ymax); s += '<line x1="' + pl + '" x2="' + (W - 10) + '" y1="' + yy + '" y2="' + yy + '" stroke="#243044"/>' + U.t(pl - 6, yy + 4, y, 10, '#8b9bb4', 'end'); }
+    var gw = (W - pl - 10) / R.length, gap = mode === 'v' ? 0.25 : 0;
+    R.forEach(function (r, i) {
+      var x = pl + i * gw + gw * gap / 2, bw = gw * (1 - gap), yy = pt + (H - pt - pb) * (1 - r.f / ymax);
+      s += '<rect x="' + x.toFixed(1) + '" y="' + yy.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (H - pb - yy).toFixed(1) + '" fill="' + (i === selRow ? '#4fc3f7' : (r.warn ? '#ef5350' : '#d4c94a')) + '" stroke="#0a0e14"/>';
+      s += U.t(x + bw / 2, yy - 4, r.f, 10.5);
+      s += U.t(pl + i * gw + gw / 2, H - pb + 14, mode === 'v' ? r.lab : U.br(r.lo === -Infinity ? 0 : r.lo), 10, '#8b9bb4');
+    });
+    s += '<line x1="' + pl + '" x2="' + (W - 10) + '" y1="' + (H - pb) + '" y2="' + (H - pb) + '" stroke="#5a6a82" stroke-width="1.5"/>';
+    s += U.t(W / 2, H - 4, mode === 'v' ? 'gráfico de barras de f\u1d62' : 'histograma de f\u1d62 (rótulo = início da classe)', 10.5, '#8b9bb4') + '</svg>';
+    el('ftChart').innerHTML = s;
+    var v = '<div><strong>n</strong> = ' + n + ' &nbsp; mín = ' + U.br(mn) + ' &nbsp; máx = ' + U.br(mx) + ' &nbsp; amplitude total = ' + U.br(mx) + ' − ' + U.br(mn) + ' = <span class="hl3">' + U.br(Math.round((mx - mn) * 1000) / 1000) + '</span></div>';
+    if (R.some(function (r) { return r.warn; })) v += '<div style="color:var(--danger)">Há dados antes do início da 1ª classe: puxe o "início" para trás.</div>';
+    if (selRow >= 0) {
+      var r = R[selRow], desc = mode === 'v' ? ('igual a ' + r.lab) : ('na classe ' + r.lab), ate = mode === 'v' ? ('até ' + r.lab) : ('abaixo de ' + U.br(r.hi) + (r.last ? ' (inclusive)' : ''));
+      v += '<div><span class="hl">Linha selecionada</span>: \\(f_i=' + r.f + '\\) → ' + r.f + ' dado(s) ' + desc + '.</div>';
+      v += '<div>\\(F_i=' + r.F + '\\) → ' + r.F + ' dado(s) ' + ate + '. Logo, ' + (n - r.F) + ' dado(s) acima.</div>';
+      v += '<div>\\(f_r=' + r.f + '/' + n + '=' + pct(r.fr).replace('%', '\\%').replace(',', '{,}') + '\\) &nbsp; \\(F_r=' + r.F + '/' + n + '=' + pct(r.Fr).replace('%', '\\%').replace(',', '{,}') + '\\)</div>';
+    } else v += '<div class="note">Clique numa linha da tabela.</div>';
+    el('ftVals').innerHTML = v;
+    if (window.renderKatex) window.renderKatex(el('ftVals'));
+  }
+  function load(k) { var p = PRE[k]; el('ftData').value = p.d; setMode(p.m); if (p.m === 'c') { var d = U.parse(p.d); el('ftS').min = Math.min.apply(null, d) - 10; el('ftS').max = Math.min.apply(null, d); el('ftS').value = p.s; el('ftH').value = p.h; } selRow = -1; draw(); }
+
+  // ---- lab 2 ----
+  var LR = {
+    p04: { e: [55, 65, 75, 85, 95, 105, 115], f: [4, 5, 8, 13, 9, 11], u: 'mm', nome: 'peças' },
+    c03: { e: [50, 75, 100, 125, 150, 175], f: [300, 640, 500, 1310, 850], u: 'R$', nome: 'funcionários' },
+    c01: { e: [1, 2, 3, 4, 5, 6], f: [12, 14, 17, 14, 13], u: '', nome: 'dados', soF: true },
+    p02: { e: [1, 4, 7, 10, 13, 16, 19], f: [8, 7, 12, 7, 4, 2], u: 'dias', nome: 'pacientes' }
+  };
+  var cur = 'p04';
+  function drawLR() {
+    var T = LR[cur], k = T.f.length, n = T.f.reduce(function (a, b) { return a + b; }, 0);
+    var sx = el('lrX'); sx.max = k; var j = +sx.value; if (j > k) { j = k; sx.value = k; }
+    var x = T.e[j];
+    el('lrXLbl').textContent = T.soF ? ('fim da ' + j + 'ª classe') : (T.u === 'R$' ? 'R$ ' + x : x + ' ' + T.u);
+    var acc = 0, h = '<div class="tab-wrap"><table class="ftab"><tr><th>Classe</th><th>f<sub>i</sub></th><th>F<sub>i</sub></th><th>F<sub>r</sub></th></tr>';
+    T.f.forEach(function (f, i) {
+      acc += f;
+      var lab = T.soF ? (i + 1) + 'ª classe' : (T.e[i] + ' ⊢ ' + T.e[i + 1]);
+      var fi = T.soF ? (i === 0 ? '12' : acc + ' − ' + (acc - f) + ' = <strong>' + f + '</strong>') : f;
+      h += '<tr class="' + (i < j ? 'hi' : 'hi2') + '"><td>' + lab + '</td><td>' + fi + '</td><td>' + acc + '</td><td>' + U.br(Math.round(acc / n * 1000) / 10) + '%</td></tr>';
+    });
+    h += '<tr class="tot"><td>Total</td><td>' + n + '</td><td>—</td><td>100%</td></tr></table></div>';
+    el('lrTable').innerHTML = h;
+    var below = T.f.slice(0, j).reduce(function (a, b) { return a + b; }, 0), above = n - below;
+    var terms = T.f.slice(0, j).join(' + ') || '0';
+    var W = 600, H = 200, pl = 40, pb = 30, pt = 12, fm = Math.max.apply(null, T.f);
+    var s = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '">';
+    var X = function (i) { return pl + (W - pl - 14) * i / k; };
+    T.f.forEach(function (f, i) {
+      var yy = pt + (H - pt - pb) * (1 - f / fm);
+      s += '<rect x="' + X(i) + '" y="' + yy + '" width="' + (X(i + 1) - X(i)) + '" height="' + (H - pb - yy) + '" fill="' + (i < j ? '#4fc3f7' : '#ffb74d') + '" fill-opacity="0.8" stroke="#0a0e14"/>' + U.t((X(i) + X(i + 1)) / 2, yy - 4, f, 10.5);
+    });
+    T.e.forEach(function (e, i) { s += U.t(X(i), H - pb + 14, T.soF ? '' : e, 10, '#8b9bb4'); });
+    s += '<line x1="' + X(j) + '" x2="' + X(j) + '" y1="4" y2="' + (H - pb + 4) + '" stroke="#fff" stroke-width="2.5" stroke-dasharray="6 4"/>';
+    s += '</svg>';
+    el('lrChart').innerHTML = s;
+    var xs = T.soF ? 'o fim da ' + j + 'ª classe' : (T.u === 'R$' ? 'R\\$\\,' + x : x + '\\text{ ' + T.u + '}');
+    var v = '<div><span class="hl">Menos de \\(' + xs + '\\)</span>: \\(' + terms + '=' + below + '\\) ' + T.nome + ' → \\(\\dfrac{' + below + '}{' + n + '}=' + U.br(Math.round(below / n * 1000) / 10).replace(',', '{,}') + '\\%\\)</div>';
+    v += '<div><span class="hl3">\\(' + xs + '\\) ou mais</span>: \\(' + n + '-' + below + '=' + above + '\\) → \\(' + U.br(Math.round(above / n * 1000) / 10).replace(',', '{,}') + '\\%\\)</div>';
+    if (T.soF) v += '<div class="note">Complementar 01: a coluna \\(f_i\\) foi reconstruída por \\(f_i=F_i-F_{i-1}\\).</div>';
+    el('lrVals').innerHTML = v;
+    if (window.renderKatex) window.renderKatex(el('lrVals'));
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    ['ftData'].forEach(function (id) { el(id).addEventListener('input', function () { selRow = -1; draw(); }); });
+    ['ftS', 'ftH', 'ftNew'].forEach(function (id) { el(id).addEventListener('input', draw); });
+    el('ftModeV').addEventListener('click', function () { setMode('v'); draw(); });
+    el('ftModeC').addEventListener('click', function () { setMode('c'); draw(); });
+    el('ftAdd').addEventListener('click', function () { el('ftData').value = el('ftData').value.trim() + ' ' + el('ftNew').value; draw(); });
+    el('ftDel').addEventListener('click', function () { var d = el('ftData').value.trim().split(/\s+/); d.pop(); el('ftData').value = d.join(' '); draw(); });
+    el('ftSort').addEventListener('click', function () { el('ftData').value = data().sort(function (a, b) { return a - b; }).map(function (x) { return String(x).replace('.', ','); }).join(' '); draw(); });
+    document.querySelectorAll('[data-ft]').forEach(function (b) { b.addEventListener('click', function () { load(b.dataset.ft); }); });
+    document.querySelectorAll('[data-lr]').forEach(function (b) { b.addEventListener('click', function () { cur = b.dataset.lr; document.querySelectorAll('[data-lr]').forEach(function (z) { z.classList.toggle('primary', z === b); }); drawLR(); }); });
+    el('lrX').addEventListener('input', drawLR);
+    function tab(nn) { [1, 2].forEach(function (k) { el('lab' + k).style.display = k === nn ? '' : 'none'; el('tabLab' + k).classList.toggle('on', k === nn); }); }
+    [1, 2].forEach(function (k) { el('tabLab' + k).addEventListener('click', function () { tab(k); }); });
+    load('ex1'); drawLR();
+  });
+})();
+
+(function () {
+var Q = [
+ {q: 'Numa tabela, \\(F_i\\) da 3ª linha é 27 e \\(F_i\\) da 2ª é 15. Quanto vale \\(f_i\\) da 3ª linha?', o: ['42', '12', '27', '15'], a: 1, e: '\\(f_3=F_3-F_2=27-15=12\\).'},
+ {q: 'A classe \\(20\\vdash 30\\) contém o valor 30?', o: ['Sim', 'Não', 'Só se for a última classe e estiver fechada', 'Depende do professor'], a: 2, e: '\\(a\\vdash b=[a,b[\\): inclui 20, exclui 30. O livro só fecha a última classe, escrevendo \\([a,b]\\).'},
+ {q: 'Em 40 dados, um valor aparece 6 vezes. Sua frequência relativa é:', o: ['6%', '15%', '24%', '40%'], a: 1, e: '\\(6/40=0{,}15=15\\%\\).'},
+ {q: 'A última linha da coluna \\(F_r\\) sempre vale:', o: ['\\(n\\)', '0', '100%', 'a maior \\(f_r\\)'], a: 2, e: 'A soma de todas as frequências relativas é 100%.'},
+ {q: 'Dados 12, 7, 20, 15, 9. Amplitude total:', o: ['8', '13', '20', '5'], a: 1, e: '\\(20-7=13\\).'},
+ {q: 'Tabela: 0 ⊢ 10: 5; 10 ⊢ 20: 8; 20 ⊢ 30: 7 (\\(n=20\\)). Quantos têm <strong>pelo menos</strong> 10?', o: ['13', '8', '15', '5'], a: 2, e: '\\(8+7=15\\) (ou \\(20-5\\)).'},
+ {q: '“Número de irmãos” é uma variável:', o: ['qualitativa nominal', 'quantitativa discreta', 'quantitativa contínua', 'qualitativa ordinal'], a: 1, e: 'É uma contagem (0, 1, 2…): quantitativa discreta.'},
+ {q: 'Frequências relativas 25%, 37,5%, 37,5%. Menor \\(n\\) possível:', o: ['4', '8', '100', '16'], a: 1, e: '\\(37{,}5\\%=3/8\\) e \\(25\\%=1/4\\). O mmc de 8 e 4 é 8, e as quantidades ficam 2, 3, 3.'}
+];
+  var right = 0, answered = 0;
+  function score() { document.getElementById('quizScore').textContent = right + ' / ' + answered + ' (de ' + Q.length + ')'; }
+  function render() {
+    right = 0; answered = 0;
+    var box = document.getElementById('quizBox'), h = '';
+    Q.forEach(function (it, i) {
+      h += '<div class="quiz-q" data-i="' + i + '"><div class="qt"><strong>' + (i + 1) + '.</strong> ' + it.q + '</div><div class="quiz-opts">';
+      it.o.forEach(function (op, j) { h += '<button type="button" data-j="' + j + '">' + op + '</button>'; });
+      h += '</div><div class="quiz-fb"></div></div>';
+    });
+    box.innerHTML = h;
+    box.querySelectorAll('.quiz-q').forEach(function (qq) {
+      var it = Q[+qq.dataset.i];
+      qq.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (qq.classList.contains('done')) return;
+          qq.classList.add('done'); answered++;
+          var j = +b.dataset.j, ok = j === it.a;
+          if (ok) right++;
+          b.classList.add(ok ? 'ok' : 'bad');
+          qq.querySelectorAll('button')[it.a].classList.add('ok');
+          var fb = qq.querySelector('.quiz-fb');
+          fb.innerHTML = (ok ? '<strong style="color:var(--accent2)">Certo!</strong> ' : '<strong style="color:var(--danger)">Ainda não.</strong> ') + it.e;
+          if (window.renderKatex) window.renderKatex(fb);
+          score();
+        });
+      });
+    });
+    if (window.renderKatex) window.renderKatex(box);
+    score();
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    render();
+    document.getElementById('quizReset').addEventListener('click', render);
+  });
+})();
+
+(function () {
+  var KEY = 'c45-estat-treino';
+  function loadPref() {
+    try { var v = localStorage.getItem(KEY); if (v === null) return true; return v === 'true'; } catch (e) { return true; }
+  }
+  function savePref(on) { try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {} }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal'), btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) { ex.classList.remove('collapsed'); ex.dataset.userRevealed = '1'; syncButtons(ex); }
+  function hide(ex) { ex.classList.add('collapsed'); delete ex.dataset.userRevealed; syncButtons(ex); }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner'), chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) { if (!ex.dataset.userRevealed) ex.classList.add('collapsed'); } else { ex.classList.remove('collapsed'); }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    if (/[?&]revisao\b/.test(location.search)) on = false;
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var steps = ex.querySelector('.steps');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (steps) { steps.parentNode.insertBefore(box, steps); steps.parentNode.insertBefore(row, steps); }
+        else { ex.appendChild(box); ex.appendChild(row); }
+      }
+      var br = ex.querySelector('.btn-reveal'), bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) { chk.checked = on; chk.addEventListener('change', function () { setMode(chk.checked); }); }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) { if (all.checked) reveal(ex); else hide(ex); });
+      });
+    }
+    setMode(on);
+    var bp = document.getElementById('btnPrintForm');
+    if (bp) bp.addEventListener('click', function () {
+      document.body.classList.add('print-form');
+      window.print();
+      setTimeout(function () { document.body.classList.remove('print-form'); }, 500);
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

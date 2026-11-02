@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C46 · Gráficos e Histogramas</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --danger: #ef5350; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+  touch-action: none;
+}
+.controls { display: flex; flex-direction: column; gap: 0.7rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-size: 0.92rem;
+}
+.live-vals div { margin: 0.25rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.status-pill {
+  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+}
+.status-secante { background: rgba(79,195,247,.2); color: var(--accent); }
+.status-tangente { background: rgba(129,199,132,.2); color: var(--accent2); }
+.status-exterior { background: rgba(255,183,77,.2); color: var(--accent3); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow); overflow: hidden;
+}
+.theory-card h3 { margin-top: 0; color: var(--accent); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
+}
+.explain {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 0 0 1.5rem; box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(79,195,247,.15); color: var(--accent);
+  border: 1px solid rgba(79,195,247,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps, .ex.collapsed .ans-box { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+/* ---- B44 extras ---- */
+canvas#cvPoly { aspect-ratio: 4 / 3; max-width: 640px; }
+.formulario {
+  background: linear-gradient(160deg, #22301f 0%, #1a2332 55%);
+  border: 2px solid var(--accent3); border-radius: var(--radius);
+  padding: 1.25rem 1.3rem 1.4rem; margin: 0 0 1.75rem; box-shadow: 0 6px 28px rgba(255,183,77,.12);
+}
+.formulario-head { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+.formulario-head h2 { margin: 0; border: none; padding: 0; color: var(--accent3); font-size: 1.35rem; letter-spacing: .02em; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 0.9rem; }
+.form-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; }
+.form-item h4 { color: var(--accent3); font-size: 0.92rem; margin-bottom: 0.25rem; }
+.form-item h4 .n { display: inline-block; min-width: 1.6rem; color: var(--bg); background: var(--accent3); border-radius: 5px; text-align: center; margin-right: 0.4rem; font-size: 0.8rem; }
+.form-item p { color: var(--muted); font-size: 0.86rem; margin-top: 0.3rem; }
+.form-item .formula { border-left-color: var(--accent3); font-size: 0.98rem; }
+.fix {
+  margin: 0.75rem 0; padding: 0.65rem 0.9rem; border-radius: 8px;
+  background: rgba(239,83,80,.10); border: 1px solid rgba(239,83,80,.4); color: #ffab9f; font-size: 0.9rem;
+}
+.fix strong { color: #ffcdd2; }
+.fix .katex { color: inherit; }
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.lab-tabs button.on { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.coef-row { display: grid; grid-template-columns: 4.2rem 1fr 3.4rem; gap: 0.5rem; align-items: center; }
+.coef-row .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--text); font-size: 0.88rem; }
+.coef-row.dom label { color: var(--accent3); font-weight: 700; }
+.coef-row.zero label { opacity: .55; }
+.ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .ops-grid { grid-template-columns: 1fr; } }
+.poly-in { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; font-size: 0.9rem; color: var(--muted); }
+.poly-in input { width: 58px; }
+.mult-table { border-collapse: collapse; margin: 0.6rem 0; font-size: 0.92rem; }
+.mult-table th, .mult-table td { border: 1px solid var(--border); padding: 0.4rem 0.65rem; text-align: center; }
+.mult-table th { background: var(--surface2); color: var(--accent); }
+.mult-table td { background: var(--bg); }
+.work { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-top: 0.8rem; overflow-x: auto; }
+.work div { margin: 0.3rem 0; color: var(--muted); }
+.deg-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(255,183,77,.18); color: var(--accent3); }
+.deg-tag.nulo { background: rgba(239,83,80,.18); color: var(--danger); }
+.root-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(129,199,132,.2); color: var(--accent2); }
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.9rem 0; }
+.quiz-q .qt { margin-bottom: 0.6rem; }
+.quiz-opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.quiz-opts button.ok { background: rgba(129,199,132,.25); border-color: var(--accent2); color: var(--accent2); }
+.quiz-opts button.bad { background: rgba(239,83,80,.18); border-color: var(--danger); color: #ffab9f; }
+.quiz-fb { margin-top: 0.55rem; font-size: 0.9rem; color: var(--muted); display: none; }
+.quiz-q.done .quiz-fb { display: block; }
+.score { display: inline-block; font-weight: 800; color: var(--accent2); font-size: 1.05rem; }
+.sys { display: inline-block; }
+/* ---- B45/B46 extras ---- */
+canvas.cv-wide { aspect-ratio: 4 / 3; max-width: 640px; }
+.badge-prova {
+  display: inline-block; background: rgba(239,83,80,.18); color: #ff8a80; border: 1px solid rgba(239,83,80,.6);
+  padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: .03em;
+}
+.badge-prova.max { background: #c62828; color: #fff; border-color: #ff8a80; box-shadow: 0 0 12px rgba(239,83,80,.45); }
+.ex.prova { border-left: 4px solid #ef5350; }
+.ex.prova-max { border: 2px solid #ef5350; box-shadow: 0 0 24px rgba(239,83,80,.18); }
+.badge-gab { display: inline-block; background: rgba(129,199,132,.15); color: var(--accent2); border: 1px solid rgba(129,199,132,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.caderno {
+  margin-top: 0.85rem; padding: 0.7rem 0.95rem; border-radius: 8px; font-size: 0.9rem;
+  background: rgba(79,195,247,.08); border: 1px dashed rgba(79,195,247,.55); color: #b3e5fc;
+}
+.caderno strong { color: #e1f5fe; }
+.caderno.quase { background: rgba(255,183,77,.08); border-color: rgba(255,183,77,.6); color: #ffe0b2; }
+.caderno.quase strong { color: #fff3e0; }
+.caderno .katex { color: inherit; }
+.opts { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem 1.2rem; margin: 0.35rem 0 0.2rem; color: var(--muted); font-size: 0.93rem; }
+.prova-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+.prova-list a { display: block; background: var(--bg); border: 1px solid rgba(239,83,80,.45); border-radius: 8px; padding: 0.5rem 0.7rem; color: var(--text); text-decoration: none; font-size: 0.88rem; }
+.prova-list a:hover { border-color: #ef5350; }
+.prova-list a .k { color: #ff8a80; font-weight: 800; margin-right: 0.35rem; }
+/* tabela de Briot-Ruffini */
+.briot { border-collapse: collapse; margin: 0.6rem auto; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.briot td { padding: 0.35rem 0.7rem; text-align: center; min-width: 2.6rem; color: var(--text); }
+.briot td.root { border-right: 2px solid var(--accent3); color: var(--accent3); font-weight: 700; }
+.briot tr.top td { border-bottom: 2px solid var(--accent3); }
+.briot td.rest { border-left: 2px solid var(--accent3); }
+.briot tr.bot td.rest { color: var(--accent2); font-weight: 800; }
+.briot td.hi { background: rgba(79,195,247,.22); border-radius: 6px; outline: 1px solid var(--accent); }
+.briot td.src { background: rgba(255,183,77,.16); border-radius: 6px; }
+.briot td.ghost { color: transparent; }
+.briot caption { caption-side: bottom; color: var(--muted); font-size: 0.8rem; padding-top: 0.3rem; }
+.steps .briot { margin-left: 0; }
+.step-msg { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.85rem; margin-top: 0.6rem; color: var(--muted); min-height: 2.6rem; }
+.step-msg strong { color: var(--accent); }
+.inp-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.35rem 0; }
+.inp-row input[type="text"], .inp-row input[type="number"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.35rem 0.55rem; border-radius: 8px; font-size: 0.92rem;
+}
+.inp-row input[type="text"] { min-width: 210px; flex: 1; }
+.inp-row input[type="number"] { width: 70px; }
+.inp-row select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.3rem 0.4rem; border-radius: 8px; }
+.err { color: #ff8a80; font-size: 0.85rem; }
+.chave { font-size: 0.98rem; }
+.chave .katex-display { margin: 0.15em 0; text-align: left; }
+.root-ctl { display: grid; grid-template-columns: 2.2rem 1fr 3rem 4.6rem; gap: 0.45rem; align-items: center; }
+.root-ctl .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.88rem; }
+.mult-pill { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin: 0.1rem 0.15rem; }
+.mult-pill.cruza { background: rgba(79,195,247,.18); color: var(--accent); }
+.mult-pill.toca { background: rgba(255,183,77,.2); color: var(--accent3); }
+.mult-pill.inflex { background: rgba(206,147,216,.2); color: var(--accent4); }
+.graph-fig { display: block; margin: 0.6rem auto; max-width: 100%; }
+.ex.collapsed .caderno { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .caderno { display: block !important; }
+
+.formula { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.formula .katex-display { position: relative; }
+.briot-wrap { max-width: 100%; overflow-x: auto; }
+@media (max-width: 520px) { .briot td { padding: 0.3rem 0.45rem; } }
+@media print {
+  body.print-form nav, body.print-form .treino-banner, body.print-form .wrap > *:not(.formulario), body.print-form footer, body.print-form .no-print { display: none !important; }
+  body.print-form { background: #fff; color: #000; }
+  body.print-form .formulario { border-color: #999; background: #fff; box-shadow: none; }
+  body.print-form .form-item { background: #fff; border-color: #bbb; break-inside: avoid; }
+  body.print-form .form-item h4, body.print-form .formulario-head h2 { color: #000; }
+  body.print-form .form-item p { color: #333; }
+}
+
+
+/* ---- Estatística (C45–C47) extras ---- */
+.ftab { border-collapse: collapse; margin: 0.6rem 0; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.ftab th, .ftab td { border: 1px solid var(--border); padding: 0.38rem 0.7rem; text-align: center; }
+.ftab th { background: #3a2230; color: #ffcdd2; font-weight: 700; }
+.ftab td { background: var(--bg); color: var(--text); }
+.ftab tr.hi td { background: rgba(79,195,247,.16); }
+.ftab tr.hi2 td { background: rgba(255,183,77,.16); }
+.ftab tr.tot td { background: var(--surface2); font-weight: 700; color: var(--accent2); }
+.ftab td.l { text-align: left; }
+.ftab .katex { color: inherit; }
+.tab-wrap { max-width: 100%; overflow-x: auto; }
+.chart { display: block; margin: 0.7rem auto; max-width: 100%; height: auto; background: #0a0e14; border: 1px solid var(--border); border-radius: 10px; }
+.fig { text-align: center; margin: 0.6rem 0; }
+.fig .note { margin-top: 0.25rem; }
+.badge-marc {
+  display: inline-block; background: rgba(239,83,80,.18); color: #ff8a80; border: 1px solid rgba(239,83,80,.6);
+  padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: .03em;
+}
+.datab { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.9rem; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; margin: 0.45rem 0; overflow-x: auto; white-space: pre-wrap; word-spacing: 0.35rem; }
+textarea.data-in { width: 100%; min-height: 80px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0.5rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.88rem; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.seg button { border: none; border-radius: 0; }
+.seg button.on { background: #0d47a1; color: #fff; }
+.cat-row { display: grid; grid-template-columns: 6.5rem 1fr 3.2rem; gap: 0.45rem; align-items: center; }
+.cat-row input[type="text"] { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.25rem 0.4rem; border-radius: 6px; width: 100%; font-size: 0.82rem; }
+.cat-row .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.88rem; }
+.sw { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 3px; vertical-align: -1px; margin-right: 0.3rem; }
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+@media (max-width: 860px) { .chart-grid { grid-template-columns: 1fr; } }
+.ler { margin-top: 0.85rem; padding: 0.65rem 0.9rem; border-radius: 8px; background: rgba(206,147,216,.10); border: 1px solid rgba(206,147,216,.45); color: #e1bee7; font-size: 0.9rem; }
+.ler strong { color: #f3e5f5; }
+.ler .katex { color: inherit; }
+.ex.collapsed .ler { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .ler { display: block !important; }
+svg.drag { touch-action: none; cursor: default; }
+svg.drag circle.pt { cursor: grab; }
+.pill { display:inline-block; padding: 0.1rem 0.55rem; border-radius: 999px; font-weight: 700; font-size: 0.82rem; margin: 0.1rem 0.15rem; }
+.pill.media { background: rgba(239,83,80,.2); color: #ff8a80; }
+.pill.mediana { background: rgba(79,195,247,.2); color: var(--accent); }
+.pill.moda { background: rgba(129,199,132,.2); color: var(--accent2); }
+</style>
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "\\[", right: "\\]", display: true},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">Estatística · C46</span>
+  <a href="index.html">Index</a>
+  <a href="c45-tabelas-frequencia.html">C45 Tabelas</a>
+  <a href="c46-graficos-histogramas.html" class="active">C46 Gráficos</a>
+  <a href="c47-tendencia-central.html">C47 Média, mediana, moda</a>
+  <a href="#formulario">Formulário</a>
+  <a href="#laboratorio">Laboratório</a>
+  <a href="#teste">Teste</a>
+  <a href="#exercicios">Exercícios</a>
+</nav>
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+
+  <h1>Gráficos e Histogramas</h1>
+  <p class="subtitle">C46 · Gráfico de linhas · Barras/colunas · Setores · Pictograma · Histograma · Polígono de frequências · Leitura e interpretação · Versa</p>
+
+  <span class="section-label">(A) Por que gráfico, e como ler um</span>
+  <div class="explain">
+    <p class="lead">Um gráfico é uma tabela de frequências <strong>desenhada</strong>. A prova da Gica é dissertativa e foca em <strong>interpretar</strong>: tirar o número certo do gráfico, fazer a conta e escrever a conclusão com unidade.</p>
+    <p><strong>Roteiro de leitura (sempre, antes de qualquer conta):</strong></p>
+    <ol style="color:var(--muted);padding-left:1.3rem">
+      <li><strong>Título e fonte:</strong> do que se trata, de quando é.</li>
+      <li><strong>Eixos e unidade:</strong> "em milhares", "em %", "em mm", "ppm". Um "62,8" em milhares é 62 800.</li>
+      <li><strong>Escala:</strong> o eixo começa em zero? (no C05 começa perto de 2,4; no P03, em 3,14). Eixo que não começa no zero <em>exagera</em> a variação visual.</li>
+      <li><strong>Legenda:</strong> qual cor é qual série.</li>
+      <li><strong>Pergunta:</strong> ela pede um valor, uma diferença, uma porcentagem ou uma conclusão? Conclusões só valem para o que o gráfico <em>mostra</em> (Complementar 05).</li>
+    </ol>
+  </div>
+
+  <span class="section-label">(B) Conceitos: os tipos de gráfico</span>
+  <div class="theory-grid">
+    <div class="theory-card">
+      <h3>1. Gráfico de linhas (segmentos)</h3>
+      <p>Mostra <strong>evolução no tempo</strong>: cada ponto é um valor, e os segmentos ligam pontos consecutivos. Segmento subindo = aumento, descendo = queda, mais inclinado = variação maior <em>se os intervalos de tempo forem iguais</em>.</p>
+      <p>Exercícios: Propostos 03 e 04, Complementares 01 e 05.</p>
+    </div>
+    <div class="theory-card">
+      <h3>2. Barras / colunas</h3>
+      <p>Comparam <strong>categorias</strong>. Altura (ou comprimento) da barra = valor. As barras ficam <strong>separadas</strong>. Barras lado a lado comparam duas séries (Proposto 01, Complementar 03). Barras empilhadas mostram partes de um total (Complementar 07).</p>
+    </div>
+    <div class="theory-card">
+      <h3>3. Setores (pizza)</h3>
+      <p>Mostra <strong>partes de um todo</strong>. O círculo inteiro (360°) é 100%. O ângulo de cada setor é proporcional à frequência:</p>
+      <div class="formula">\[\theta=f_r\cdot 360^\circ=\frac{f_i}{n}\cdot 360^\circ\]</div>
+      <p>1% ↔ 3,6°. Meio círculo = 50% (diâmetro!), um quarto = 25% (ângulo reto).</p>
+    </div>
+    <div class="theory-card">
+      <h3>4. Pictograma</h3>
+      <p>Usa figuras (casquinhas de sorvete no exemplo do livro). Cada figura vale uma quantidade fixa que a legenda informa. Meia figura = metade do valor.</p>
+    </div>
+    <div class="theory-card">
+      <h3>5. Histograma</h3>
+      <p>Para dados em <strong>classes</strong> (C45). Retângulos <strong>colados</strong>: a base é a classe \(a\vdash b\) e a altura é \(f_i\). Com classes de mesma amplitude, a área de cada retângulo é proporcional à frequência.</p>
+    </div>
+    <div class="theory-card">
+      <h3>6. Polígono de frequências</h3>
+      <p>Ligue os <strong>pontos médios</strong> do topo de cada retângulo. Para fechar no eixo, acrescente uma classe vazia antes e outra depois (frequência 0). A área sob o polígono é igual à área do histograma.</p>
+      <div class="formula">\[\text{ponto médio}=\frac{a+b}{2}\]</div>
+    </div>
+  </div>
+
+  <h3>Exemplo: setores com 50%, 30%, 14% e 6% (como no livro)</h3>
+  <div class="explain">
+    <div class="formula">\[50\%\cdot360^\circ=180^\circ,\quad 30\%\cdot360^\circ=108^\circ,\quad 14\%\cdot360^\circ=50{,}4^\circ,\quad 6\%\cdot360^\circ=21{,}6^\circ\]</div>
+    <div class="formula">\[180+108+50{,}4+21{,}6=360^\circ\ \checkmark\]</div>
+    <div class="fig"><svg class="chart" viewBox="0 0 560 280" width="560" role="img" aria-label="Setores 50/30/14/6"><path d="M280.0,140.0 L280.0,40.0 A100,100 0 0 1 280.0,240.0 Z" fill="#4f8fe0" stroke="#0a0e14" stroke-width="2"/><text x="396.0" y="144.0" fill="#e8eef7" font-size="11.5" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >A: 50% · 180°</text><path d="M280.0,140.0 L280.0,240.0 A100,100 0 0 1 184.9,109.1 Z" fill="#d8b04a" stroke="#0a0e14" stroke-width="2"/><text x="186.2" y="212.2" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >B: 30% · 108°</text><path d="M280.0,140.0 L184.9,109.1 A100,100 0 0 1 243.2,47.0 Z" fill="#8fbf73" stroke="#0a0e14" stroke-width="2"/><text x="195.4" y="64.6" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >C: 14% · 50,4°</text><path d="M280.0,140.0 L243.2,47.0 A100,100 0 0 1 280.0,40.0 Z" fill="#d0566e" stroke="#0a0e14" stroke-width="2"/><text x="258.3" y="30.1" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >D: 6% · 21,6°</text></svg><p class="note">Redesenhado: só as porcentagens importam para os ângulos.</p></div>
+  </div>
+
+  <h3>Exemplo do livro (p. 749): histograma e polígono das massas</h3>
+  <div class="explain">
+    <div class="tab-wrap"><table class="ftab"><tr><th>Massa (kg)</th><th>f<sub>i</sub></th><th>ponto médio</th></tr><tr><td>40 ⊢ 50</td><td>6</td><td>45</td></tr><tr><td>50 ⊢ 60</td><td>10</td><td>55</td></tr><tr><td>60 ⊢ 70</td><td>18</td><td>65</td></tr><tr><td>70 ⊢ 80</td><td>12</td><td>75</td></tr><tr><td>80 ⊢ 90</td><td>4</td><td>85</td></tr><tr class="tot"><td>Total</td><td>50</td><td>—</td></tr></table></div><div class="fig"><svg class="chart" viewBox="0 0 620 320" width="620" role="img" aria-label="Histograma com polígono"><line x1="52" y1="276.0" x2="604" y2="276.0" stroke="#243044"/><text x="46.0" y="280.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >0</text><line x1="52" y1="250.0" x2="604" y2="250.0" stroke="#243044"/><text x="46.0" y="254.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >2</text><line x1="52" y1="224.0" x2="604" y2="224.0" stroke="#243044"/><text x="46.0" y="228.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><line x1="52" y1="198.0" x2="604" y2="198.0" stroke="#243044"/><text x="46.0" y="202.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><line x1="52" y1="172.0" x2="604" y2="172.0" stroke="#243044"/><text x="46.0" y="176.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >8</text><line x1="52" y1="146.0" x2="604" y2="146.0" stroke="#243044"/><text x="46.0" y="150.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><line x1="52" y1="120.0" x2="604" y2="120.0" stroke="#243044"/><text x="46.0" y="124.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >12</text><line x1="52" y1="94.0" x2="604" y2="94.0" stroke="#243044"/><text x="46.0" y="98.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >14</text><line x1="52" y1="68.0" x2="604" y2="68.0" stroke="#243044"/><text x="46.0" y="72.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >16</text><line x1="52" y1="42.0" x2="604" y2="42.0" stroke="#243044"/><text x="46.0" y="46.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >18</text><line x1="52" y1="16.0" x2="604" y2="16.0" stroke="#243044"/><text x="46.0" y="20.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >20</text><rect x="130.9" y="198.0" width="78.9" height="78.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><rect x="209.7" y="146.0" width="78.9" height="130.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><rect x="288.6" y="42.0" width="78.9" height="234.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><rect x="367.4" y="120.0" width="78.9" height="156.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><rect x="446.3" y="224.0" width="78.9" height="52.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><line x1="91.4" y1="276.0" x2="91.4" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="170.3" y1="198.0" x2="170.3" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="249.1" y1="146.0" x2="249.1" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="328.0" y1="42.0" x2="328.0" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="406.9" y1="120.0" x2="406.9" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="485.7" y1="224.0" x2="485.7" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="564.6" y1="276.0" x2="564.6" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><polyline fill="none" stroke="#ef5350" stroke-width="2.5" points="91.4,276.0 170.3,198.0 249.1,146.0 328.0,42.0 406.9,120.0 485.7,224.0 564.6,276.0"/><circle cx="91.4" cy="276.0" r="4" fill="#ef5350"/><circle cx="170.3" cy="198.0" r="4" fill="#ef5350"/><text x="170.3" y="190.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><circle cx="249.1" cy="146.0" r="4" fill="#ef5350"/><text x="249.1" y="138.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><circle cx="328.0" cy="42.0" r="4" fill="#ef5350"/><text x="328.0" y="34.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >18</text><circle cx="406.9" cy="120.0" r="4" fill="#ef5350"/><text x="406.9" y="112.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >12</text><circle cx="485.7" cy="224.0" r="4" fill="#ef5350"/><text x="485.7" y="216.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><circle cx="564.6" cy="276.0" r="4" fill="#ef5350"/><text x="91.4" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >35</text><text x="170.3" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >45</text><text x="249.1" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >55</text><text x="328.0" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >65</text><text x="406.9" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >75</text><text x="485.7" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >85</text><text x="564.6" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >95</text><line x1="52.0" y1="276" x2="52.0" y2="280" stroke="#5a6a82"/><text x="52.0" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >30</text><line x1="130.9" y1="276" x2="130.9" y2="280" stroke="#5a6a82"/><text x="130.9" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >40</text><line x1="209.7" y1="276" x2="209.7" y2="280" stroke="#5a6a82"/><text x="209.7" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >50</text><line x1="288.6" y1="276" x2="288.6" y2="280" stroke="#5a6a82"/><text x="288.6" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >60</text><line x1="367.4" y1="276" x2="367.4" y2="280" stroke="#5a6a82"/><text x="367.4" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >70</text><line x1="446.3" y1="276" x2="446.3" y2="280" stroke="#5a6a82"/><text x="446.3" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >80</text><line x1="525.1" y1="276" x2="525.1" y2="280" stroke="#5a6a82"/><text x="525.1" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >90</text><line x1="604.0" y1="276" x2="604.0" y2="280" stroke="#5a6a82"/><text x="604.0" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >100</text><line x1="52" y1="16" x2="52" y2="276" stroke="#5a6a82" stroke-width="1.5"/><line x1="52" y1="276" x2="604" y2="276" stroke="#5a6a82" stroke-width="1.5"/><text x="14.0" y="146.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 146.0)">nº de pessoas</text><text x="328.0" y="318.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Massa (kg)</text></svg><p class="note">Redesenhado a partir da tabela. As classes vazias 30 ⊢ 40 (ponto médio 35) e 90 ⊢ 100 (ponto médio 95) fecham o polígono no eixo.</p></div>
+    <div class="fix"><strong>Correção do livro (p. 749).</strong> Os gráficos impressos não batem exatamente com a tabela 6, 10, 18, 12, 4. No desenho, a classe \(50\vdash60\) aparece com cerca de 8,5, a \(60\vdash70\) com cerca de 17, a \(70\vdash80\) com cerca de 14,5 e a \(80\vdash90\) com cerca de 2,5. Vale a <strong>tabela</strong>. Os gráficos acima foram redesenhados com os valores corretos (são os mesmos do Proposto 05). Repare também que a soma da tabela é \(6+10+18+12+4=50\), e não 40.</div>
+  </div>
+  <section class="formulario" id="formulario">
+    <div class="formulario-head">
+      <h2>(C) FORMULÁRIO · C46 Gráficos e Histogramas</h2>
+      <button type="button" class="primary no-print" id="btnPrintForm">Imprimir só o formulário</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-item">
+        <h4><span class="n">1</span>Ângulo do setor</h4>
+        <div class="formula">\[\theta=\frac{f_i}{n}\cdot 360^\circ\]</div><p>Ex.: \(20\%\cdot 360^\circ=72^\circ\) (Proposto 02).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">2</span>Do ângulo para %</h4>
+        <div class="formula">\[f_r=\frac{\theta}{360^\circ}\]</div><p>\(180^\circ=50\%\), \(90^\circ=25\%\), \(1\%=3{,}6^\circ\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">3</span>Parte que falta</h4>
+        <div class="formula">\[f_r(\text{faltando})=100\%-\sum(\text{conhecidas})\]</div><p>Proposto 02: \(100-92=8\%\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">4</span>Porcentagem → quantidade</h4>
+        <div class="formula">\[f_i=f_r\cdot n\]</div><p>\(8\%\) de 1200 = 96.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">5</span>Diâmetro no setor</h4>
+        <p>Se um segmento é diâmetro, ele divide o círculo em <strong>50% + 50%</strong> (Complementar 02).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">6</span>Variação entre dois pontos</h4>
+        <div class="formula">\[\Delta=v_{\text{final}}-v_{\text{inicial}}\]</div><p>Maior variação: compare os \(|\Delta|\) de cada par consecutivo (Proposto 03).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">7</span>Diferença entre duas séries</h4>
+        <div class="formula">\[d=|\text{série 1}-\text{série 2}|\]</div><p>Mês a mês. A maior diferença é o maior "vão" entre as linhas (Complementar 01).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">8</span>Unidade do eixo</h4>
+        <p>"em milhares": \(62{,}8-37{,}9=24{,}9\) mil \(=24\,900\) (Complementar 04).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">9</span>Histograma</h4>
+        <p>Retângulos colados, base = classe, altura = \(f_i\).</p><div class="formula">\[\text{área total}=h\cdot n\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">10</span>Polígono de frequências</h4>
+        <div class="formula">\[\left(\frac{a+b}{2},\ f_i\right)\]</div><p>Mais uma classe vazia em cada ponta para fechar no eixo.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">11</span>Média de várias barras</h4>
+        <div class="formula">\[\bar x=\frac{v_1+\dots+v_k}{k}\]</div><p>"\(k\) vezes maior": divida e compare (Complementar 07).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">12</span>Só o que o gráfico mostra</h4>
+        <p>Valores fora do período ou entre dois pontos (15 de agosto, dez/2014) <strong>não</strong> podem ser afirmados (Complementar 05).</p>
+      </div>
+    </div>
+  </section>
+
+  <span class="section-label" id="laboratorio">(D) Laboratório interativo</span>
+  <div class="lab-tabs">
+    <button type="button" class="on" id="tabLab1">1 · Mesmos dados: barras × setores (com os ângulos)</button>
+    <button type="button" id="tabLab2">2 · Histograma + polígono de frequências</button>
+  </div>
+
+  <div class="playground" id="lab1">
+    <div class="play-grid">
+      <div>
+        <div class="chart-grid"><div id="bsBar"></div><div id="bsPie"></div></div>
+        <div id="bsTab"></div>
+        <div class="live-vals" id="bsVals" aria-live="polite"></div>
+      </div>
+      <div class="controls">
+        <label>Categorias (nome e quantidade):</label>
+        <div id="bsRows"></div>
+        <label>Exemplos prontos:</label>
+        <div class="ctrl-row">
+          <button type="button" class="primary" data-bs="p02">Prop. 02 filhos (1200)</button>
+          <button type="button" data-bs="c02">Compl. 02 setores</button>
+          <button type="button" data-bs="c06">Compl. 06 leitura</button>
+          <button type="button" data-bs="livro">Livro 50/30/14/6</button>
+        </div>
+        <p class="note">Mexa um controle e veja: a barra cresce, o setor abre e <strong>todos</strong> os ângulos mudam, porque o total mudou.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="playground" id="lab2" style="display:none">
+    <div class="play-grid">
+      <div>
+        <div id="hgChart"></div>
+        <div id="hgTab"></div>
+        <div class="live-vals" id="hgVals" aria-live="polite"></div>
+      </div>
+      <div class="controls">
+        <label for="hgS">Início da 1ª classe: <span id="hgSLbl" class="hl3"></span></label>
+        <input type="range" id="hgS" min="0" max="100" step="1" value="40">
+        <label for="hgH">Amplitude \(h=\) <span id="hgHLbl" class="hl3"></span></label>
+        <input type="range" id="hgH" min="1" max="20" step="1" value="10">
+        <label for="hgK">Número de classes: <span id="hgKLbl" class="hl3"></span></label>
+        <input type="range" id="hgK" min="3" max="7" step="1" value="5">
+        <label>Frequências \(f_i\):</label>
+        <div id="hgRows"></div>
+        <div class="ctrl-row">
+          <label><input type="checkbox" id="hgShowH" checked> histograma</label>
+          <label><input type="checkbox" id="hgShowP" checked> polígono</label>
+        </div>
+        <div class="ctrl-row">
+          <button type="button" class="primary" data-hg="p05">Prop. 05 massas</button>
+          <button type="button" data-hg="c45p04">C45 Prop. 04 espessura</button>
+          <button type="button" data-hg="c45p02">C45 Prop. 02 internação</button>
+          <button type="button" data-hg="c47p03">C47 Prop. 03</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <span class="section-label" id="teste">(E) Teste rápido</span>
+  <div class="explain">
+    <p>Clique na alternativa. A explicação aparece logo depois. Acertos: <span class="score" id="quizScore">0 / 0</span> &nbsp; <button type="button" id="quizReset">Recomeçar</button></p>
+    <div id="quizBox"></div>
+  </div>
+
+  <h2 id="exercicios">(F) Exercícios</h2>
+  <div class="explain">
+    <p class="lead"><span class="badge-prova">★ Cai na prova</span> &nbsp;marca os exercícios que a Gica circulou (todos os complementares, menos o 02). Todos os gráficos foram <strong>redesenhados</strong> abaixo de cada enunciado para a resolução poder apontar para eles. Onde o livro não imprime o número, a leitura foi feita pela grade e isso está avisado.</p>
+    <div class="prova-list">
+      <a href="#f01"><span class="k">★</span>Compl. 01 · UEG, chuva Cantareira</a>
+      <a href="#f03"><span class="k">★</span>Compl. 03 · Unesp, óleo × oxigênio</a>
+      <a href="#f04"><span class="k">★</span>Compl. 04 · Cesgranrio, exportação</a>
+      <a href="#f05"><span class="k">★</span>Compl. 05 · UCB, dólar 2015</a>
+      <a href="#f06"><span class="k">★</span>Compl. 06 · OBMEP, barras → setores</a>
+      <a href="#f07"><span class="k">★</span>Compl. 07 · UEG, soja</a>
+    </div>
+  </div>
+
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+  <h3>Exercícios propostos · pp. 750–751</h3>
+
+  <div class="ex" id="e01">
+    <div class="ex-header"><span class="ex-num">Proposto 01</span><span class="ex-src">Versa C46 · p. 750</span><span class="badge-pratica">barras duplas</span><span class="badge-pratica">porcentagem</span></div>
+    <p class="ex-q">O gráfico mostra as causas da mortalidade de jovens e não jovens (em %) no Brasil em 2008. Supondo que existissem 8 milhões de jovens no Brasil em 2008, de acordo com a pesquisa, quantos deles morreram por meio de homicídios?</p><div class="fig"><svg class="chart" viewBox="0 0 620 330" width="620" role="img" aria-label="Causas da mortalidade de jovens e não jovens"><line x1="52" y1="272.0" x2="606" y2="272.0" stroke="#243044"/><text x="46.0" y="276.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >0</text><line x1="52" y1="222.4" x2="606" y2="222.4" stroke="#243044"/><text x="46.0" y="226.4" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >20</text><line x1="52" y1="172.8" x2="606" y2="172.8" stroke="#243044"/><text x="46.0" y="176.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >40</text><line x1="52" y1="123.2" x2="606" y2="123.2" stroke="#243044"/><text x="46.0" y="127.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >60</text><line x1="52" y1="73.6" x2="606" y2="73.6" stroke="#243044"/><text x="46.0" y="77.6" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >80</text><line x1="52" y1="24.0" x2="606" y2="24.0" stroke="#243044"/><text x="46.0" y="28.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >100</text><line x1="52" y1="24" x2="52" y2="272" stroke="#5a6a82" stroke-width="1.5"/><line x1="52" y1="272" x2="606" y2="272" stroke="#5a6a82" stroke-width="1.5"/><rect x="74.4" y="205.0" width="32.0" height="67.0" fill="#d4c94a" rx="2"/><text x="90.4" y="201.0" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >27</text><rect x="108.4" y="48.8" width="32.0" height="223.2" fill="#e05a7a" rx="2"/><text x="124.4" y="44.8" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >90</text><text x="107.4" y="287.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Naturais</text><rect x="185.2" y="91.0" width="32.0" height="181.0" fill="#d4c94a" rx="2"/><text x="201.2" y="87.0" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >73</text><rect x="219.2" y="239.8" width="32.0" height="32.2" fill="#e05a7a" rx="2"/><text x="235.2" y="235.8" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >13</text><text x="218.2" y="287.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Externas</text><rect x="296.0" y="172.8" width="32.0" height="99.2" fill="#d4c94a" rx="2" stroke="#ffffff" stroke-width="2.5"/><text x="312.0" y="168.8" fill="#ffffff" font-size="10" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif" >40</text><rect x="330.0" y="257.1" width="32.0" height="14.9" fill="#e05a7a" rx="2"/><text x="346.0" y="253.1" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><text x="329.0" y="287.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Homicídios</text><rect x="406.8" y="249.7" width="32.0" height="22.3" fill="#d4c94a" rx="2"/><text x="422.8" y="245.7" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >9</text><rect x="440.8" y="259.6" width="32.0" height="12.4" fill="#e05a7a" rx="2"/><text x="456.8" y="255.6" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >5</text><text x="439.8" y="287.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Suicídios</text><rect x="517.6" y="207.5" width="32.0" height="64.5" fill="#d4c94a" rx="2"/><text x="533.6" y="203.5" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >26</text><rect x="551.6" y="254.6" width="32.0" height="17.4" fill="#e05a7a" rx="2"/><text x="567.6" y="250.6" fill="#e8eef7" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >7</text><text x="550.6" y="287.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Transporte</text><text x="14.0" y="148.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 148.0)">Participação (%)</text><rect x="52" y="309" width="12" height="10" fill="#d4c94a" rx="2"/><text x="68.0" y="318.0" fill="#e8eef7" font-size="11" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >Jovem</text><rect x="108.5" y="309" width="12" height="10" fill="#e05a7a" rx="2"/><text x="124.5" y="318.0" fill="#e8eef7" font-size="11" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >Não jovem</text></svg><p class="note">Redesenhado. As barras do livro não têm rótulo numérico: os valores foram lidos na grade (perspectiva inclinada), por isso são aproximados. Barra destacada: homicídios, jovens.</p></div>
+    <div class="fix"><strong>Ambiguidade do enunciado.</strong> As porcentagens do gráfico são a <em>participação de cada causa nas mortes</em> (de cada 100 jovens que morreram, cerca de 40 foram por homicídio), e não a porcentagem da população jovem. Aplicar 40% a "8 milhões de jovens vivos" daria 3,2 milhões de homicídios, o que é impossível na vida real. O livro quer a conta direta \(f_r\cdot n\). Na prova faça essa conta, mas vale escrever: "considerando 8 milhões como o total de mortes de jovens".</div>
+    <div class="steps">
+      
+      <ol>
+        <li><strong>Leia o gráfico:</strong> grupo "Homicídios", barra amarela (Jovem). Ela fica um pouco acima da linha de 40 (entre 40 e 45). Na pesquisa original (Mapa da Violência 2011), o valor é \(39{,}7\%\). Use \(\approx 40\%\).</li>
+        <li><strong>Aplique a porcentagem ao total:</strong>
+          <div class="formula">\[40\%\ \text{de}\ 8\,000\,000=\frac{40}{100}\cdot 8\,000\,000=0{,}4\cdot 8\,000\,000=3\,200\,000\]</div></li>
+        <li><strong>Com o valor exato da fonte:</strong> \(0{,}397\cdot 8\,000\,000=3\,176\,000\) (também \(\approx 3{,}2\) milhões).</li>
+      </ol>
+      <div class="dica">Na resposta dissertativa, escreva de onde veio o 40%: "pelo gráfico, homicídios correspondem a cerca de 40% para jovens".</div>
+    </div>
+    <div class="ans-box">\(\approx 3\,200\,000\) jovens (cerca de 3,2 milhões; com 39,7%: 3 176 000)</div>
+    
+  </div>
+
+  <div class="ex" id="e02">
+    <div class="ex-header"><span class="ex-num">Proposto 02</span><span class="ex-src">Versa C46 · p. 750</span><span class="badge-pratica">setores</span><span class="badge-pratica">ângulo</span></div>
+    <p class="ex-q">Foram consultadas 1200 mulheres sobre o número de filhos. O gráfico informa a porcentagem de mulheres para cada número de filhos, exceto na faixa de 5 filhos. Determine:<br>a) o número de mulheres entrevistadas com 5 filhos;<br>b) o ângulo do setor que representa as mulheres com 3 filhos.</p><div class="fig"><svg class="chart" viewBox="0 0 600 300" width="600" role="img" aria-label="Filhos por mulher"><path d="M300.0,150.0 L300.0,45.0 A105,105 0 0 1 344.7,55.0 Z" fill="#c9c46a" stroke="#0a0e14" stroke-width="2"/><text x="326.4" y="35.9" fill="#e8eef7" font-size="11.5" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >0: 7% · 25,2°</text><path d="M300.0,150.0 L344.7,55.0 A105,105 0 0 1 404.2,163.2 Z" fill="#6f86d6" stroke="#0a0e14" stroke-width="2"/><text x="406.0" y="95.7" fill="#e8eef7" font-size="11.5" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >1: 20% · 72°</text><path d="M300.0,150.0 L404.2,163.2 A105,105 0 0 1 255.3,245.0 Z" fill="#d0566e" stroke="#0a0e14" stroke-width="2"/><text x="358.3" y="260.0" fill="#e8eef7" font-size="11.5" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >2: 30% · 108°</text><path d="M300.0,150.0 L255.3,245.0 A105,105 0 0 1 195.8,136.8 Z" fill="#d8b04a" stroke="#0a0e14" stroke-width="2"/><text x="194.0" y="212.3" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3: 20% · 72°</text><path d="M300.0,150.0 L195.8,136.8 A105,105 0 0 1 249.4,58.0 Z" fill="#8fbf73" stroke="#0a0e14" stroke-width="2"/><text x="199.9" y="86.0" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >4: 15% · 54°</text><path d="M300.0,150.0 L249.4,58.0 A105,105 0 0 1 300.0,45.0 Z" fill="#c98a7a" stroke="#0a0e14" stroke-width="2"/><text x="269.9" y="36.8" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >5: 8% · 28,8°</text></svg><p class="note">Redesenhado (plano, não em 3D) com a correção 1 filho = 20%. O setor de 5 filhos já aparece com os 8% calculados no item a.</p></div>
+    <div class="fix"><strong>Correção do livro.</strong> No setor de 1 filho está impresso <strong>"200%"</strong>. É impossível (o círculo inteiro é 100%). O correto é <strong>20%</strong>. Só com 20% a conta fecha num valor positivo para 5 filhos.</div>
+    <div class="steps">
+      
+      <ol>
+        <li><strong>a) Porcentagens conhecidas:</strong> 0 filho: 7%; 1 filho: 20%; 2 filhos: 30%; 3 filhos: 20%; 4 filhos: 15%.
+          <div class="formula">\[7+20+30+20+15=92\%\]</div></li>
+        <li><strong>O que falta para 100%</strong> é a faixa de 5 filhos:
+          <div class="formula">\[100\%-92\%=8\%\]</div></li>
+        <li><strong>Quantidade de mulheres:</strong>
+          <div class="formula">\[8\%\ \text{de}\ 1200=\frac{8}{100}\cdot 1200=8\cdot 12=96\]</div></li>
+        <li><strong>b) Ângulo de 3 filhos (20%):</strong>
+          <div class="formula">\[\theta=20\%\cdot 360^\circ=\frac{20}{100}\cdot 360^\circ=\frac{360^\circ}{5}=72^\circ\]</div></li>
+        <li><strong>Conferência pela quantidade:</strong> 20% de 1200 = 240 mulheres, e \(\frac{240}{1200}\cdot 360^\circ=72^\circ\ \checkmark\)</li>
+      </ol>
+    </div>
+    <div class="ans-box">a) \(96\) mulheres &nbsp; b) \(72^\circ\)</div>
+    
+  </div>
+
+  <div class="ex" id="e03">
+    <div class="ex-header"><span class="ex-num">Proposto 03</span><span class="ex-src">Versa C46 · p. 750</span><span class="badge-pratica">linha</span><span class="badge-pratica">variação</span></div>
+    <p class="ex-q">As ações de uma empresa variaram semanalmente conforme os dados da figura. De acordo com os dados apresentados, o período de maior variação ocorreu entre quais semanas?</p><div class="fig"><svg class="chart" viewBox="0 0 620 320" width="620" role="img" aria-label="Preço semanal das ações"><line x1="56" y1="274.0" x2="596" y2="274.0" stroke="#243044"/><text x="50.0" y="278.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,14</text><line x1="56" y1="231.3" x2="596" y2="231.3" stroke="#243044"/><text x="50.0" y="235.3" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,16</text><line x1="56" y1="188.7" x2="596" y2="188.7" stroke="#243044"/><text x="50.0" y="192.7" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,18</text><line x1="56" y1="146.0" x2="596" y2="146.0" stroke="#243044"/><text x="50.0" y="150.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,20</text><line x1="56" y1="103.3" x2="596" y2="103.3" stroke="#243044"/><text x="50.0" y="107.3" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,22</text><line x1="56" y1="60.7" x2="596" y2="60.7" stroke="#243044"/><text x="50.0" y="64.7" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,24</text><line x1="56" y1="18.0" x2="596" y2="18.0" stroke="#243044"/><text x="50.0" y="22.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,26</text><line x1="56" y1="18" x2="56" y2="274" stroke="#5a6a82" stroke-width="1.5"/><line x1="56" y1="274" x2="596" y2="274" stroke="#5a6a82" stroke-width="1.5"/><text x="101.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >1</text><text x="191.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >2</text><text x="281.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3</text><text x="371.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><text x="461.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >5</text><text x="551.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><polyline fill="none" stroke="#e05a5a" stroke-width="2.5" points="101.0,146.0 191.0,188.7 281.0,96.9 371.0,50.0 461.0,32.9 551.0,88.4"/><line x1="191.0" y1="188.7" x2="281.0" y2="96.9" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/><circle cx="101.0" cy="146.0" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="101.0" y="137.0" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >≈3,2</text><circle cx="191.0" cy="188.7" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="191.0" y="179.7" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >≈3,18</text><circle cx="281.0" cy="96.9" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="281.0" y="87.9" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >≈3,223</text><circle cx="371.0" cy="50.0" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="371.0" y="41.0" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >≈3,245</text><circle cx="461.0" cy="32.9" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="461.0" y="23.9" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >≈3,253</text><circle cx="551.0" cy="88.4" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="551.0" y="79.4" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >≈3,227</text><text x="14.0" y="146.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 146.0)">Preço (R$)</text><text x="326.0" y="314.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Semana</text></svg><p class="note">Redesenhado. O livro não imprime os valores dos pontos: eles foram lidos na grade (de 0,02 em 0,02), por isso aparecem com "≈". Segmento destacado: semanas 2 → 3.</p></div>
+    <div class="steps">
+      <ol>
+        <li><strong>Leia cada ponto</strong> (aproximadamente): S1 ≈ 3,20; S2 ≈ 3,18; S3 ≈ 3,22; S4 ≈ 3,245; S5 ≈ 3,25; S6 ≈ 3,23.</li>
+        <li><strong>Variação de cada período</strong> (final − inicial):
+          <div class="formula">\[1\to2:\ 3{,}18-3{,}20=-0{,}02\]</div>
+          <div class="formula">\[2\to3:\ 3{,}22-3{,}18=+0{,}04\]</div>
+          <div class="formula">\[3\to4:\ \approx+0{,}02\qquad 4\to5:\ \approx+0{,}01\qquad 5\to6:\ \approx-0{,}03\]</div></li>
+        <li><strong>Compare os tamanhos</strong> (sem sinal): o maior é \(0{,}04\), entre as semanas 2 e 3. No gráfico é o segmento <strong>mais inclinado</strong>: atravessa duas faixas da grade.</li>
+      </ol>
+      <div class="dica">"Maior variação" conta subida ou descida. Por isso compare \(|\Delta|\). A queda 5 → 6 (≈ 0,03) é a segunda maior, mas ainda é menor que 0,04.</div>
+    </div>
+    <div class="ans-box">Entre as semanas <strong>2 e 3</strong> (alta de cerca de R$ 0,04)</div>
+    
+  </div>
+
+  <div class="ex" id="e04">
+    <div class="ex-header"><span class="ex-num">Proposto 04</span><span class="ex-src">Versa C46 · p. 751</span><span class="badge-pratica">linha</span><span class="badge-pratica">leitura de rótulos</span></div>
+    <p class="ex-q">O gráfico mostra a produção de leite (litros) de uma fazenda no 1º semestre de 2024.<br>a) Quantos litros foram produzidos somente no 1º trimestre de 2024?<br>b) Quantos litros a mais foram produzidos em abril em relação a junho?<br>c) Sabendo que o lucro por litro nesse período foi de R$ 0,80, qual o lucro obtido em março?</p><div class="fig"><svg class="chart" viewBox="0 0 620 320" width="620" role="img" aria-label="Produção de leite"><line x1="56" y1="274.0" x2="596" y2="274.0" stroke="#243044"/><text x="50.0" y="278.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >700</text><line x1="56" y1="237.4" x2="596" y2="237.4" stroke="#243044"/><text x="50.0" y="241.4" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >720</text><line x1="56" y1="200.9" x2="596" y2="200.9" stroke="#243044"/><text x="50.0" y="204.9" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >740</text><line x1="56" y1="164.3" x2="596" y2="164.3" stroke="#243044"/><text x="50.0" y="168.3" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >760</text><line x1="56" y1="127.7" x2="596" y2="127.7" stroke="#243044"/><text x="50.0" y="131.7" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >780</text><line x1="56" y1="91.1" x2="596" y2="91.1" stroke="#243044"/><text x="50.0" y="95.1" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >800</text><line x1="56" y1="54.6" x2="596" y2="54.6" stroke="#243044"/><text x="50.0" y="58.6" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >820</text><line x1="56" y1="18.0" x2="596" y2="18.0" stroke="#243044"/><text x="50.0" y="22.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >840</text><line x1="56" y1="18" x2="56" y2="274" stroke="#5a6a82" stroke-width="1.5"/><line x1="56" y1="274" x2="596" y2="274" stroke="#5a6a82" stroke-width="1.5"/><text x="101.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Jan</text><text x="191.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Fev</text><text x="281.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Mar</text><text x="371.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Abr</text><text x="461.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Mai</text><text x="551.0" y="290.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Jun</text><polyline fill="none" stroke="#e05a5a" stroke-width="2.5" points="101.0,57.5 191.0,144.0 281.0,63.3 371.0,119.5 461.0,84.9 551.0,195.6"/><circle cx="101.0" cy="57.5" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="101.0" y="48.5" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >818,4</text><circle cx="191.0" cy="144.0" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="191.0" y="161.0" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >771,1</text><circle cx="281.0" cy="63.3" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="281.0" y="54.3" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >815,2</text><circle cx="371.0" cy="119.5" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="371.0" y="136.5" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >784,5</text><circle cx="461.0" cy="84.9" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="461.0" y="75.9" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >803,4</text><circle cx="551.0" cy="195.6" r="4" fill="#e05a5a" stroke="#0a0e14" stroke-width="1.5"/><text x="551.0" y="212.6" fill="#e05a5a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >742,9</text><text x="14.0" y="146.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 146.0)">Produção (litros)</text></svg><p class="note">Redesenhado com os rótulos do livro e o eixo corrigido.</p></div>
+    <div class="fix"><strong>Correção do livro.</strong> O eixo vertical está impresso como 840, 820, 800, 780, 760, <strong>700</strong>, 720, 700: o "700" aparece duas vezes. O correto entre 760 e 720 é <strong>740</strong>. Como os pontos têm rótulos, as contas não dependem do eixo.</div>
+    <div class="steps">
+      
+      <ol>
+        <li><strong>a) 1º trimestre = janeiro, fevereiro e março</strong> (3 meses):
+          <div class="formula">\[818{,}4+771{,}1+815{,}2\]</div>
+          <div class="formula">\[818{,}4+771{,}1=1589{,}5\qquad 1589{,}5+815{,}2=2404{,}7\text{ L}\]</div></li>
+        <li><strong>b) Abril − junho:</strong>
+          <div class="formula">\[784{,}5-742{,}9=41{,}6\text{ L}\]</div></li>
+        <li><strong>c) Lucro de março:</strong> litros × lucro por litro:
+          <div class="formula">\[815{,}2\cdot 0{,}80=652{,}16\]</div>
+          Conta armada: \(815{,}2\cdot 8=6521{,}6\) e depois \(\div 10\): \(652{,}16\).</li>
+      </ol>
+      <div class="dica">Trimestre = 3 meses, semestre = 6 meses. Não some o semestre inteiro no item a.</div>
+    </div>
+    <div class="ans-box">a) \(2404{,}7\) L &nbsp; b) \(41{,}6\) L &nbsp; c) R$ \(652{,}16\)</div>
+    
+  </div>
+
+  <div class="ex" id="e05">
+    <div class="ex-header"><span class="ex-num">Proposto 05</span><span class="ex-src">Versa C46 · p. 751</span><span class="badge-pratica">histograma</span><span class="badge-pratica">polígono</span></div>
+    <p class="ex-q">A tabela mostra as massas de 40 pessoas que trabalham em um escritório.</p><div class="tab-wrap"><table class="ftab"><tr><th>Pesos (kg)</th><th>Frequências absolutas</th></tr><tr><td>40 ⊢ 50</td><td>6</td></tr><tr><td>50 ⊢ 60</td><td>10</td></tr><tr><td>60 ⊢ 70</td><td>18</td></tr><tr><td>70 ⊢ 80</td><td>12</td></tr><tr><td>80 ⊢ 90</td><td>4</td></tr></table></div><p class="ex-q">a) Represente esses dados por meio de um histograma. &nbsp; b) Represente esses dados por meio de um polígono de frequências.</p>
+    <div class="fix"><strong>Atenção: dado inconsistente.</strong> O enunciado diz "40 pessoas", mas a soma da tabela é <strong>50</strong>. Os desenhos não dependem disso (usam as frequências da tabela), mas se alguém perguntar uma porcentagem, use \(n=50\), que é o que a tabela mostra.</div>
+    <div class="steps">
+      <ol>
+        <li><strong>Confira o total:</strong> \(6+10=16\), \(16+18=34\), \(34+12=46\), \(46+4=50\).
+          </li>
+        <li><strong>a) Histograma:</strong> no eixo horizontal, marque 40, 50, 60, 70, 80, 90 com espaços iguais. No vertical, de 0 a 18 (de 2 em 2). Sobre cada classe, desenhe um retângulo <em>colado</em> no vizinho, com altura igual a \(f_i\): 6, 10, 18, 12, 4.
+          <div class="fig"><svg class="chart" viewBox="0 0 620 320" width="620" role="img" aria-label="Histograma das massas"><line x1="52" y1="276.0" x2="604" y2="276.0" stroke="#243044"/><text x="46.0" y="280.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >0</text><line x1="52" y1="250.0" x2="604" y2="250.0" stroke="#243044"/><text x="46.0" y="254.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >2</text><line x1="52" y1="224.0" x2="604" y2="224.0" stroke="#243044"/><text x="46.0" y="228.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><line x1="52" y1="198.0" x2="604" y2="198.0" stroke="#243044"/><text x="46.0" y="202.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><line x1="52" y1="172.0" x2="604" y2="172.0" stroke="#243044"/><text x="46.0" y="176.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >8</text><line x1="52" y1="146.0" x2="604" y2="146.0" stroke="#243044"/><text x="46.0" y="150.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><line x1="52" y1="120.0" x2="604" y2="120.0" stroke="#243044"/><text x="46.0" y="124.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >12</text><line x1="52" y1="94.0" x2="604" y2="94.0" stroke="#243044"/><text x="46.0" y="98.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >14</text><line x1="52" y1="68.0" x2="604" y2="68.0" stroke="#243044"/><text x="46.0" y="72.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >16</text><line x1="52" y1="42.0" x2="604" y2="42.0" stroke="#243044"/><text x="46.0" y="46.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >18</text><line x1="52" y1="16.0" x2="604" y2="16.0" stroke="#243044"/><text x="46.0" y="20.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >20</text><rect x="52.0" y="198.0" width="110.4" height="78.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><text x="107.2" y="193.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><rect x="162.4" y="146.0" width="110.4" height="130.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><text x="217.6" y="141.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><rect x="272.8" y="42.0" width="110.4" height="234.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><text x="328.0" y="37.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >18</text><rect x="383.2" y="120.0" width="110.4" height="156.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><text x="438.4" y="115.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >12</text><rect x="493.6" y="224.0" width="110.4" height="52.0" fill="#d4c94a" fill-opacity="0.85" stroke="#0a0e14" stroke-width="1.5"/><text x="548.8" y="219.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><line x1="52.0" y1="276" x2="52.0" y2="280" stroke="#5a6a82"/><text x="52.0" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >40</text><line x1="162.4" y1="276" x2="162.4" y2="280" stroke="#5a6a82"/><text x="162.4" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >50</text><line x1="272.8" y1="276" x2="272.8" y2="280" stroke="#5a6a82"/><text x="272.8" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >60</text><line x1="383.2" y1="276" x2="383.2" y2="280" stroke="#5a6a82"/><text x="383.2" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >70</text><line x1="493.6" y1="276" x2="493.6" y2="280" stroke="#5a6a82"/><text x="493.6" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >80</text><line x1="604.0" y1="276" x2="604.0" y2="280" stroke="#5a6a82"/><text x="604.0" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >90</text><line x1="52" y1="16" x2="52" y2="276" stroke="#5a6a82" stroke-width="1.5"/><line x1="52" y1="276" x2="604" y2="276" stroke="#5a6a82" stroke-width="1.5"/><text x="14.0" y="146.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 146.0)">nº de pessoas</text><text x="328.0" y="318.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Massa (kg)</text></svg></div></li>
+        <li><strong>b) Polígono, passo 1: pontos médios</strong>
+          <div class="formula">\[\tfrac{40+50}{2}=45,\ \ \tfrac{50+60}{2}=55,\ \ 65,\ \ 75,\ \ 85\]</div></li>
+        <li><strong>Passo 2: pontos</strong> \((45,6),\ (55,10),\ (65,18),\ (75,12),\ (85,4)\).</li>
+        <li><strong>Passo 3: fechar no eixo</strong> com as classes vazias vizinhas: \(30\vdash40\) (ponto médio 35) e \(90\vdash100\) (ponto médio 95), as duas com \(f=0\): pontos \((35,0)\) e \((95,0)\).</li>
+        <li><strong>Passo 4:</strong> ligue os 7 pontos com segmentos de reta.
+          <div class="fig"><svg class="chart" viewBox="0 0 620 320" width="620" role="img" aria-label="Polígono de frequências das massas"><line x1="52" y1="276.0" x2="604" y2="276.0" stroke="#243044"/><text x="46.0" y="280.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >0</text><line x1="52" y1="250.0" x2="604" y2="250.0" stroke="#243044"/><text x="46.0" y="254.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >2</text><line x1="52" y1="224.0" x2="604" y2="224.0" stroke="#243044"/><text x="46.0" y="228.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><line x1="52" y1="198.0" x2="604" y2="198.0" stroke="#243044"/><text x="46.0" y="202.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><line x1="52" y1="172.0" x2="604" y2="172.0" stroke="#243044"/><text x="46.0" y="176.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >8</text><line x1="52" y1="146.0" x2="604" y2="146.0" stroke="#243044"/><text x="46.0" y="150.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><line x1="52" y1="120.0" x2="604" y2="120.0" stroke="#243044"/><text x="46.0" y="124.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >12</text><line x1="52" y1="94.0" x2="604" y2="94.0" stroke="#243044"/><text x="46.0" y="98.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >14</text><line x1="52" y1="68.0" x2="604" y2="68.0" stroke="#243044"/><text x="46.0" y="72.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >16</text><line x1="52" y1="42.0" x2="604" y2="42.0" stroke="#243044"/><text x="46.0" y="46.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >18</text><line x1="52" y1="16.0" x2="604" y2="16.0" stroke="#243044"/><text x="46.0" y="20.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >20</text><line x1="91.4" y1="276.0" x2="91.4" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="170.3" y1="198.0" x2="170.3" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="249.1" y1="146.0" x2="249.1" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="328.0" y1="42.0" x2="328.0" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="406.9" y1="120.0" x2="406.9" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="485.7" y1="224.0" x2="485.7" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><line x1="564.6" y1="276.0" x2="564.6" y2="276" stroke="#ef5350" stroke-dasharray="4 3" opacity="0.7"/><polyline fill="none" stroke="#ef5350" stroke-width="2.5" points="91.4,276.0 170.3,198.0 249.1,146.0 328.0,42.0 406.9,120.0 485.7,224.0 564.6,276.0"/><circle cx="91.4" cy="276.0" r="4" fill="#ef5350"/><circle cx="170.3" cy="198.0" r="4" fill="#ef5350"/><text x="170.3" y="190.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><circle cx="249.1" cy="146.0" r="4" fill="#ef5350"/><text x="249.1" y="138.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><circle cx="328.0" cy="42.0" r="4" fill="#ef5350"/><text x="328.0" y="34.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >18</text><circle cx="406.9" cy="120.0" r="4" fill="#ef5350"/><text x="406.9" y="112.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >12</text><circle cx="485.7" cy="224.0" r="4" fill="#ef5350"/><text x="485.7" y="216.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><circle cx="564.6" cy="276.0" r="4" fill="#ef5350"/><text x="91.4" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >35</text><text x="170.3" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >45</text><text x="249.1" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >55</text><text x="328.0" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >65</text><text x="406.9" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >75</text><text x="485.7" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >85</text><text x="564.6" y="304.0" fill="#ff8a80" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >95</text><line x1="52.0" y1="276" x2="52.0" y2="280" stroke="#5a6a82"/><text x="52.0" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >30</text><line x1="130.9" y1="276" x2="130.9" y2="280" stroke="#5a6a82"/><text x="130.9" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >40</text><line x1="209.7" y1="276" x2="209.7" y2="280" stroke="#5a6a82"/><text x="209.7" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >50</text><line x1="288.6" y1="276" x2="288.6" y2="280" stroke="#5a6a82"/><text x="288.6" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >60</text><line x1="367.4" y1="276" x2="367.4" y2="280" stroke="#5a6a82"/><text x="367.4" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >70</text><line x1="446.3" y1="276" x2="446.3" y2="280" stroke="#5a6a82"/><text x="446.3" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >80</text><line x1="525.1" y1="276" x2="525.1" y2="280" stroke="#5a6a82"/><text x="525.1" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >90</text><line x1="604.0" y1="276" x2="604.0" y2="280" stroke="#5a6a82"/><text x="604.0" y="291.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >100</text><line x1="52" y1="16" x2="52" y2="276" stroke="#5a6a82" stroke-width="1.5"/><line x1="52" y1="276" x2="604" y2="276" stroke="#5a6a82" stroke-width="1.5"/><text x="14.0" y="146.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 146.0)">nº de pessoas</text><text x="328.0" y="318.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Massa (kg) · em vermelho: pontos médios</text></svg></div></li>
+      </ol>
+      <div class="dica">No caderno, use régua e mantenha a mesma escala nos dois gráficos. Os pontos médios ficam exatamente no meio do topo de cada retângulo (veja o gráfico combinado na teoria).</div>
+    </div>
+    <div class="ans-box">Histograma com alturas 6, 10, 18, 12, 4 sobre 40–90. Polígono pelos pontos \((35,0),(45,6),(55,10),(65,18),(75,12),(85,4),(95,0)\).</div>
+    
+  </div>
+
+  <h3>Exercícios complementares · pp. 752–753</h3>
+
+  <div class="ex prova" id="f01">
+    <div class="ex-header"><span class="ex-num">Complementar 01</span><span class="ex-src">UEG GO · Versa C46 · p. 752</span><span class="badge-pratica">duas linhas</span><span class="badge-pratica">maior diferença</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Na figura vê-se o gráfico comparativo entre a quantidade de chuva esperada e a quantidade de chuva registrada no sistema de captação de água Cantareira. De acordo com o gráfico, o mês em que ocorreu a maior diferença entre o volume de chuva esperada e o volume de chuva registrada foi:</p><div class="fig"><svg class="chart" viewBox="0 0 680 360" width="680" role="img" aria-label="Cantareira"><line x1="56" y1="286.0" x2="656" y2="286.0" stroke="#243044"/><text x="50.0" y="290.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >0</text><line x1="56" y1="241.3" x2="656" y2="241.3" stroke="#243044"/><text x="50.0" y="245.3" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >50</text><line x1="56" y1="196.7" x2="656" y2="196.7" stroke="#243044"/><text x="50.0" y="200.7" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >100</text><line x1="56" y1="152.0" x2="656" y2="152.0" stroke="#243044"/><text x="50.0" y="156.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >150</text><line x1="56" y1="107.3" x2="656" y2="107.3" stroke="#243044"/><text x="50.0" y="111.3" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >200</text><line x1="56" y1="62.7" x2="656" y2="62.7" stroke="#243044"/><text x="50.0" y="66.7" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >250</text><line x1="56" y1="18.0" x2="656" y2="18.0" stroke="#243044"/><text x="50.0" y="22.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >300</text><line x1="56" y1="18" x2="56" y2="286" stroke="#5a6a82" stroke-width="1.5"/><line x1="56" y1="286" x2="656" y2="286" stroke="#5a6a82" stroke-width="1.5"/><text x="83.3" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >out</text><text x="137.8" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >nov</text><text x="192.4" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >dez</text><text x="246.9" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >jan</text><text x="301.5" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >fev</text><text x="356.0" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >mar</text><text x="410.5" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >abr</text><text x="465.1" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >out</text><text x="519.6" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >nov</text><text x="574.2" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >dez</text><text x="628.7" y="302.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >jan</text><text x="137.8" y="317.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >2013</text><text x="356.0" y="317.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >2014</text><text x="574.2" y="317.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >2015</text><polyline fill="none" stroke="#3fb5a0" stroke-width="2.5" points="83.3,167.5 137.8,139.7 192.4,83.4 246.9,53.8 301.5,105.0 356.0,121.5 410.5,206.2 465.1,169.2 519.6,142.0 574.2,88.7 628.7,43.8"/><circle cx="83.3" cy="167.5" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="83.3" y="158.5" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >132,6</text><circle cx="137.8" cy="139.7" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="137.8" y="130.7" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >163,8</text><circle cx="192.4" cy="83.4" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="192.4" y="74.4" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >226,8</text><circle cx="246.9" cy="53.8" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="246.9" y="44.8" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >259,9</text><circle cx="301.5" cy="105.0" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="301.5" y="96.0" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >202,6</text><circle cx="356.0" cy="121.5" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="356.0" y="112.5" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >184,1</text><circle cx="410.5" cy="206.2" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="410.5" y="197.2" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >89,3</text><circle cx="465.1" cy="169.2" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="465.1" y="160.2" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >130,8</text><circle cx="519.6" cy="142.0" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="519.6" y="133.0" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >161,2</text><circle cx="574.2" cy="88.7" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="574.2" y="79.7" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >220,9</text><circle cx="628.7" cy="43.8" r="4" fill="#3fb5a0" stroke="#0a0e14" stroke-width="1.5"/><text x="628.7" y="34.8" fill="#3fb5a0" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >271,1</text><polyline fill="none" stroke="#e07a6a" stroke-width="2.5" points="83.3,175.8 137.8,199.3 192.4,229.8 246.9,207.6 301.5,220.8 356.0,113.3 410.5,209.4 465.1,248.0 519.6,165.4 574.2,138.2 628.7,166.1"/><circle cx="83.3" cy="175.8" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="83.3" y="192.8" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >123,4</text><circle cx="137.8" cy="199.3" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="137.8" y="216.3" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >97</text><circle cx="192.4" cy="229.8" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="192.4" y="246.8" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >62,9</text><circle cx="246.9" cy="207.6" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="246.9" y="224.6" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >87,8</text><circle cx="301.5" cy="220.8" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="301.5" y="237.8" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >73</text><circle cx="356.0" cy="113.3" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="356.0" y="130.3" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >193,3</text><circle cx="410.5" cy="209.4" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="410.5" y="226.4" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >85,7</text><circle cx="465.1" cy="248.0" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="465.1" y="265.0" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >42,5</text><circle cx="519.6" cy="165.4" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="519.6" y="182.4" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >135</text><circle cx="574.2" cy="138.2" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="574.2" y="155.2" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >165,5</text><circle cx="628.7" cy="166.1" r="4" fill="#e07a6a" stroke="#0a0e14" stroke-width="1.5"/><text x="628.7" y="183.1" fill="#e07a6a" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >134,2</text><text x="14.0" y="152.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 152.0)">mm</text><line x1="56" y1="350" x2="74" y2="350" stroke="#3fb5a0" stroke-width="3"/><text x="78.0" y="354.0" fill="#e8eef7" font-size="11" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >Média esperada</text><line x1="178.2" y1="350" x2="196.2" y2="350" stroke="#e07a6a" stroke-width="3"/><text x="200.2" y="354.0" fill="#e8eef7" font-size="11" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >Chuva registrada</text></svg><p class="note">Redesenhado com os rótulos do livro. Atenção: o eixo horizontal pula de abr/2014 para out/2014.</p></div><ul class="opts"><li>a) dezembro de 2013</li><li>b) janeiro de 2014</li><li>c) março de 2014</li><li>d) janeiro de 2015</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Diferença mês a mês</strong> (esperada − registrada):<div class="tab-wrap"><table class="ftab"><tr><th>Mês</th><th>Esperada</th><th>Registrada</th><th>Diferença</th></tr><tr><td>out/13</td><td>132,6</td><td>123,4</td><td>9,2</td></tr><tr><td>nov/13</td><td>163,8</td><td>97</td><td>66,8</td></tr><tr><td>dez/13</td><td>226,8</td><td>62,9</td><td>163,9</td></tr><tr class="hi"><td>jan/14</td><td>259,9</td><td>87,8</td><td>172,1</td></tr><tr><td>fev/14</td><td>202,6</td><td>73</td><td>129,6</td></tr><tr><td>mar/14</td><td>184,1</td><td>193,3</td><td>-9,2</td></tr><tr><td>abr/14</td><td>89,3</td><td>85,7</td><td>3,6</td></tr><tr><td>out/14</td><td>130,8</td><td>42,5</td><td>88,3</td></tr><tr><td>nov/14</td><td>161,2</td><td>135</td><td>26,2</td></tr><tr><td>dez/14</td><td>220,9</td><td>165,5</td><td>55,4</td></tr><tr><td>jan/15*</td><td>271,1</td><td>134,2</td><td>136,9</td></tr></table></div></li>
+        <li><strong>Teste as alternativas:</strong>
+          <div class="formula">\[\text{a) dez/13: } 226{,}8-62{,}9=163{,}9\]</div>
+          <div class="formula">\[\text{b) jan/14: } 259{,}9-87{,}8=172{,}1\]</div>
+          <div class="formula">\[\text{c) mar/14: } 184{,}1-193{,}3=-9{,}2\ \ (|{-9{,}2}|=9{,}2)\]</div>
+          <div class="formula">\[\text{d) jan/15: } 271{,}1-134{,}2=136{,}9\]</div></li>
+        <li><strong>Maior:</strong> 172,1 mm em janeiro de 2014. No gráfico é o maior "vão" vertical entre as duas linhas.</li>
+      </ol>
+      <div class="dica">Março de 2014 é o único mês em que choveu <em>mais</em> que o esperado: as linhas se cruzam ali. O asterisco em 134,2* (jan/2015) indica dado parcial, e mesmo assim ele não é o maior.</div>
+    </div>
+    <div class="ans-box">Janeiro de 2014 (diferença 172,1 mm) &nbsp; <span class="badge-gab">Alternativa b</span></div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> ela circulou a <strong>b</strong>. Está certo ✓.</div>
+  </div>
+
+  <div class="ex" id="f02">
+    <div class="ex-header"><span class="ex-num">Complementar 02</span><span class="ex-src">UFRGS · Versa C46 · p. 752</span><span class="badge-pratica">setores</span><span class="badge-pratica">diâmetro</span></div>
+    <p class="ex-q">Os resultados de uma pesquisa de opinião foram divulgados num gráfico de setores. Ao setor <strong>a</strong> estão associadas 35% das respostas; ao setor <strong>b</strong>, 270 respostas; e aos setores <strong>c</strong> e <strong>d</strong>, um mesmo número de respostas. Sabendo que \(\overline{AC}\) é o diâmetro dessa circunferência, determine seu valor.</p>
+    <ul class="opts"><li>a) 45</li><li>b) 90</li><li>c) 180</li><li>d) 450</li><li>e) 900</li></ul><div class="fig"><svg class="chart" viewBox="0 0 600 300" width="600" role="img" aria-label="Setores a, b, c, d"><path d="M300.0,150.0 L195.0,150.0 A105,105 0 0 1 361.7,65.1 Z" fill="#4f8fe0" stroke="#0a0e14" stroke-width="2"/><text x="245.1" y="46.2" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >a: 35% = 630 resp. · 126°</text><path d="M300.0,150.0 L361.7,65.1 A105,105 0 0 1 405.0,150.0 Z" fill="#d8b04a" stroke="#0a0e14" stroke-width="2"/><text x="407.8" y="99.1" fill="#e8eef7" font-size="11.5" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >b: 15% = 270 resp. · 54°</text><path d="M300.0,150.0 L405.0,150.0 A105,105 0 0 1 300.0,255.0 Z" fill="#8fbf73" stroke="#0a0e14" stroke-width="2"/><text x="385.6" y="239.6" fill="#e8eef7" font-size="11.5" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >c: 25% = 450 resp. · 90°</text><path d="M300.0,150.0 L300.0,255.0 A105,105 0 0 1 195.0,150.0 Z" fill="#d0566e" stroke="#0a0e14" stroke-width="2"/><text x="214.4" y="239.6" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >d: 25% = 450 resp. · 90°</text></svg><p class="note">Redesenhado já com a resposta. AC é o diâmetro: a + b ocupam a metade de cima e c + d a metade de baixo.</p></div>
+    <div class="fix"><strong>Ambiguidade do livro.</strong> "Determine seu valor" não diz de quem. Na questão original (UFRGS) a frase é "<em>Esse número é</em>", isto é, o número de respostas comum a <strong>c</strong> e <strong>d</strong>. É isso que as alternativas medem.</div>
+    <div class="steps">
+      
+      <ol>
+        <li><strong>AC é diâmetro</strong> \(\Rightarrow\) divide o círculo em duas metades: \(a+b=50\%\) e \(c+d=50\%\).</li>
+        <li><strong>Porcentagem de b:</strong>
+          <div class="formula">\[35\%+b=50\%\ \Rightarrow\ b=15\%\]</div></li>
+        <li><strong>Total de respostas:</strong> 15% equivalem a 270 respostas.
+          <div class="formula">\[0{,}15\cdot N=270\ \Rightarrow\ N=\frac{270}{0{,}15}=\frac{27000}{15}=1800\]</div></li>
+        <li><strong>c e d iguais e somando 50%:</strong> cada um vale 25%.
+          <div class="formula">\[25\%\ \text{de}\ 1800=\frac{1800}{4}=450\]</div></li>
+        <li><strong>Conferência:</strong> \(a=0{,}35\cdot1800=630\); \(630+270+450+450=1800\ \checkmark\)</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(c=d=450\) respostas &nbsp; <span class="badge-gab">Alternativa d</span></div>
+    
+  </div>
+
+  <div class="ex prova" id="f03">
+    <div class="ex-header"><span class="ex-num">Complementar 03</span><span class="ex-src">Unesp SP · Versa C46 · p. 752</span><span class="badge-pratica">barras agrupadas</span><span class="badge-pratica">conclusão</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Uma dissertação investigou a influência do descarte de óleo de cozinha na água. Diariamente foi monitorado o nível de oxigênio dissolvido na água de 4 aquários com plantas submersas. Cada aquário tinha uma composição diferente:</p><div class="tab-wrap"><table class="ftab"><tr><th>% do volume</th><th>I</th><th>II</th><th>III</th><th>IV</th></tr><tr><td>óleo</td><td>0</td><td>10</td><td>20</td><td>30</td></tr><tr><td>água</td><td>100</td><td>90</td><td>80</td><td>70</td></tr></table></div><p class="ex-q">O gráfico registra a concentração de oxigênio dissolvido C (ppm) ao longo dos 8 dias (T). É correto afirmar que, no período e nas condições do experimento:</p><div class="fig"><svg class="chart" viewBox="0 0 680 340" width="680" role="img" aria-label="Oxigênio dissolvido"><line x1="52" y1="282.0" x2="666" y2="282.0" stroke="#243044"/><text x="46.0" y="286.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >0</text><line x1="52" y1="260.5" x2="666" y2="260.5" stroke="#243044"/><text x="46.0" y="264.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >1</text><line x1="52" y1="239.0" x2="666" y2="239.0" stroke="#243044"/><text x="46.0" y="243.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >2</text><line x1="52" y1="217.5" x2="666" y2="217.5" stroke="#243044"/><text x="46.0" y="221.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3</text><line x1="52" y1="196.0" x2="666" y2="196.0" stroke="#243044"/><text x="46.0" y="200.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><line x1="52" y1="174.5" x2="666" y2="174.5" stroke="#243044"/><text x="46.0" y="178.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >5</text><line x1="52" y1="153.0" x2="666" y2="153.0" stroke="#243044"/><text x="46.0" y="157.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><line x1="52" y1="131.5" x2="666" y2="131.5" stroke="#243044"/><text x="46.0" y="135.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >7</text><line x1="52" y1="110.0" x2="666" y2="110.0" stroke="#243044"/><text x="46.0" y="114.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >8</text><line x1="52" y1="88.5" x2="666" y2="88.5" stroke="#243044"/><text x="46.0" y="92.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >9</text><line x1="52" y1="67.0" x2="666" y2="67.0" stroke="#243044"/><text x="46.0" y="71.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><line x1="52" y1="45.5" x2="666" y2="45.5" stroke="#243044"/><text x="46.0" y="49.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >11</text><line x1="52" y1="24.0" x2="666" y2="24.0" stroke="#243044"/><text x="46.0" y="28.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >12</text><line x1="52" y1="24" x2="52" y2="282" stroke="#5a6a82" stroke-width="1.5"/><line x1="52" y1="282" x2="666" y2="282" stroke="#5a6a82" stroke-width="1.5"/><rect x="62.6" y="45.5" width="12.4" height="236.5" fill="#d4c94a" rx="2"/><rect x="77.0" y="45.5" width="12.4" height="236.5" fill="#4f8fe0" rx="2"/><rect x="91.4" y="45.5" width="12.4" height="236.5" fill="#e05a7a" rx="2"/><rect x="105.8" y="45.5" width="12.4" height="236.5" fill="#6fbf73" rx="2"/><text x="90.4" y="297.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >1</text><rect x="139.3" y="45.5" width="12.4" height="236.5" fill="#d4c94a" rx="2"/><rect x="153.7" y="45.5" width="12.4" height="236.5" fill="#4f8fe0" rx="2"/><rect x="168.1" y="45.5" width="12.4" height="236.5" fill="#e05a7a" rx="2"/><rect x="182.5" y="110.0" width="12.4" height="172.0" fill="#6fbf73" rx="2"/><text x="167.1" y="297.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >2</text><rect x="216.1" y="45.5" width="12.4" height="236.5" fill="#d4c94a" rx="2"/><rect x="230.5" y="110.0" width="12.4" height="172.0" fill="#4f8fe0" rx="2"/><rect x="244.9" y="110.0" width="12.4" height="172.0" fill="#e05a7a" rx="2"/><rect x="259.3" y="153.0" width="12.4" height="129.0" fill="#6fbf73" rx="2"/><text x="243.9" y="297.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3</text><rect x="292.8" y="45.5" width="12.4" height="236.5" fill="#d4c94a" rx="2"/><rect x="307.2" y="110.0" width="12.4" height="172.0" fill="#4f8fe0" rx="2"/><rect x="321.6" y="110.0" width="12.4" height="172.0" fill="#e05a7a" rx="2"/><rect x="336.0" y="196.0" width="12.4" height="86.0" fill="#6fbf73" rx="2"/><text x="320.6" y="297.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >4</text><rect x="369.6" y="110.0" width="12.4" height="172.0" fill="#d4c94a" rx="2"/><rect x="384.0" y="153.0" width="12.4" height="129.0" fill="#4f8fe0" rx="2"/><rect x="398.4" y="153.0" width="12.4" height="129.0" fill="#e05a7a" rx="2"/><rect x="412.8" y="239.0" width="12.4" height="43.0" fill="#6fbf73" rx="2"/><text x="397.4" y="297.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >5</text><rect x="446.3" y="110.0" width="12.4" height="172.0" fill="#d4c94a" rx="2"/><rect x="460.7" y="196.0" width="12.4" height="86.0" fill="#4f8fe0" rx="2"/><rect x="475.1" y="196.0" width="12.4" height="86.0" fill="#e05a7a" rx="2"/><rect x="489.5" y="282.0" width="12.4" height="0.0" fill="#6fbf73" rx="2"/><text x="474.1" y="297.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >6</text><rect x="523.1" y="153.0" width="12.4" height="129.0" fill="#d4c94a" rx="2"/><rect x="537.5" y="217.5" width="12.4" height="64.5" fill="#4f8fe0" rx="2"/><rect x="551.9" y="239.0" width="12.4" height="43.0" fill="#e05a7a" rx="2"/><rect x="566.3" y="282.0" width="12.4" height="0.0" fill="#6fbf73" rx="2"/><text x="550.9" y="297.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >7</text><rect x="599.8" y="196.0" width="12.4" height="86.0" fill="#d4c94a" rx="2"/><rect x="614.2" y="239.0" width="12.4" height="43.0" fill="#4f8fe0" rx="2"/><rect x="628.6" y="282.0" width="12.4" height="0.0" fill="#e05a7a" rx="2"/><rect x="643.0" y="282.0" width="12.4" height="0.0" fill="#6fbf73" rx="2"/><text x="627.6" y="297.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >8</text><text x="14.0" y="153.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 153.0)">C (ppm)</text><text x="359.0" y="334.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >T (dias)</text><rect x="52" y="309" width="12" height="10" fill="#d4c94a" rx="2"/><text x="68.0" y="318.0" fill="#e8eef7" font-size="11" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >Aquário I (0% óleo)</text><rect x="199.5" y="309" width="12" height="10" fill="#4f8fe0" rx="2"/><text x="215.5" y="318.0" fill="#e8eef7" font-size="11" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >Aquário II (10%)</text><rect x="327.5" y="309" width="12" height="10" fill="#e05a7a" rx="2"/><text x="343.5" y="318.0" fill="#e8eef7" font-size="11" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >Aquário III (20%)</text><rect x="462.0" y="309" width="12" height="10" fill="#6fbf73" rx="2"/><text x="478.0" y="318.0" fill="#e8eef7" font-size="11" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >Aquário IV (30%)</text></svg><p class="note">Redesenhado. Valores lidos na grade (de 1 em 1 ppm): onde não há barra, a concentração chegou a 0.</p></div><ul class="opts" style="flex-direction:column"><li>a) não há dados suficientes para estabelecer o nível de influência da quantidade de óleo na água sobre o oxigênio dissolvido.</li><li>b) quanto maior a quantidade de óleo na água, maior a sua influência sobre o nível de oxigênio dissolvido.</li><li>c) quanto menor a quantidade de óleo, maior a sua influência sobre o oxigênio dissolvido.</li><li>d) quanto maior a quantidade de óleo, menor a sua influência sobre o oxigênio dissolvido.</li><li>e) não houve influência da quantidade de óleo sobre o oxigênio dissolvido.</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Leia as quatro séries</strong> (ppm, dias 1 a 8):<div class="tab-wrap"><table class="ftab"><tr><th>Aquário (óleo)</th><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>D5</th><th>D6</th><th>D7</th><th>D8</th></tr><tr><td>I (0%)</td><td>11</td><td>11</td><td>11</td><td>11</td><td>8</td><td>8</td><td>6</td><td>4</td></tr><tr><td>II (10%)</td><td>11</td><td>11</td><td>8</td><td>8</td><td>6</td><td>4</td><td>3</td><td>2</td></tr><tr><td>III (20%)</td><td>11</td><td>11</td><td>8</td><td>8</td><td>6</td><td>4</td><td>2</td><td>0</td></tr><tr><td>IV (30%)</td><td>11</td><td>8</td><td>6</td><td>4</td><td>2</td><td>0</td><td>0</td><td>0</td></tr></table></div></li>
+        <li><strong>Compare o mesmo dia:</strong> no dia 4: I = 11, II = 8, III = 8, IV = 4. No dia 6: I = 8, II = 4, III = 4, IV = 0. Mais óleo → menos oxigênio.</li>
+        <li><strong>Compare a velocidade da queda:</strong> o IV (30% de óleo) zera no dia 6, o III no dia 8, o II chega a 2 e o I ainda tem 4 no dia 8.</li>
+        <li><strong>Descarte as outras:</strong> (a) há dados, sim: 4 aquários × 8 dias. (c) e (d) dizem o contrário do observado. (e) houve influência clara (o aquário I, sem óleo, cai mais devagar).</li>
+        <li><strong>Conclusão:</strong> quanto maior a quantidade de óleo, mais forte o efeito (a queda) no oxigênio dissolvido.</li>
+      </ol>
+    </div>
+    <div class="ans-box"><span class="badge-gab">Alternativa b</span></div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> ela circulou a <strong>b</strong>. Está certo ✓. Na dissertativa, cite dois números do gráfico, por exemplo: "no dia 6, sem óleo: 8 ppm; com 30%: 0 ppm".</div>
+  </div>
+
+  <div class="ex prova" id="f04">
+    <div class="ex-header"><span class="ex-num">Complementar 04</span><span class="ex-src">Fac. Cesgranrio RJ · Versa C46 · p. 753</span><span class="badge-pratica">colunas</span><span class="badge-pratica">unidade "milhares"</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">O gráfico "Autoveículos no Brasil" mostra a exportação de autoveículos (números do setor, em milhares). Comparando os resultados de dezembro de 2016 e janeiro de 2017, constata-se que houve uma redução de quantos autoveículos exportados?</p><div class="fig"><svg class="chart" viewBox="0 0 680 330" width="680" role="img" aria-label="Exportação de autoveículos (milhares)"><line x1="52" y1="290.0" x2="666" y2="290.0" stroke="#243044"/><text x="46.0" y="294.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >0</text><line x1="52" y1="256.8" x2="666" y2="256.8" stroke="#243044"/><text x="46.0" y="260.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><line x1="52" y1="223.5" x2="666" y2="223.5" stroke="#243044"/><text x="46.0" y="227.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >20</text><line x1="52" y1="190.2" x2="666" y2="190.2" stroke="#243044"/><text x="46.0" y="194.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >30</text><line x1="52" y1="157.0" x2="666" y2="157.0" stroke="#243044"/><text x="46.0" y="161.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >40</text><line x1="52" y1="123.8" x2="666" y2="123.8" stroke="#243044"/><text x="46.0" y="127.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >50</text><line x1="52" y1="90.5" x2="666" y2="90.5" stroke="#243044"/><text x="46.0" y="94.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >60</text><line x1="52" y1="57.2" x2="666" y2="57.2" stroke="#243044"/><text x="46.0" y="61.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >70</text><line x1="52" y1="24.0" x2="666" y2="24.0" stroke="#243044"/><text x="46.0" y="28.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >80</text><line x1="52" y1="24" x2="52" y2="290" stroke="#5a6a82" stroke-width="1.5"/><line x1="52" y1="290" x2="666" y2="290" stroke="#5a6a82" stroke-width="1.5"/><rect x="59.6" y="134.1" width="32.0" height="155.9" fill="#4a6a72" rx="2"/><text x="75.6" y="130.1" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >46,9</text><text x="75.6" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Jan16</text><rect x="106.8" y="136.7" width="32.0" height="153.3" fill="#4a6a72" rx="2"/><text x="122.8" y="132.7" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >46,1</text><text x="122.8" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Jul</text><rect x="154.1" y="153.0" width="32.0" height="137.0" fill="#4a6a72" rx="2"/><text x="170.1" y="149.0" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >41,2</text><text x="170.1" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Ago</text><rect x="201.3" y="158.7" width="32.0" height="131.3" fill="#4a6a72" rx="2"/><text x="217.3" y="154.7" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >39,5</text><text x="217.3" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Set</text><rect x="248.5" y="167.3" width="32.0" height="122.7" fill="#4a6a72" rx="2"/><text x="264.5" y="163.3" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >36,9</text><text x="264.5" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Out</text><rect x="295.8" y="101.5" width="32.0" height="188.5" fill="#4a6a72" rx="2"/><text x="311.8" y="97.5" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >56,7</text><text x="311.8" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Nov</text><rect x="343.0" y="81.2" width="32.0" height="208.8" fill="#4a6a72" rx="2" stroke="#ffffff" stroke-width="2.5"/><text x="359.0" y="77.2" fill="#ffffff" font-size="10.5" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif" >62,8</text><text x="359.0" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Dez</text><rect x="390.2" y="164.0" width="32.0" height="126.0" fill="#4a6a72" rx="2" stroke="#ffffff" stroke-width="2.5"/><text x="406.2" y="160.0" fill="#ffffff" font-size="10.5" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif" >37,9</text><text x="406.2" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Jan17</text><rect x="437.5" y="68.6" width="32.0" height="221.4" fill="#4a6a72" rx="2"/><text x="453.5" y="64.6" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >66,6</text><text x="453.5" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Fev</text><rect x="484.7" y="62.2" width="32.0" height="227.8" fill="#4a6a72" rx="2"/><text x="500.7" y="58.2" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >68,5</text><text x="500.7" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Mar</text><rect x="531.9" y="88.2" width="32.0" height="201.8" fill="#4a6a72" rx="2"/><text x="547.9" y="84.2" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >60,7</text><text x="547.9" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Abr</text><rect x="579.2" y="47.9" width="32.0" height="242.1" fill="#4a6a72" rx="2"/><text x="595.2" y="43.9" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >72,8</text><text x="595.2" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Mai</text><rect x="626.4" y="70.2" width="32.0" height="219.8" fill="#4a6a72" rx="2"/><text x="642.4" y="66.2" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >66,1</text><text x="642.4" y="305.0" fill="#8b9bb4" font-size="10" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >Jun</text><text x="14.0" y="157.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 157.0)">milhares</text></svg><p class="note">Redesenhado com os rótulos do livro (Fonte: Anfavea/Folha). Destaque: Dez/2016 e Jan/2017.</p></div><ul class="opts"><li>a) 62 800</li><li>b) 37 900</li><li>c) 36 000</li><li>d) 32 200</li><li>e) 24 900</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Leia as duas colunas:</strong> Dez (2016) = 62,8 e Jan 17 = 37,9 (em milhares).</li>
+        <li><strong>Redução</strong> = antes − depois:
+          <div class="formula">\[62{,}8-37{,}9=24{,}9\ \text{milhares}\]</div></li>
+        <li><strong>Converta "milhares":</strong>
+          <div class="formula">\[24{,}9\cdot 1000=24\,900\ \text{autoveículos}\]</div></li>
+      </ol>
+      <div class="dica">As alternativas a (62 800) e b (37 900) são só os valores das colunas: armadilha para quem não subtrai.</div>
+    </div>
+    <div class="ans-box">\(24\,900\) autoveículos &nbsp; <span class="badge-gab">Alternativa e</span></div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> ela circulou a <strong>e</strong>. Está certo ✓.</div>
+  </div>
+
+  <div class="ex prova" id="f05">
+    <div class="ex-header"><span class="ex-num">Complementar 05</span><span class="ex-src">UCB DF · Versa C46 · p. 753</span><span class="badge-pratica">linha</span><span class="badge-pratica">o que dá para concluir</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">"Escalada da moeda americana em 2015": cotação do dólar comercial no último dia útil de cada mês (e alguns dias de setembro). Com base <strong>exclusivamente</strong> nos dados do gráfico, assinale a alternativa correta.</p><div class="fig"><svg class="chart" viewBox="0 0 680 340" width="680" role="img" aria-label="Dólar 2015"><line x1="56" y1="282.0" x2="656" y2="282.0" stroke="#243044"/><text x="50.0" y="286.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >2,4</text><line x1="56" y1="255.6" x2="656" y2="255.6" stroke="#243044"/><text x="50.0" y="259.6" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >2,6</text><line x1="56" y1="229.2" x2="656" y2="229.2" stroke="#243044"/><text x="50.0" y="233.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >2,8</text><line x1="56" y1="202.8" x2="656" y2="202.8" stroke="#243044"/><text x="50.0" y="206.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,0</text><line x1="56" y1="176.4" x2="656" y2="176.4" stroke="#243044"/><text x="50.0" y="180.4" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,2</text><line x1="56" y1="150.0" x2="656" y2="150.0" stroke="#243044"/><text x="50.0" y="154.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,4</text><line x1="56" y1="123.6" x2="656" y2="123.6" stroke="#243044"/><text x="50.0" y="127.6" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,6</text><line x1="56" y1="97.2" x2="656" y2="97.2" stroke="#243044"/><text x="50.0" y="101.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >3,8</text><line x1="56" y1="70.8" x2="656" y2="70.8" stroke="#243044"/><text x="50.0" y="74.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >4,0</text><line x1="56" y1="44.4" x2="656" y2="44.4" stroke="#243044"/><text x="50.0" y="48.4" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >4,2</text><line x1="56" y1="18.0" x2="656" y2="18.0" stroke="#243044"/><text x="50.0" y="22.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >4,4</text><line x1="56" y1="18" x2="56" y2="282" stroke="#5a6a82" stroke-width="1.5"/><line x1="56" y1="282" x2="656" y2="282" stroke="#5a6a82" stroke-width="1.5"/><text x="79.1" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >JAN</text><text x="125.2" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >FEV</text><text x="171.4" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >MAR</text><text x="217.5" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >ABR</text><text x="263.7" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >MAI</text><text x="309.8" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >JUN</text><text x="356.0" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >JUL</text><text x="402.2" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >AGO</text><text x="448.3" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >1</text><text x="494.5" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >18</text><text x="540.6" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >22</text><text x="586.8" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >25</text><text x="632.9" y="298.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >28</text><text x="540.6" y="313.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >setembro</text><polyline fill="none" stroke="#e8eef7" stroke-width="2.5" points="79.1,243.9 125.2,221.8 171.4,177.5 217.5,201.1 263.7,178.1 309.8,188.3 356.0,146.7 402.2,119.8 448.3,112.2 494.5,73.2 540.6,51.7 586.8,74.1 632.9,56.4"/><circle cx="79.1" cy="243.9" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="79.1" y="234.9" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >2,689</text><circle cx="125.2" cy="221.8" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="125.2" y="212.8" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >2,856</text><circle cx="171.4" cy="177.5" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="171.4" y="168.5" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,192</text><circle cx="217.5" cy="201.1" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="217.5" y="192.1" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,013</text><circle cx="263.7" cy="178.1" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="263.7" y="169.1" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,187</text><circle cx="309.8" cy="188.3" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="309.8" y="179.3" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,110</text><circle cx="356.0" cy="146.7" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="356.0" y="137.7" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,425</text><circle cx="402.2" cy="119.8" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="402.2" y="110.8" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,629</text><circle cx="448.3" cy="112.2" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="448.3" y="103.2" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,686</text><circle cx="494.5" cy="73.2" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="494.5" y="64.2" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,982</text><circle cx="540.6" cy="51.7" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="540.6" y="42.7" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >4,145</text><circle cx="586.8" cy="74.1" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="586.8" y="65.1" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >3,975</text><circle cx="632.9" cy="56.4" r="4" fill="#e8eef7" stroke="#0a0e14" stroke-width="1.5"/><text x="632.9" y="47.4" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >4,109</text><text x="14.0" y="150.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 150.0)">R$</text></svg><p class="note">Redesenhado com os rótulos do livro (Fonte: CMA). Os 5 últimos pontos são dias de setembro (1, 18, 22, 25, 28).</p></div><ul class="opts" style="flex-direction:column"><li>a) Em dezembro de 2014, a cotação do dólar comercial foi menor que 2,689.</li><li>b) O maior valor para a cotação do dólar comercial foi verificado em 28 de setembro.</li><li>c) A função que representa a cotação em relação ao tempo é crescente no intervalo apresentado.</li><li>d) A diferença entre as cotações de maio e de março foi menor que um centavo de real.</li><li>e) Em 15 de agosto, o valor da moeda foi menor que 3,629.</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>a)</strong> Dezembro de 2014 <strong>não aparece</strong> no gráfico (ele começa em jan/2015). Não dá para concluir. ✗</li>
+        <li><strong>b)</strong> Em 28/9 a cotação é 4,109. Mas em 22/9 foi <strong>4,145</strong>, que é maior. ✗</li>
+        <li><strong>c)</strong> Crescente exigiria só subir. Há quedas: mar → abr (3,192 → 3,013), mai → jun (3,187 → 3,110) e 22/9 → 25/9 (4,145 → 3,975). ✗</li>
+        <li><strong>d)</strong> Março = 3,192 e maio = 3,187:
+          <div class="formula">\[3{,}192-3{,}187=0{,}005\ \text{real}=0{,}5\ \text{centavo}&lt;1\ \text{centavo}\ \checkmark\]</div></li>
+        <li><strong>e)</strong> O gráfico só mostra o último dia útil de cada mês. Sobre o dia 15 de agosto ele não diz nada. ✗</li>
+      </ol>
+      <div class="dica">"Exclusivamente nos dados do gráfico": qualquer afirmação sobre um dia que não está no gráfico (a, e) é "não dá para saber", portanto falsa como afirmação.</div>
+    </div>
+    <div class="ans-box"><span class="badge-gab">Alternativa d</span> (diferença de R$ 0,005)</div>
+    
+  </div>
+
+  <div class="ex prova" id="f06">
+    <div class="ex-header"><span class="ex-num">Complementar 06</span><span class="ex-src">OBMEP · Versa C46 · p. 753</span><span class="badge-pratica">barras → setores</span><span class="badge-pratica">fração</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">O gráfico de barras mostra a distribuição dos alunos de uma escola conforme o tempo diário dedicado à leitura. Qual é o gráfico de setores que melhor representa, na região sombreada, a fração de alunos que dedicam à leitura <strong>no máximo 40 minutos</strong> por dia?</p><div class="fig"><svg class="chart" viewBox="0 0 460 300" width="460" role="img" aria-label="Tempo de leitura"><line x1="52" y1="260.0" x2="446" y2="260.0" stroke="#243044"/><text x="46.0" y="264.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >0</text><line x1="52" y1="236.4" x2="446" y2="236.4" stroke="#243044"/><text x="46.0" y="240.4" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >10</text><line x1="52" y1="212.8" x2="446" y2="212.8" stroke="#243044"/><text x="46.0" y="216.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >20</text><line x1="52" y1="189.2" x2="446" y2="189.2" stroke="#243044"/><text x="46.0" y="193.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >30</text><line x1="52" y1="165.6" x2="446" y2="165.6" stroke="#243044"/><text x="46.0" y="169.6" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >40</text><line x1="52" y1="142.0" x2="446" y2="142.0" stroke="#243044"/><text x="46.0" y="146.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >50</text><line x1="52" y1="118.4" x2="446" y2="118.4" stroke="#243044"/><text x="46.0" y="122.4" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >60</text><line x1="52" y1="94.8" x2="446" y2="94.8" stroke="#243044"/><text x="46.0" y="98.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >70</text><line x1="52" y1="71.2" x2="446" y2="71.2" stroke="#243044"/><text x="46.0" y="75.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >80</text><line x1="52" y1="47.6" x2="446" y2="47.6" stroke="#243044"/><text x="46.0" y="51.6" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >90</text><line x1="52" y1="24.0" x2="446" y2="24.0" stroke="#243044"/><text x="46.0" y="28.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >100</text><line x1="52" y1="24" x2="52" y2="260" stroke="#5a6a82" stroke-width="1.5"/><line x1="52" y1="260" x2="446" y2="260" stroke="#5a6a82" stroke-width="1.5"/><rect x="101.7" y="47.6" width="32.0" height="212.4" fill="#e8a0a0" rx="2" stroke="#ffffff" stroke-width="2.5"/><text x="117.7" y="43.6" fill="#ffffff" font-size="10.5" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif" >90</text><text x="117.7" y="275.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >menos de</text><text x="117.7" y="287.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >20 min</text><rect x="233.0" y="118.4" width="32.0" height="141.6" fill="#e8a0a0" rx="2" stroke="#ffffff" stroke-width="2.5"/><text x="249.0" y="114.4" fill="#ffffff" font-size="10.5" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif" >60</text><text x="249.0" y="275.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >de 20 a</text><text x="249.0" y="287.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >40 min</text><rect x="364.3" y="118.4" width="32.0" height="141.6" fill="#e8a0a0" rx="2"/><text x="380.3" y="114.4" fill="#e8eef7" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >60</text><text x="380.3" y="275.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >mais de</text><text x="380.3" y="287.0" fill="#8b9bb4" font-size="10.5" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" >40 min</text><text x="14.0" y="142.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-weight="normal" font-family="Segoe UI,sans-serif" transform="rotate(-90 14 142.0)">Número de alunos</text></svg><p class="note">Redesenhado. O livro não escreve os números: a grade vai de 10 em 10 (linhas tracejadas) e as barras param em 90, 60 e 60.</p></div><div class="fig"><span style="display:inline-flex;align-items:center;gap:0.3rem;margin:0.2rem 0.8rem 0.2rem 0;color:var(--muted)">a) <svg viewBox="0 0 70 70" width="70" height="70"><circle cx="35.0" cy="35.0" r="31.0" fill="#dfe6ee" stroke="#1565c0" stroke-width="2"/><path d="M35.0,35.0 L66.0,35.0 A31.0,31.0 0 0 0 8.2,19.5 Z" fill="#d4c94a"/><line x1="35.0" y1="35.0" x2="66.0" y2="35.0" stroke="#1565c0" stroke-width="1.5"/><line x1="35.0" y1="35.0" x2="8.2" y2="19.5" stroke="#1565c0" stroke-width="1.5"/><circle cx="35.0" cy="35.0" r="31.0" fill="none" stroke="#1565c0" stroke-width="2"/></svg></span><span style="display:inline-flex;align-items:center;gap:0.3rem;margin:0.2rem 0.8rem 0.2rem 0;color:var(--muted)">b) <svg viewBox="0 0 70 70" width="70" height="70"><circle cx="35.0" cy="35.0" r="31.0" fill="#dfe6ee" stroke="#1565c0" stroke-width="2"/><path d="M35.0,35.0 L66.0,35.0 A31.0,31.0 0 0 0 4.0,35.0 Z" fill="#d4c94a"/><line x1="35.0" y1="35.0" x2="66.0" y2="35.0" stroke="#1565c0" stroke-width="1.5"/><line x1="35.0" y1="35.0" x2="4.0" y2="35.0" stroke="#1565c0" stroke-width="1.5"/><circle cx="35.0" cy="35.0" r="31.0" fill="none" stroke="#1565c0" stroke-width="2"/></svg></span><span style="display:inline-flex;align-items:center;gap:0.3rem;margin:0.2rem 0.8rem 0.2rem 0;color:var(--muted)">c) <svg viewBox="0 0 70 70" width="70" height="70"><circle cx="35.0" cy="35.0" r="31.0" fill="#dfe6ee" stroke="#1565c0" stroke-width="2"/><path d="M35.0,35.0 L66.0,35.0 A31.0,31.0 0 1 0 8.2,50.5 Z" fill="#d4c94a"/><line x1="35.0" y1="35.0" x2="66.0" y2="35.0" stroke="#1565c0" stroke-width="1.5"/><line x1="35.0" y1="35.0" x2="8.2" y2="50.5" stroke="#1565c0" stroke-width="1.5"/><circle cx="35.0" cy="35.0" r="31.0" fill="none" stroke="#1565c0" stroke-width="2"/></svg></span><span style="display:inline-flex;align-items:center;gap:0.3rem;margin:0.2rem 0.8rem 0.2rem 0;color:var(--muted)">d) <svg viewBox="0 0 70 70" width="70" height="70"><circle cx="35.0" cy="35.0" r="31.0" fill="#dfe6ee" stroke="#1565c0" stroke-width="2"/><path d="M35.0,35.0 L66.0,35.0 A31.0,31.0 0 1 0 28.0,65.2 Z" fill="#d4c94a"/><line x1="35.0" y1="35.0" x2="66.0" y2="35.0" stroke="#1565c0" stroke-width="1.5"/><line x1="35.0" y1="35.0" x2="28.0" y2="65.2" stroke="#1565c0" stroke-width="1.5"/><circle cx="35.0" cy="35.0" r="31.0" fill="none" stroke="#1565c0" stroke-width="2"/></svg></span><span style="display:inline-flex;align-items:center;gap:0.3rem;margin:0.2rem 0.8rem 0.2rem 0;color:var(--muted)">e) <svg viewBox="0 0 70 70" width="70" height="70"><circle cx="35.0" cy="35.0" r="31.0" fill="#dfe6ee" stroke="#1565c0" stroke-width="2"/><path d="M35.0,35.0 L66.0,35.0 A31.0,31.0 0 1 0 50.5,61.8 Z" fill="#d4c94a"/><line x1="35.0" y1="35.0" x2="66.0" y2="35.0" stroke="#1565c0" stroke-width="1.5"/><line x1="35.0" y1="35.0" x2="50.5" y2="61.8" stroke="#1565c0" stroke-width="1.5"/><circle cx="35.0" cy="35.0" r="31.0" fill="none" stroke="#1565c0" stroke-width="2"/></svg></span><p class="note">Opções redesenhadas com ângulos aproximados do livro: a ≈ 150°, b = 180°, c ≈ 210°, d ≈ 255°, e ≈ 300°.</p></div>
+    <div class="steps">
+      <ol>
+        <li><strong>Leia as barras pela grade:</strong> menos de 20 min: 90 alunos; de 20 a 40 min: 60; mais de 40 min: 60.</li>
+        <li><strong>Total:</strong> \(90+60+60=210\).</li>
+        <li><strong>"No máximo 40 min"</strong> = menos de 20 <em>mais</em> de 20 a 40:
+          <div class="formula">\[90+60=150\]</div></li>
+        <li><strong>Fração e ângulo:</strong>
+          <div class="formula">\[\frac{150}{210}=\frac{5}{7}\approx 0{,}714=71{,}4\%\]</div>
+          <div class="formula">\[\theta=\frac{5}{7}\cdot360^\circ\approx 257^\circ\]</div></li>
+        <li><strong>Escolha o setor:</strong> um pouco menos de \(\tfrac34\) do círculo (\(270^\circ\)) e bem mais que a metade. É a opção <strong>d</strong> (a parte branca é um pouco maior que um quarto).
+          <div class="fig"><svg class="chart" viewBox="0 0 520 260" width="520" role="img" aria-label="Fração até 40 min"><path d="M260.0,130.0 L355.0,130.0 A95,95 0 1 1 238.9,37.4 Z" fill="#d4c94a" stroke="#0a0e14" stroke-width="2"/><text x="190.8" y="220.8" fill="#e8eef7" font-size="11.5" text-anchor="end" font-weight="normal" font-family="Segoe UI,sans-serif" >até 40 min: 150/210 · 257,1°</text><path d="M260.0,130.0 L238.9,37.4 A95,95 0 0 1 355.0,130.0 Z" fill="#dfe6ee" stroke="#0a0e14" stroke-width="2"/><text x="329.2" y="47.2" fill="#e8eef7" font-size="11.5" text-anchor="start" font-weight="normal" font-family="Segoe UI,sans-serif" >mais de 40 min: 60/210 · 102,9°</text></svg></div></li>
+      </ol>
+    </div>
+    <div class="ans-box">\(\tfrac{5}{7}\) dos alunos (\(\approx 257^\circ\)) &nbsp; <span class="badge-gab">Alternativa d</span></div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> ela circulou a <strong>d</strong>. Está certo ✓.</div>
+  </div>
+
+  <div class="ex prova" id="f07">
+    <div class="ex-header"><span class="ex-num">Complementar 07</span><span class="ex-src">UEG GO · Versa C46 · p. 753</span><span class="badge-pratica">colunas empilhadas</span><span class="badge-pratica">média</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">O gráfico mostra a comercialização antecipada da safra de soja 2020/2021. Os números pretos são os volumes totais de produção projetados para cada estado, em milhões de toneladas. Observa-se que o total estimado da produção em Mato Grosso é, aproximadamente:</p><div class="fig"><svg class="chart" viewBox="0 0 680 330" width="680" role="img" aria-label="Soja: produção e vendas"><line x1="44" y1="290.0" x2="666" y2="290.0" stroke="#243044"/><text x="38" y="294.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">0</text><line x1="44" y1="255.8" x2="666" y2="255.8" stroke="#243044"/><text x="38" y="259.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">5</text><line x1="44" y1="221.5" x2="666" y2="221.5" stroke="#243044"/><text x="38" y="225.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">10</text><line x1="44" y1="187.2" x2="666" y2="187.2" stroke="#243044"/><text x="38" y="191.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">15</text><line x1="44" y1="153.0" x2="666" y2="153.0" stroke="#243044"/><text x="38" y="157.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">20</text><line x1="44" y1="118.8" x2="666" y2="118.8" stroke="#243044"/><text x="38" y="122.8" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">25</text><line x1="44" y1="84.5" x2="666" y2="84.5" stroke="#243044"/><text x="38" y="88.5" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">30</text><line x1="44" y1="50.2" x2="666" y2="50.2" stroke="#243044"/><text x="38" y="54.2" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">35</text><line x1="44" y1="16.0" x2="666" y2="16.0" stroke="#243044"/><text x="38" y="20.0" fill="#8b9bb4" font-size="10.5" text-anchor="end" font-family="Segoe UI,sans-serif">40</text><rect x="51.8" y="155.1" width="36.3" height="98.5" fill="#2e7d32"/><rect x="51.8" y="253.6" width="36.3" height="36.4" fill="#d4c94a"/><text x="69.9" y="150.1" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">19,7</text><text x="69.9" y="167.1" fill="#e8f5e9" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">27%</text><text x="69.9" y="305.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">RS</text><rect x="103.6" y="148.2" width="36.3" height="78.0" fill="#2e7d32"/><rect x="103.6" y="226.2" width="36.3" height="63.8" fill="#d4c94a"/><text x="121.8" y="143.2" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">20,7</text><text x="121.8" y="160.2" fill="#e8f5e9" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">45%</text><text x="121.8" y="305.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">PR</text><rect x="155.4" y="50.9" width="36.3" height="114.8" fill="#2e7d32" stroke="#fff" stroke-width="2"/><rect x="155.4" y="165.7" width="36.3" height="124.3" fill="#d4c94a"/><text x="173.6" y="45.9" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">34,9</text><text x="173.6" y="62.9" fill="#e8f5e9" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">52%</text><text x="173.6" y="305.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">MT</text><rect x="207.3" y="214.6" width="36.3" height="43.7" fill="#2e7d32"/><rect x="207.3" y="258.4" width="36.3" height="31.6" fill="#d4c94a"/><text x="225.4" y="209.6" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">11</text><text x="225.4" y="226.6" fill="#e8f5e9" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">42%</text><text x="225.4" y="305.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">MS</text><rect x="259.1" y="198.2" width="36.3" height="48.6" fill="#2e7d32"/><rect x="259.1" y="246.9" width="36.3" height="43.1" fill="#d4c94a"/><text x="277.2" y="193.2" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">13,4</text><text x="277.2" y="210.2" fill="#e8f5e9" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">47%</text><text x="277.2" y="305.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">GO</text><rect x="310.9" y="264.0" width="36.3" height="17.7" fill="#2e7d32"/><rect x="310.9" y="281.7" width="36.3" height="8.3" fill="#d4c94a"/><text x="329.1" y="259.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">3,8</text><text x="329.1" y="247.0" fill="#a5d6a7" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">32%</text><text x="329.1" y="305.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">SP</text><rect x="362.8" y="246.8" width="36.3" height="25.0" fill="#2e7d32"/><rect x="362.8" y="271.9" width="36.3" height="18.1" fill="#d4c94a"/><text x="380.9" y="241.8" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">6,3</text><text x="380.9" y="258.8" fill="#e8f5e9" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">42%</text><text x="380.9" y="305.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">MG</text><rect x="414.6" y="251.6" width="36.3" height="22.6" fill="#2e7d32"/><rect x="414.6" y="274.3" width="36.3" height="15.7" fill="#d4c94a"/><text x="432.8" y="246.6" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">5,6</text><text x="432.8" y="263.6" fill="#e8f5e9" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">41%</text><text x="432.8" y="305.0" fill="#8b9bb4" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">BA</text><rect x="466.4" y="271.5" width="36.3" height="13.9" fill="#2e7d32" stroke="#fff" stroke-width="2"/><rect x="466.4" y="285.4" width="36.3" height="4.6" fill="#d4c94a"/><text x="484.6" y="266.5" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">2,7</text><text x="484.6" y="254.5" fill="#a5d6a7" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">25%</text><text x="484.6" y="305.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">SC</text><rect x="518.3" y="267.4" width="36.3" height="12.4" fill="#2e7d32" stroke="#fff" stroke-width="2"/><rect x="518.3" y="279.8" width="36.3" height="10.2" fill="#d4c94a"/><text x="536.4" y="262.4" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">3,3</text><text x="536.4" y="250.4" fill="#a5d6a7" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">45%</text><text x="536.4" y="305.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">MA</text><rect x="570.1" y="272.2" width="36.3" height="11.0" fill="#2e7d32" stroke="#fff" stroke-width="2"/><rect x="570.1" y="283.2" width="36.3" height="6.8" fill="#d4c94a"/><text x="588.2" y="267.2" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">2,6</text><text x="588.2" y="255.2" fill="#a5d6a7" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">38%</text><text x="588.2" y="305.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">PI</text><rect x="621.9" y="266.0" width="36.3" height="12.7" fill="#2e7d32" stroke="#fff" stroke-width="2"/><rect x="621.9" y="278.7" width="36.3" height="11.3" fill="#d4c94a"/><text x="640.1" y="261.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-weight="bold" font-family="Segoe UI,sans-serif">3,5</text><text x="640.1" y="249.0" fill="#a5d6a7" font-size="9" text-anchor="middle" font-family="Segoe UI,sans-serif">47%</text><text x="640.1" y="305.0" fill="#e8eef7" font-size="11" text-anchor="middle" font-family="Segoe UI,sans-serif">TO</text><rect x="44" y="316" width="11" height="10" fill="#d4c94a"/><text x="59" y="325" fill="#e8eef7" font-size="11" font-family="Segoe UI,sans-serif">Volume disponível para venda</text><rect x="254" y="316" width="11" height="10" fill="#2e7d32"/><text x="269" y="325" fill="#e8eef7" font-size="11" font-family="Segoe UI,sans-serif">Vendas realizadas (%)</text></svg><p class="note">Redesenhado com os rótulos do livro. A parte verde é a % já vendida. Destaque: MT, SC, MA, PI e TO.</p></div><ul class="opts" style="flex-direction:column"><li>a) cinco vezes maior que o valor da produção estimada da Bahia.</li><li>b) três vezes maior que o valor da produção estimada do Paraná.</li><li>c) igual ao valor estimado da produção do Rio Grande do Sul e Minas Gerais juntos.</li><li>d) igual à média da produção estimada entre os estados de Goiás, Rio Grande do Sul e São Paulo juntos.</li><li>e) onze vezes maior que o valor da média da produção estimada de Santa Catarina, Maranhão, Piauí e Tocantins juntos.</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> MT = 34,9. Calcule o que cada alternativa diz e compare com 34,9. As porcentagens verdes não entram nesta pergunta (ela fala do total estimado).</p>
+      <ol>
+        <li><strong>a)</strong> \(5\cdot 5{,}6=28\neq 34{,}9\). ✗ (Na verdade, \(34{,}9/5{,}6\approx 6{,}2\) vezes.)</li>
+        <li><strong>b)</strong> \(3\cdot 20{,}7=62{,}1\neq 34{,}9\). ✗</li>
+        <li><strong>c)</strong> \(19{,}7+6{,}3=26\neq 34{,}9\). ✗</li>
+        <li><strong>d)</strong> \(\dfrac{13{,}4+19{,}7+3{,}8}{3}=\dfrac{36{,}9}{3}=12{,}3\neq 34{,}9\). ✗</li>
+        <li><strong>e)</strong> Média de SC, MA, PI, TO:
+          <div class="formula">\[\frac{2{,}7+3{,}3+2{,}6+3{,}5}{4}=\frac{12{,}1}{4}=3{,}025\]</div>
+          <div class="formula">\[11\cdot 3{,}025=33{,}275\approx 33{,}3\]</div>
+          Compare: \(34{,}9/3{,}025\approx 11{,}5\). É a única alternativa com a ordem de grandeza certa: "aproximadamente onze vezes". ✓</li>
+      </ol>
+    </div>
+    <div class="ans-box"><span class="badge-gab">Alternativa e</span> (\(11\cdot3{,}025\approx 33{,}3\approx 34{,}9\))</div>
+    <div class="caderno"><strong>Caderno da Gica:</strong> ela circulou a <strong>e</strong>. Está certo ✓. "Aproximadamente" é a palavra-chave: nenhuma alternativa dá exato.</div>
+  </div>
+
+</div>
+<footer>
+  Pack didático offline · Estatística · C46 · Gráficos e Histogramas · Versa
+</footer>
+
+<script>
+
+var U = (function () {
+  function br(v, d) {
+    if (d === undefined) { var r = Math.round(v * 1000) / 1000; return String(r).replace('.', ','); }
+    return v.toFixed(d).replace('.', ',');
+  }
+  function parse(s) {
+    return String(s).replace(/;/g, ' ').replace(/\n/g, ' ').split(/[\s]+/).map(function (t) { return t.trim().replace(',', '.'); })
+      .filter(function (t) { return t !== '' && !isNaN(+t); }).map(Number);
+  }
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = a % b; a = b; b = t; } return a || 1; }
+  function frac(n, d) { var g = gcd(n, d); return [n / g, d / g]; }
+  function t(x, y, s, size, fill, anchor, weight) {
+    return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" fill="' + (fill || '#e8eef7') + '" font-size="' + (size || 12) + '" text-anchor="' + (anchor || 'middle') + '" font-weight="' + (weight || 'normal') + '" font-family="Segoe UI,sans-serif">' + s + '</text>';
+  }
+  function niceStep(max) {
+    var raw = max / 6, p = Math.pow(10, Math.floor(Math.log10(raw || 1))), m = raw / p;
+    var s = m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10;
+    return s * p;
+  }
+  return { br: br, parse: parse, frac: frac, gcd: gcd, t: t, niceStep: niceStep };
+})();
+
+(function () {
+  function el(id) { return document.getElementById(id); }
+  var COLS = ['#4f8fe0', '#d8b04a', '#8fbf73', '#d0566e', '#ce93d8', '#4fc3f7'];
+  var BS = {
+    p02: { n: ['0 filho', '1 filho', '2 filhos', '3 filhos', '4 filhos', '5 filhos'], v: [84, 240, 360, 240, 180, 96], max: 500 },
+    c02: { n: ['a', 'b', 'c', 'd'], v: [630, 270, 450, 450], max: 1000 },
+    c06: { n: ['< 20 min', '20 a 40 min', '> 40 min'], v: [90, 60, 60], max: 150 },
+    livro: { n: ['A', 'B', 'C', 'D'], v: [50, 30, 14, 6], max: 100 }
+  };
+  var cats = [];
+  function buildRows(p) {
+    cats = p.n.map(function (n, i) { return { n: n, v: p.v[i] }; });
+    var h = '';
+    cats.forEach(function (c, i) {
+      h += '<div class="cat-row"><input type="text" data-i="' + i + '" value="' + c.n + '"><input type="range" data-i="' + i + '" min="0" max="' + p.max + '" step="1" value="' + c.v + '"><span class="val" id="bsV' + i + '">' + c.v + '</span></div>';
+    });
+    el('bsRows').innerHTML = h;
+    el('bsRows').querySelectorAll('input[type=range]').forEach(function (r) { r.addEventListener('input', function () { cats[+r.dataset.i].v = +r.value; drawBS(); }); });
+    el('bsRows').querySelectorAll('input[type=text]').forEach(function (r) { r.addEventListener('input', function () { cats[+r.dataset.i].n = r.value; drawBS(); }); });
+    drawBS();
+  }
+  function drawBS() {
+    var N = cats.reduce(function (a, c) { return a + c.v; }, 0);
+    cats.forEach(function (c, i) { el('bsV' + i).textContent = c.v; });
+    var W = 360, H = 260, pl = 40, pb = 34, pt = 14, mx = Math.max.apply(null, cats.map(function (c) { return c.v; })) || 1;
+    var st = U.niceStep(mx), ymax = Math.ceil(mx / st) * st;
+    var s = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '">';
+    for (var y = 0; y <= ymax + 1e-9; y += st) { var yy = pt + (H - pt - pb) * (1 - y / ymax); s += '<line x1="' + pl + '" x2="' + (W - 8) + '" y1="' + yy + '" y2="' + yy + '" stroke="#243044"/>' + U.t(pl - 5, yy + 4, U.br(y), 9.5, '#8b9bb4', 'end'); }
+    var gw = (W - pl - 8) / cats.length;
+    cats.forEach(function (c, i) {
+      var bw = gw * 0.62, x = pl + gw * i + (gw - bw) / 2, yy = pt + (H - pt - pb) * (1 - c.v / ymax);
+      s += '<rect x="' + x + '" y="' + yy + '" width="' + bw + '" height="' + (H - pb - yy) + '" fill="' + COLS[i] + '" rx="2"/>' + U.t(x + bw / 2, yy - 4, c.v, 10);
+      s += U.t(pl + gw * i + gw / 2, H - pb + 14, c.n, 9.5, '#8b9bb4');
+    });
+    s += '<line x1="' + pl + '" x2="' + (W - 8) + '" y1="' + (H - pb) + '" y2="' + (H - pb) + '" stroke="#5a6a82" stroke-width="1.5"/>' + U.t(W / 2, H - 4, 'barras: altura = quantidade', 10, '#8b9bb4') + '</svg>';
+    el('bsBar').innerHTML = s;
+    var cx = 180, cy = 124, r = 92, a = 90, p = '<svg class="chart" viewBox="0 0 360 260" width="360">';
+    if (N > 0) cats.forEach(function (c, i) {
+      var ang = c.v / N * 360; if (ang <= 0) return;
+      var a0 = a * Math.PI / 180, a1 = (a - ang) * Math.PI / 180;
+      if (ang >= 359.999) p += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + COLS[i] + '"/>';
+      else p += '<path d="M' + cx + ',' + cy + ' L' + (cx + r * Math.cos(a0)) + ',' + (cy - r * Math.sin(a0)) + ' A' + r + ',' + r + ' 0 ' + (ang > 180 ? 1 : 0) + ' 1 ' + (cx + r * Math.cos(a1)) + ',' + (cy - r * Math.sin(a1)) + ' Z" fill="' + COLS[i] + '" stroke="#0a0e14" stroke-width="2"/>';
+      var m = (a - ang / 2) * Math.PI / 180;
+      if (ang > 14) p += U.t(cx + r * 0.62 * Math.cos(m), cy - r * 0.62 * Math.sin(m) + 4, U.br(Math.round(ang * 10) / 10) + '°', 10.5, '#0a0e14', 'middle', 'bold');
+      a -= ang;
+    });
+    p += U.t(180, 252, 'setores: ângulo = (f / n)·360°', 10, '#8b9bb4') + '</svg>';
+    el('bsPie').innerHTML = p;
+    var h = '<div class="tab-wrap"><table class="ftab"><tr><th>Categoria</th><th>f<sub>i</sub></th><th>f<sub>r</sub></th><th>ângulo = f<sub>r</sub>·360°</th></tr>', tot = 0;
+    cats.forEach(function (c, i) {
+      var fr = N ? c.v / N : 0, ang = fr * 360; tot += ang;
+      h += '<tr><td class="l"><span class="sw" style="background:' + COLS[i] + '"></span>' + c.n + '</td><td>' + c.v + '</td><td>' + U.br(Math.round(fr * 1000) / 10) + '%</td><td>' + c.v + '/' + N + ' · 360° = ' + U.br(Math.round(ang * 10) / 10) + '°</td></tr>';
+    });
+    h += '<tr class="tot"><td>Total</td><td>' + N + '</td><td>100%</td><td>' + U.br(Math.round(tot * 10) / 10) + '°</td></tr></table></div>';
+    el('bsTab').innerHTML = h;
+    el('bsVals').innerHTML = '<div>\\(n=' + N + '\\). Cada unidade vale \\(\\dfrac{360^\\circ}{' + N + '}\\approx ' + (N ? U.br(Math.round(360 / N * 1000) / 1000).replace(',', '{,}') : '0') + '^\\circ\\) no círculo.</div><div class="note">A barra só depende do próprio valor. O setor depende do valor <strong>e</strong> do total.</div>';
+    if (window.renderKatex) window.renderKatex(el('bsVals'));
+  }
+  // ---------- histogram ----------
+  var HG = {
+    p05: { s: 40, h: 10, f: [6, 10, 18, 12, 4] },
+    c45p04: { s: 55, h: 10, f: [4, 5, 8, 13, 9, 11] },
+    c45p02: { s: 1, h: 3, f: [8, 7, 12, 7, 4, 2] },
+    c47p03: { s: 0, h: 2, f: [3, 5, 18, 14, 10] }
+  };
+  var hf = [6, 10, 18, 12, 4, 0, 0];
+  function hgRows() {
+    var k = +el('hgK').value, h = '';
+    for (var i = 0; i < k; i++) h += '<div class="cat-row"><span style="font-size:0.8rem;color:var(--muted)">classe ' + (i + 1) + '</span><input type="range" data-i="' + i + '" min="0" max="30" step="1" value="' + (hf[i] || 0) + '"><span class="val" id="hgV' + i + '">' + (hf[i] || 0) + '</span></div>';
+    el('hgRows').innerHTML = h;
+    el('hgRows').querySelectorAll('input').forEach(function (r) { r.addEventListener('input', function () { hf[+r.dataset.i] = +r.value; drawHG(); }); });
+  }
+  function drawHG() {
+    var s0 = +el('hgS').value, h = +el('hgH').value, k = +el('hgK').value;
+    el('hgSLbl').textContent = s0; el('hgHLbl').textContent = h; el('hgKLbl').textContent = k;
+    var f = hf.slice(0, k); f.forEach(function (v, i) { var e = el('hgV' + i); if (e) e.textContent = v; });
+    var n = f.reduce(function (a, b) { return a + b; }, 0), fm = Math.max.apply(null, f) || 1;
+    var st = Math.max(1, Math.ceil(fm / 8)), ymax = Math.ceil(fm / st) * st + st;
+    var W = 620, H = 300, pl = 44, pb = 46, pt = 12, lo = s0 - h, hi = s0 + (k + 1) * h;
+    function X(v) { return pl + (v - lo) / (hi - lo) * (W - pl - 12); }
+    function Y(v) { return pt + (H - pt - pb) * (1 - v / ymax); }
+    var svg = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '">';
+    for (var y = 0; y <= ymax; y += st) svg += '<line x1="' + pl + '" x2="' + (W - 12) + '" y1="' + Y(y) + '" y2="' + Y(y) + '" stroke="#243044"/>' + U.t(pl - 5, Y(y) + 4, y, 10, '#8b9bb4', 'end');
+    if (el('hgShowH').checked) f.forEach(function (v, i) { var a = s0 + i * h; svg += '<rect x="' + X(a) + '" y="' + Y(v) + '" width="' + (X(a + h) - X(a)) + '" height="' + (Y(0) - Y(v)) + '" fill="#d4c94a" fill-opacity="0.8" stroke="#0a0e14" stroke-width="1.5"/>'; if (!el('hgShowP').checked) svg += U.t((X(a) + X(a + h)) / 2, Y(v) - 4, v, 10.5); });
+    var mids = [s0 - h / 2], ys = [0];
+    f.forEach(function (v, i) { mids.push(s0 + i * h + h / 2); ys.push(v); });
+    mids.push(s0 + k * h + h / 2); ys.push(0);
+    if (el('hgShowP').checked) {
+      svg += '<polyline fill="none" stroke="#ef5350" stroke-width="2.5" points="' + mids.map(function (m, i) { return X(m) + ',' + Y(ys[i]); }).join(' ') + '"/>';
+      mids.forEach(function (m, i) { svg += '<circle cx="' + X(m) + '" cy="' + Y(ys[i]) + '" r="4" fill="#ef5350"/>' + U.t(X(m), H - pb + 28, U.br(m), 9.5, '#ff8a80'); if (ys[i]) svg += U.t(X(m), Y(ys[i]) - 8, ys[i], 10.5); });
+    }
+    for (var i = 0; i <= k; i++) svg += U.t(X(s0 + i * h), H - pb + 14, U.br(s0 + i * h), 9.5, '#8b9bb4');
+    svg += '<line x1="' + pl + '" x2="' + (W - 12) + '" y1="' + Y(0) + '" y2="' + Y(0) + '" stroke="#5a6a82" stroke-width="1.5"/>' + U.t(W / 2, H - 4, 'cinza: limites das classes · vermelho: pontos médios', 10, '#8b9bb4') + '</svg>';
+    el('hgChart').innerHTML = svg;
+    var t = '<div class="tab-wrap"><table class="ftab"><tr><th>Classe</th><th>f<sub>i</sub></th><th>ponto médio</th><th>ponto do polígono</th></tr>';
+    t += '<tr><td>(vazia) ' + U.br(s0 - h) + ' ⊢ ' + U.br(s0) + '</td><td>0</td><td>' + U.br(mids[0]) + '</td><td>(' + U.br(mids[0]) + '; 0)</td></tr>';
+    f.forEach(function (v, i) { var a = s0 + i * h; t += '<tr><td>' + U.br(a) + ' ⊢ ' + U.br(a + h) + '</td><td>' + v + '</td><td>(' + U.br(a) + ' + ' + U.br(a + h) + ')/2 = ' + U.br(mids[i + 1]) + '</td><td>(' + U.br(mids[i + 1]) + '; ' + v + ')</td></tr>'; });
+    t += '<tr><td>(vazia) ' + U.br(s0 + k * h) + ' ⊢ ' + U.br(s0 + (k + 1) * h) + '</td><td>0</td><td>' + U.br(mids[k + 1]) + '</td><td>(' + U.br(mids[k + 1]) + '; 0)</td></tr></table></div>';
+    el('hgTab').innerHTML = t;
+    el('hgVals').innerHTML = '<div>\\(n=' + n + '\\). Área do histograma \\(=h\\cdot n=' + h + '\\cdot' + n + '=' + (h * n) + '\\), igual à área sob o polígono (os triângulos que saem e entram se compensam).</div>';
+    if (window.renderKatex) window.renderKatex(el('hgVals'));
+  }
+  function loadHG(key) { var p = HG[key]; el('hgS').value = p.s; el('hgH').value = p.h; el('hgK').value = p.f.length; hf = p.f.slice(); while (hf.length < 7) hf.push(0); hgRows(); drawHG(); document.querySelectorAll('[data-hg]').forEach(function (b) { b.classList.toggle('primary', b.dataset.hg === key); }); }
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-bs]').forEach(function (b) { b.addEventListener('click', function () { buildRows(BS[b.dataset.bs]); document.querySelectorAll('[data-bs]').forEach(function (z) { z.classList.toggle('primary', z === b); }); }); });
+    document.querySelectorAll('[data-hg]').forEach(function (b) { b.addEventListener('click', function () { loadHG(b.dataset.hg); }); });
+    ['hgS', 'hgH'].forEach(function (id) { el(id).addEventListener('input', drawHG); });
+    el('hgK').addEventListener('input', function () { hgRows(); drawHG(); });
+    ['hgShowH', 'hgShowP'].forEach(function (id) { el(id).addEventListener('change', drawHG); });
+    function tab(nn) { [1, 2].forEach(function (k) { el('lab' + k).style.display = k === nn ? '' : 'none'; el('tabLab' + k).classList.toggle('on', k === nn); }); }
+    [1, 2].forEach(function (k) { el('tabLab' + k).addEventListener('click', function () { tab(k); }); });
+    buildRows(BS.p02); loadHG('p05');
+  });
+})();
+
+(function () {
+var Q = [
+ {q: 'Num gráfico de setores, uma categoria tem 25% dos dados. O ângulo do setor é:', o: ['25°', '45°', '90°', '100°'], a: 2, e: '\\(0{,}25\\cdot 360^\\circ=90^\\circ\\).'},
+ {q: 'Um setor tem 54°. Que porcentagem ele representa?', o: ['54%', '15%', '18%', '30%'], a: 1, e: '\\(54/360=0{,}15=15\\%\\).'},
+ {q: 'Qual gráfico é o mais indicado para mostrar a evolução do dólar mês a mês?', o: ['setores', 'linhas', 'pictograma', 'histograma'], a: 1, e: 'Evolução no tempo: gráfico de linhas.'},
+ {q: 'No histograma, os retângulos…', o: ['ficam separados', 'ficam colados, com base = classe', 'têm todos a mesma altura', 'são desenhados em pizza'], a: 1, e: 'As classes \\(a\\vdash b\\) são contíguas, então os retângulos se encostam.'},
+ {q: 'Classe 60 ⊢ 70. Onde fica o ponto do polígono de frequências?', o: ['x = 60', 'x = 70', 'x = 65', 'x = 130'], a: 2, e: 'Ponto médio: \\((60+70)/2=65\\).'},
+ {q: 'Eixo "em milhares": a coluna mostra 12,5. Quantas unidades?', o: ['12,5', '125', '1 250', '12 500'], a: 3, e: '\\(12{,}5\\cdot1000=12\\,500\\).'},
+ {q: 'Setores: A = 40%, B = 35%, C = ?. Total de 600 pessoas. Quantas em C?', o: ['25', '150', '240', '210'], a: 1, e: 'C = 25%, e \\(0{,}25\\cdot 600=150\\).'},
+ {q: 'Um diâmetro divide um gráfico de setores em duas partes. Cada parte vale:', o: ['25%', '50%', '180%', 'depende'], a: 1, e: 'Meio círculo = 180° = 50%.'}
+];
+  var right = 0, answered = 0;
+  function score() { document.getElementById('quizScore').textContent = right + ' / ' + answered + ' (de ' + Q.length + ')'; }
+  function render() {
+    right = 0; answered = 0;
+    var box = document.getElementById('quizBox'), h = '';
+    Q.forEach(function (it, i) {
+      h += '<div class="quiz-q" data-i="' + i + '"><div class="qt"><strong>' + (i + 1) + '.</strong> ' + it.q + '</div><div class="quiz-opts">';
+      it.o.forEach(function (op, j) { h += '<button type="button" data-j="' + j + '">' + op + '</button>'; });
+      h += '</div><div class="quiz-fb"></div></div>';
+    });
+    box.innerHTML = h;
+    box.querySelectorAll('.quiz-q').forEach(function (qq) {
+      var it = Q[+qq.dataset.i];
+      qq.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (qq.classList.contains('done')) return;
+          qq.classList.add('done'); answered++;
+          var j = +b.dataset.j, ok = j === it.a;
+          if (ok) right++;
+          b.classList.add(ok ? 'ok' : 'bad');
+          qq.querySelectorAll('button')[it.a].classList.add('ok');
+          var fb = qq.querySelector('.quiz-fb');
+          fb.innerHTML = (ok ? '<strong style="color:var(--accent2)">Certo!</strong> ' : '<strong style="color:var(--danger)">Ainda não.</strong> ') + it.e;
+          if (window.renderKatex) window.renderKatex(fb);
+          score();
+        });
+      });
+    });
+    if (window.renderKatex) window.renderKatex(box);
+    score();
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    render();
+    document.getElementById('quizReset').addEventListener('click', render);
+  });
+})();
+
+(function () {
+  var KEY = 'c46-estat-treino';
+  function loadPref() {
+    try { var v = localStorage.getItem(KEY); if (v === null) return true; return v === 'true'; } catch (e) { return true; }
+  }
+  function savePref(on) { try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {} }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal'), btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) { ex.classList.remove('collapsed'); ex.dataset.userRevealed = '1'; syncButtons(ex); }
+  function hide(ex) { ex.classList.add('collapsed'); delete ex.dataset.userRevealed; syncButtons(ex); }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner'), chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) { if (!ex.dataset.userRevealed) ex.classList.add('collapsed'); } else { ex.classList.remove('collapsed'); }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    if (/[?&]revisao\b/.test(location.search)) on = false;
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var steps = ex.querySelector('.steps');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (steps) { steps.parentNode.insertBefore(box, steps); steps.parentNode.insertBefore(row, steps); }
+        else { ex.appendChild(box); ex.appendChild(row); }
+      }
+      var br = ex.querySelector('.btn-reveal'), bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) { chk.checked = on; chk.addEventListener('change', function () { setMode(chk.checked); }); }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) { if (all.checked) reveal(ex); else hide(ex); });
+      });
+    }
+    setMode(on);
+    var bp = document.getElementById('btnPrintForm');
+    if (bp) bp.addEventListener('click', function () {
+      document.body.classList.add('print-form');
+      window.print();
+      setTimeout(function () { document.body.classList.remove('print-form'); }, 500);
+    });
+  });
+})();
+
+</script>
+</body>
+</html>
