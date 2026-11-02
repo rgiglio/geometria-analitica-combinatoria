@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circunferência — Posições entre ponto e circunferência | A42</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --danger: #ef5350; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+  touch-action: none;
+}
+.controls { display: flex; flex-direction: column; gap: 0.7rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-size: 0.92rem;
+}
+.live-vals div { margin: 0.25rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.status-pill {
+  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+}
+.status-secante { background: rgba(79,195,247,.2); color: var(--accent); }
+.status-tangente { background: rgba(129,199,132,.2); color: var(--accent2); }
+.status-exterior { background: rgba(255,183,77,.2); color: var(--accent3); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow); overflow: hidden;
+}
+.theory-card h3 { margin-top: 0; color: var(--accent); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
+}
+.explain {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 0 0 1.5rem; box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(79,195,247,.15); color: var(--accent);
+  border: 1px solid rgba(79,195,247,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps, .ex.collapsed .ans-box { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+/* ---- B44 extras ---- */
+canvas#cvPoly { aspect-ratio: 4 / 3; max-width: 640px; }
+.formulario {
+  background: linear-gradient(160deg, #22301f 0%, #1a2332 55%);
+  border: 2px solid var(--accent3); border-radius: var(--radius);
+  padding: 1.25rem 1.3rem 1.4rem; margin: 0 0 1.75rem; box-shadow: 0 6px 28px rgba(255,183,77,.12);
+}
+.formulario-head { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+.formulario-head h2 { margin: 0; border: none; padding: 0; color: var(--accent3); font-size: 1.35rem; letter-spacing: .02em; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 0.9rem; }
+.form-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; }
+.form-item h4 { color: var(--accent3); font-size: 0.92rem; margin-bottom: 0.25rem; }
+.form-item h4 .n { display: inline-block; min-width: 1.6rem; color: var(--bg); background: var(--accent3); border-radius: 5px; text-align: center; margin-right: 0.4rem; font-size: 0.8rem; }
+.form-item p { color: var(--muted); font-size: 0.86rem; margin-top: 0.3rem; }
+.form-item .formula { border-left-color: var(--accent3); font-size: 0.98rem; }
+.fix {
+  margin: 0.75rem 0; padding: 0.65rem 0.9rem; border-radius: 8px;
+  background: rgba(239,83,80,.10); border: 1px solid rgba(239,83,80,.4); color: #ffab9f; font-size: 0.9rem;
+}
+.fix strong { color: #ffcdd2; }
+.fix .katex { color: inherit; }
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.lab-tabs button.on { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.coef-row { display: grid; grid-template-columns: 4.2rem 1fr 3.4rem; gap: 0.5rem; align-items: center; }
+.coef-row .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--text); font-size: 0.88rem; }
+.coef-row.dom label { color: var(--accent3); font-weight: 700; }
+.coef-row.zero label { opacity: .55; }
+.ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .ops-grid { grid-template-columns: 1fr; } }
+.poly-in { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; font-size: 0.9rem; color: var(--muted); }
+.poly-in input { width: 58px; }
+.mult-table { border-collapse: collapse; margin: 0.6rem 0; font-size: 0.92rem; }
+.mult-table th, .mult-table td { border: 1px solid var(--border); padding: 0.4rem 0.65rem; text-align: center; }
+.mult-table th { background: var(--surface2); color: var(--accent); }
+.mult-table td { background: var(--bg); }
+.work { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-top: 0.8rem; overflow-x: auto; }
+.work div { margin: 0.3rem 0; color: var(--muted); }
+.deg-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(255,183,77,.18); color: var(--accent3); }
+.deg-tag.nulo { background: rgba(239,83,80,.18); color: var(--danger); }
+.root-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(129,199,132,.2); color: var(--accent2); }
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.9rem 0; }
+.quiz-q .qt { margin-bottom: 0.6rem; }
+.quiz-opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.quiz-opts button.ok { background: rgba(129,199,132,.25); border-color: var(--accent2); color: var(--accent2); }
+.quiz-opts button.bad { background: rgba(239,83,80,.18); border-color: var(--danger); color: #ffab9f; }
+.quiz-fb { margin-top: 0.55rem; font-size: 0.9rem; color: var(--muted); display: none; }
+.quiz-q.done .quiz-fb { display: block; }
+.score { display: inline-block; font-weight: 800; color: var(--accent2); font-size: 1.05rem; }
+.sys { display: inline-block; }
+/* ---- B45/B46 extras ---- */
+canvas.cv-wide { aspect-ratio: 4 / 3; max-width: 640px; }
+.badge-prova {
+  display: inline-block; background: rgba(239,83,80,.18); color: #ff8a80; border: 1px solid rgba(239,83,80,.6);
+  padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: .03em;
+}
+.badge-prova.max { background: #c62828; color: #fff; border-color: #ff8a80; box-shadow: 0 0 12px rgba(239,83,80,.45); }
+.ex.prova { border-left: 4px solid #ef5350; }
+.ex.prova-max { border: 2px solid #ef5350; box-shadow: 0 0 24px rgba(239,83,80,.18); }
+.badge-gab { display: inline-block; background: rgba(129,199,132,.15); color: var(--accent2); border: 1px solid rgba(129,199,132,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.caderno {
+  margin-top: 0.85rem; padding: 0.7rem 0.95rem; border-radius: 8px; font-size: 0.9rem;
+  background: rgba(79,195,247,.08); border: 1px dashed rgba(79,195,247,.55); color: #b3e5fc;
+}
+.caderno strong { color: #e1f5fe; }
+.caderno.quase { background: rgba(255,183,77,.08); border-color: rgba(255,183,77,.6); color: #ffe0b2; }
+.caderno.quase strong { color: #fff3e0; }
+.caderno .katex { color: inherit; }
+.opts { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem 1.2rem; margin: 0.35rem 0 0.2rem; color: var(--muted); font-size: 0.93rem; }
+.prova-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+.prova-list a { display: block; background: var(--bg); border: 1px solid rgba(239,83,80,.45); border-radius: 8px; padding: 0.5rem 0.7rem; color: var(--text); text-decoration: none; font-size: 0.88rem; }
+.prova-list a:hover { border-color: #ef5350; }
+.prova-list a .k { color: #ff8a80; font-weight: 800; margin-right: 0.35rem; }
+/* tabela de Briot-Ruffini */
+.briot { border-collapse: collapse; margin: 0.6rem auto; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.briot td { padding: 0.35rem 0.7rem; text-align: center; min-width: 2.6rem; color: var(--text); }
+.briot td.root { border-right: 2px solid var(--accent3); color: var(--accent3); font-weight: 700; }
+.briot tr.top td { border-bottom: 2px solid var(--accent3); }
+.briot td.rest { border-left: 2px solid var(--accent3); }
+.briot tr.bot td.rest { color: var(--accent2); font-weight: 800; }
+.briot td.hi { background: rgba(79,195,247,.22); border-radius: 6px; outline: 1px solid var(--accent); }
+.briot td.src { background: rgba(255,183,77,.16); border-radius: 6px; }
+.briot td.ghost { color: transparent; }
+.briot caption { caption-side: bottom; color: var(--muted); font-size: 0.8rem; padding-top: 0.3rem; }
+.steps .briot { margin-left: 0; }
+.step-msg { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.85rem; margin-top: 0.6rem; color: var(--muted); min-height: 2.6rem; }
+.step-msg strong { color: var(--accent); }
+.inp-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.35rem 0; }
+.inp-row input[type="text"], .inp-row input[type="number"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.35rem 0.55rem; border-radius: 8px; font-size: 0.92rem;
+}
+.inp-row input[type="text"] { min-width: 210px; flex: 1; }
+.inp-row input[type="number"] { width: 70px; }
+.inp-row select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.3rem 0.4rem; border-radius: 8px; }
+.err { color: #ff8a80; font-size: 0.85rem; }
+.chave { font-size: 0.98rem; }
+.chave .katex-display { margin: 0.15em 0; text-align: left; }
+.root-ctl { display: grid; grid-template-columns: 2.2rem 1fr 3rem 4.6rem; gap: 0.45rem; align-items: center; }
+.root-ctl .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.88rem; }
+.mult-pill { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin: 0.1rem 0.15rem; }
+.mult-pill.cruza { background: rgba(79,195,247,.18); color: var(--accent); }
+.mult-pill.toca { background: rgba(255,183,77,.2); color: var(--accent3); }
+.mult-pill.inflex { background: rgba(206,147,216,.2); color: var(--accent4); }
+.graph-fig { display: block; margin: 0.6rem auto; max-width: 100%; }
+.ex.collapsed .caderno { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .caderno { display: block !important; }
+
+.formula { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.formula .katex-display { position: relative; }
+.briot-wrap { max-width: 100%; overflow-x: auto; }
+@media (max-width: 520px) { .briot td { padding: 0.3rem 0.45rem; } }
+@media print {
+  body.print-form nav, body.print-form .treino-banner, body.print-form .wrap > *:not(.formulario), body.print-form footer, body.print-form .no-print { display: none !important; }
+  body.print-form { background: #fff; color: #000; }
+  body.print-form .formulario { border-color: #999; background: #fff; box-shadow: none; }
+  body.print-form .form-item { background: #fff; border-color: #bbb; break-inside: avoid; }
+  body.print-form .form-item h4, body.print-form .formulario-head h2 { color: #000; }
+  body.print-form .form-item p { color: #333; }
+}
+
+
+canvas.mini-reg { display: block; width: 100%; max-width: 300px; height: auto; aspect-ratio: 1; margin: 0.6rem auto; }
+</style>
+</style>
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "\\[", right: "\\]", display: true},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">Circunferência · A42</span>
+  <a href="index.html">Index</a>
+  <a href="a42-ponto-circunferencia.html" class="active">A42 Ponto × circ.</a>
+  <a href="a43-recapitulacao.html">Recap.</a>
+  <a href="a43-reta-circunferencia.html">Reta × circ.</a>
+  <a href="a43-duas-circunferencias.html">Duas circ.</a>
+  <a href="a44-tangencia.html">Tangência</a>
+  <a href="#formulario">Formulário</a>
+  <a href="#laboratorio">Laboratório</a>
+  <a href="#teste">Teste</a>
+  <a href="#exercicios">Exercícios</a>
+</nav>
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+  <h1>Circunferência: posições entre ponto e circunferência</h1>
+  <p class="subtitle">A42 · Ponto interior, exterior ou pertencente · Inequações e regiões do plano · Coroa circular · Semiplanos · Áreas · Pontos de coordenadas inteiras · Versa</p>
+
+  <div class="fix"><strong>Observação sobre o título do livro.</strong> A abertura e a lateral das páginas dizem "Circunferência – Posições entre Ponto e <strong>Reta</strong>", mas todo o conteúdo do módulo (teoria e exercícios) é sobre a posição entre um <strong>ponto e uma circunferência</strong>. Aqui usamos o título correto. (Na lista da prova também aparece "ponto e reta": é este módulo, o A42.)</div>
+
+  <span class="section-label">(A) De onde vem: o picadeiro do circo</span>
+  <div class="explain">
+    <p class="lead">O livro abre falando do picadeiro de um circo: ele é circular, e cada poste, refletor ou cadeira precisa estar <strong>dentro</strong>, <strong>em cima</strong> ou <strong>fora</strong> do anel central. Vamos colocar isso num plano cartesiano.</p>
+    <p>Suponha que o picadeiro seja a circunferência de centro \(C(0,0)\) e raio \(R=6\) m, isto é, \(\lambda: x^2+y^2=36\). Onde está um poste em \(P(4,5)\)?</p>
+    <div class="formula">\[d_{PC}=\sqrt{(4-0)^2+(5-0)^2}=\sqrt{16+25}=\sqrt{41}\approx 6{,}4\ \text{m}\]</div>
+    <p>Como \(6{,}4&gt;6\), o poste fica <strong>fora</strong> do picadeiro (exterior), a uns 40 cm da borda. E um refletor em \(Q(3,4)\)? \(d_{QC}=\sqrt{9+16}=\sqrt{25}=5&lt;6\): fica <strong>dentro</strong> (interior). Toda a teoria do A42 é isso: <strong>comparar a distância do ponto ao centro com o raio</strong>.</p>
+  </div>
+
+  <span class="section-label">(B) Conceitos, passo a passo</span>
+  <div class="explain">
+    <h3 style="margin-top:0">1. Lembrete: distância entre dois pontos e equação reduzida</h3>
+    <p>A distância entre \(P(x,y)\) e o centro \(C(x_0,y_0)\) é</p>
+    <div class="formula">\[d_{PC}=\sqrt{(x-x_0)^2+(y-y_0)^2}\]</div>
+    <p>A circunferência \(\lambda\) de centro \(C(x_0,y_0)\) e raio \(R\) é o conjunto dos pontos a distância <strong>exatamente</strong> \(R\) do centro:</p>
+    <div class="formula">\[\lambda:\ (x-x_0)^2+(y-y_0)^2=R^2\]</div>
+
+    <h3>2. Os três casos (como no livro)</h3>
+    <p><strong>1º caso: ponto interior.</strong> \(P\) é interior a \(\lambda\) se, e somente se, a distância de \(P\) ao centro for <strong>menor</strong> que o raio:</p>
+    <div class="formula">\[d_{PC}&lt;R\iff (x-x_0)^2+(y-y_0)^2&lt;R^2\quad(\text{região interior})\]</div>
+    <p><strong>2º caso: ponto exterior.</strong> \(P\) é exterior a \(\lambda\) se, e somente se, a distância for <strong>maior</strong> que o raio:</p>
+    <div class="formula">\[d_{PC}&gt;R\iff (x-x_0)^2+(y-y_0)^2&gt;R^2\quad(\text{região exterior})\]</div>
+    <p><strong>3º caso: ponto pertence.</strong> \(P\) pertence a \(\lambda\) se, e somente se, a distância for <strong>igual</strong> ao raio:</p>
+    <div class="formula">\[d_{PC}=R\iff (x-x_0)^2+(y-y_0)^2=R^2\]</div>
+    <p>Por que podemos comparar os <strong>quadrados</strong>? Porque \(d\) e \(R\) são positivos, e para números positivos \(d&lt;R\iff d^2&lt;R^2\). Assim a raiz quadrada some e a conta fica mais limpa.</p>
+
+    <h3>3. Na prática: substitua o ponto na equação</h3>
+    <p>Passe tudo para um lado: \(f(x,y)=(x-x_0)^2+(y-y_0)^2-R^2\). Substitua as coordenadas de \(P\) e olhe o <strong>sinal</strong>:</p>
+    <ul style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li>\(f(P)&lt;0\): interior;</li>
+      <li>\(f(P)=0\): pertence;</li>
+      <li>\(f(P)&gt;0\): exterior.</li>
+    </ul>
+    <p>Isso funciona também com a <strong>forma geral</strong> \(x^2+y^2+Dx+Ey+F=0\): basta substituir \(P\) no lado esquerdo, porque ele é exatamente \((x-x_0)^2+(y-y_0)^2-R^2\) desenvolvido. Não precisa achar centro e raio! (Proposto 03.)</p>
+    <p><strong>Exemplo.</strong> \(P(1,1)\) e \(\lambda: x^2+y^2-4x-6y+4=0\): \(1+1-4-6+4=-4&lt;0\Rightarrow P\) é interior. (Conferindo: centro \((2,3)\), \(R=3\), \(d=\sqrt{1+4}=\sqrt5\approx 2{,}24&lt;3\ \checkmark\))</p>
+
+    <h3>4. Inequações e regiões do plano</h3>
+    <p>Uma inequação em \(x\) e \(y\) representa uma <strong>região</strong>: todos os pontos cujas coordenadas a satisfazem.</p>
+    <ul style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li>\(x^2+y^2&lt;R^2\): o <strong>disco aberto</strong> (círculo sem a borda). Borda tracejada no desenho.</li>
+      <li>\(x^2+y^2\le R^2\): o <strong>disco fechado</strong> (com a borda). Borda contínua.</li>
+      <li>\(x^2+y^2&gt;R^2\) ou \(\ge R^2\): tudo o que está <strong>fora</strong> (com ou sem a borda).</li>
+      <li>\(r^2\le x^2+y^2\le R^2\): a <strong>coroa circular</strong> (um "anel" entre duas circunferências concêntricas).</li>
+      <li>\(ax+by+c\ge 0\): um <strong>semiplano</strong> limitado pela reta \(ax+by+c=0\). Para saber de que lado fica, teste um ponto fácil, como a origem \((0,0)\).</li>
+    </ul>
+    <p><strong>Sistema de inequações = interseção.</strong> Quando aparece "\(\{\ \dots\ \text{e}\ \dots\)", a região é a parte que satisfaz <strong>todas ao mesmo tempo</strong>: pinte cada uma e fique com o que foi pintado em todas.</p>
+    <p><strong>Círculo × circunferência</strong> (Complementar 07): a <strong>circunferência</strong> é só a linha (a borda); o <strong>círculo</strong> é a região (borda + interior).</p>
+
+    <h3>5. Áreas que aparecem nos exercícios</h3>
+    <ul style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li>Círculo: \(\pi R^2\). Semicírculo (uma reta passando pelo centro corta ao meio): \(\dfrac{\pi R^2}{2}\). Quarto de círculo (duas retas perpendiculares pelo centro): \(\dfrac{\pi R^2}{4}\).</li>
+      <li>Coroa circular: \(\pi R^2-\pi r^2=\pi(R^2-r^2)\).</li>
+      <li>Segmento circular de 90°: setor menos triângulo, \(\dfrac{\pi R^2}{4}-\dfrac{R^2}{2}\).</li>
+    </ul>
+    <p>Dica de ouro: <strong>sempre verifique se a reta passa pelo centro</strong> (substitua o centro na equação da reta). Se passar, ela divide o círculo ao meio. (Complementares 03 e 05.)</p>
+
+    <h3>6. Contando pontos de coordenadas inteiras</h3>
+    <p>Para contar os pares \((x,y)\) inteiros dentro de um disco, varra cada valor inteiro de \(x\) possível e conte quantos \(y\) inteiros cabem. Organize numa tabela para não esquecer nenhum (Complementares 01 e 02).</p>
+  </div>
+
+  <section class="formulario" id="formulario">
+    <div class="formulario-head">
+      <h2>(C) FORMULÁRIO · A42 Ponto × circunferência</h2>
+      <button type="button" class="primary no-print" id="btnPrintForm">Imprimir só o formulário</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-item">
+        <h4><span class="n">1</span>Distância ponto–centro</h4>
+        <div class="formula">\[d_{PC}=\sqrt{(x_P-x_0)^2+(y_P-y_0)^2}\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">2</span>Equação reduzida e geral</h4>
+        <div class="formula">\[(x-x_0)^2+(y-y_0)^2=R^2\]</div>
+        <div class="formula">\[x^2+y^2+Dx+Ey+F=0:\ \ x_0=-\tfrac D2,\ y_0=-\tfrac E2,\ R^2=x_0^2+y_0^2-F\]</div>
+        <p>Só é circunferência se \(R^2&gt;0\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">3</span>Ponto interior</h4>
+        <div class="formula">\[d_{PC}&lt;R\iff (x-x_0)^2+(y-y_0)^2&lt;R^2\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">4</span>Ponto pertence</h4>
+        <div class="formula">\[d_{PC}=R\iff (x-x_0)^2+(y-y_0)^2=R^2\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">5</span>Ponto exterior</h4>
+        <div class="formula">\[d_{PC}&gt;R\iff (x-x_0)^2+(y-y_0)^2&gt;R^2\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">6</span>Atalho: substituir na equação</h4>
+        <div class="formula">\[f(x,y)=x^2+y^2+Dx+Ey+F\]</div>
+        <p>\(f(P)&lt;0\) interior · \(f(P)=0\) pertence · \(f(P)&gt;0\) exterior. Vale para a forma geral sem calcular centro e raio.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">7</span>Regiões</h4>
+        <div class="formula">\[x^2+y^2\le R^2:\ \text{disco (borda cheia)}\]</div>
+        <div class="formula">\[x^2+y^2&gt;R^2:\ \text{exterior (borda tracejada)}\]</div>
+        <div class="formula">\[r^2\le x^2+y^2\le R^2:\ \text{coroa circular}\]</div>
+        <p>\(&lt;\) ou \(&gt;\): borda <strong>tracejada</strong> (não faz parte). \(\le\) ou \(\ge\): borda <strong>contínua</strong>.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">8</span>Semiplano de uma reta</h4>
+        <div class="formula">\[ax+by+c\ge 0\]</div>
+        <p>Desenhe a reta \(ax+by+c=0\) e teste um ponto (de preferência \((0,0)\)). Se satisfaz, pinte o lado dele; se não, o outro lado. Isolando \(y\): \(y&gt;mx+n\) é <strong>acima</strong> da reta, \(y&lt;mx+n\) é <strong>abaixo</strong>.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">9</span>Sistema = interseção</h4>
+        <div class="formula">\[\begin{cases}\text{ineq. 1}\\ \text{ineq. 2}\end{cases}\Rightarrow \text{pontos que satisfazem as duas}\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">10</span>Áreas</h4>
+        <div class="formula">\[\text{círculo } \pi R^2\quad \text{semi } \tfrac{\pi R^2}{2}\quad \text{quarto } \tfrac{\pi R^2}{4}\]</div>
+        <div class="formula">\[\text{coroa } \pi(R^2-r^2)\qquad \text{segmento } 90^\circ:\ \tfrac{\pi R^2}{4}-\tfrac{R^2}{2}\]</div>
+        <p>Reta pelo centro divide o círculo ao meio. Duas retas perpendiculares pelo centro: quartos.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">11</span>Completar o quadrado</h4>
+        <div class="formula">\[x^2-8x=(x-4)^2-16\qquad y^2-2y=(y-1)^2-1\]</div>
+        <p>Metade do coeficiente de \(x\), ao quadrado, e compense subtraindo.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">12</span>Reta × circunferência (A43)</h4>
+        <div class="formula">\[d_{Cs}=\frac{|ax_0+by_0+c|}{\sqrt{a^2+b^2}}\]</div>
+        <p>\(d&lt;R\) secante · \(d=R\) tangente · \(d&gt;R\) exterior (Complementar 07).</p>
+      </div>
+    </div>
+  </section>
+
+  <span class="section-label" id="laboratorio">(D) Laboratório interativo</span>
+  <div class="lab-tabs">
+    <button type="button" class="on" id="tabLab1">1 · Mova o ponto e a circunferência: \(d\) × \(R\)</button>
+    <button type="button" id="tabLab2">2 · Regiões: pinte as inequações</button>
+  </div>
+
+  <div class="playground" id="lab1">
+    <div class="play-grid">
+      <div>
+        <canvas id="cvPonto" width="560" height="560" aria-label="Ponto P e circunferência"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem;font-style:normal">Arraste o ponto <span class="hl3">P</span> no desenho (ou use os controles). <span class="hl">azul = circunferência</span> &nbsp;|&nbsp; <span class="hl4">roxo = raio \(R\)</span> &nbsp;|&nbsp; <span class="hl3">laranja = \(d_{PC}\)</span></p>
+      </div>
+      <div class="controls">
+        <label for="ptX0">Centro \(x_0=\) <span id="ptX0L" class="hl">0</span></label>
+        <input type="range" id="ptX0" min="-5" max="5" step="0.5" value="0">
+        <label for="ptY0">Centro \(y_0=\) <span id="ptY0L" class="hl">0</span></label>
+        <input type="range" id="ptY0" min="-5" max="5" step="0.5" value="0">
+        <label for="ptR">Raio \(R=\) <span id="ptRL" class="hl4">4</span></label>
+        <input type="range" id="ptR" min="0.5" max="7" step="0.5" value="4">
+        <label for="ptPx">Ponto \(x_P=\) <span id="ptPxL" class="hl3">1</span></label>
+        <input type="range" id="ptPx" min="-8" max="8" step="0.5" value="1">
+        <label for="ptPy">Ponto \(y_P=\) <span id="ptPyL" class="hl3">3</span></label>
+        <input type="range" id="ptPy" min="-8" max="8" step="0.5" value="3">
+        <div class="ctrl-row">
+          <button type="button" data-pt="p02">Prop. 02</button>
+          <button type="button" data-pt="circo">Circo \(P(4,5)\)</button>
+          <button type="button" data-pt="borda">Na borda</button>
+          <button type="button" data-pt="p03">Prop. 03 (\(m=5\))</button>
+        </div>
+        <div class="live-vals" id="ptVals" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="playground" id="lab2" style="display:none">
+    <div class="play-grid">
+      <div>
+        <canvas id="cvReg" width="560" height="560" aria-label="Região do plano definida por inequações"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem;font-style:normal"><span class="hl2">verde = região que satisfaz TODAS as inequações ligadas</span> &nbsp;|&nbsp; borda contínua = \(\le,\ge\) &nbsp;|&nbsp; tracejada = \(&lt;,&gt;\)</p>
+      </div>
+      <div class="controls">
+        <label><strong style="color:var(--accent)">Circunferência 1</strong>: \((x-x_0)^2+(y-y_0)^2\) <select id="rgOp1"><option>&lt;</option><option selected>≤</option><option>&gt;</option><option>≥</option></select> \(R^2\)</label>
+        <div class="coef-row"><label for="rgX1">\(x_0\)</label><input type="range" id="rgX1" min="-5" max="5" step="0.5" value="0"><span class="val" id="rgX1L">0</span></div>
+        <div class="coef-row"><label for="rgY1">\(y_0\)</label><input type="range" id="rgY1" min="-5" max="5" step="0.5" value="0"><span class="val" id="rgY1L">0</span></div>
+        <div class="coef-row"><label for="rgR1">\(R\)</label><input type="range" id="rgR1" min="0.5" max="9" step="0.5" value="4"><span class="val" id="rgR1L">4</span></div>
+        <label><input type="checkbox" id="rgOn2"> <strong style="color:var(--accent4)">Circunferência 2</strong>: \((x-x_0)^2+(y-y_0)^2\) <select id="rgOp2"><option>&lt;</option><option>≤</option><option selected>&gt;</option><option>≥</option></select> \(R^2\)</label>
+        <div class="coef-row"><label for="rgX2">\(x_0\)</label><input type="range" id="rgX2" min="-5" max="5" step="0.5" value="0"><span class="val" id="rgX2L">0</span></div>
+        <div class="coef-row"><label for="rgY2">\(y_0\)</label><input type="range" id="rgY2" min="-5" max="5" step="0.5" value="0"><span class="val" id="rgY2L">0</span></div>
+        <div class="coef-row"><label for="rgR2">\(R\)</label><input type="range" id="rgR2" min="0.5" max="9" step="0.5" value="3"><span class="val" id="rgR2L">3</span></div>
+        <label><input type="checkbox" id="rgOnL"> <strong style="color:var(--accent3)">Reta</strong>: \(ax+by+c\) <select id="rgOpL"><option>&lt;</option><option>≤</option><option>&gt;</option><option selected>≥</option></select> \(0\)</label>
+        <div class="poly-in">\(a=\)<input type="number" id="rgA" value="1" step="0.5"> \(b=\)<input type="number" id="rgB" value="-1" step="0.5"> \(c=\)<input type="number" id="rgC" value="0" step="0.5"></div>
+        <label for="rgW">Janela: \(x,y\) de \(-W\) a \(W\), \(W=\) <span id="rgWL" class="hl">6</span></label>
+        <input type="range" id="rgW" min="3" max="10" step="1" value="6">
+        <label><input type="checkbox" id="rgInt"> marcar pontos de coordenadas inteiras dentro da região (e contar)</label>
+        <div class="ctrl-row">
+          <button type="button" data-rg="p01a">P01a</button><button type="button" data-rg="p01b">P01b</button>
+          <button type="button" data-rg="p04a">P04a</button><button type="button" data-rg="p04b">P04b</button>
+          <button type="button" data-rg="p05">P05</button>
+          <button type="button" data-rg="c01">C01</button><button type="button" data-rg="c02">C02</button>
+          <button type="button" data-rg="c03">C03</button><button type="button" data-rg="c04">C04</button>
+          <button type="button" data-rg="c05">C05</button><button type="button" data-rg="c06">C06</button>
+        </div>
+        <div class="live-vals" id="rgVals" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <span class="section-label" id="teste">(E) Teste rápido</span>
+  <div class="explain">
+    <p>Clique na alternativa. A explicação aparece logo depois. Acertos: <span class="score" id="quizScore">0 / 0</span> &nbsp; <button type="button" id="quizReset">Recomeçar</button></p>
+    <div id="quizBox"></div>
+  </div>
+
+  <h2 id="exercicios">(F) Exercícios</h2>
+  <div class="explain">
+    <p class="lead">Nenhum exercício do A42 veio marcado nas fotos da Gica, então não há selo ★ aqui. Mesmo assim, este módulo está na lista da P2 (Frente A), e todos estão resolvidos passo a passo. Como a prova é dissertativa, treine <strong>escrever e desenhar</strong> cada região.</p>
+    <p>Mais parecidos com prova dissertativa: Proposto 03 (achar \(m\)), Proposto 04 (coroa) e Complementares 03, 04 e 05 (áreas de regiões).</p>
+  </div>
+
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+  <h3>Exercícios propostos · p. 714</h3>
+
+  <!-- E01 -->
+  <div class="ex" id="e01">
+    <div class="ex-header"><span class="ex-num">Proposto 01</span><span class="ex-src">Versa A42 · p. 714</span><span class="badge-pratica">desenhar regiões</span></div>
+    <p class="ex-q">Represente graficamente os pontos \(P(x,y)\) que satisfazem cada uma das seguintes inequações: a) \(x^2+y^2&lt;16\); b) \(x^2+y^2\ge 9\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> cada inequação compara \(x^2+y^2\) (o quadrado da distância de \(P\) até a origem) com o quadrado de um raio. Primeiro identifique a circunferência "de borda", depois decida se é dentro ou fora e se a borda entra.</p>
+      <ol>
+        <li><strong>Item a), a circunferência de borda:</strong> \(x^2+y^2=16\) é a forma reduzida \((x-0)^2+(y-0)^2=4^2\): centro \(C(0,0)\), raio \(R=\sqrt{16}=4\).</li>
+        <li><strong>Dentro ou fora?</strong> \(x^2+y^2&lt;16\iff d_{PC}^2&lt;R^2\iff d_{PC}&lt;4\): pontos a distância <strong>menor que 4</strong> da origem, ou seja, o <strong>interior</strong>.</li>
+        <li><strong>A borda entra?</strong> O sinal é \(&lt;\) (estrito): os pontos da circunferência (onde vale \(=16\)) <strong>não</strong> satisfazem. Desenhe a borda <strong>tracejada</strong>.</li>
+        <li><strong>Teste rápido:</strong> \((0,0)\): \(0&lt;16\ \checkmark\) (está pintado). \((4,0)\): \(16&lt;16\)? Não (borda fora). \((5,0)\): \(25&lt;16\)? Não.
+          <canvas class="mini-reg" data-reg="p01a" width="300" height="300" aria-label="Disco aberto de raio 4"></canvas></li>
+        <li><strong>Item b), a circunferência de borda:</strong> \(x^2+y^2=9\): centro \((0,0)\), raio \(R=\sqrt9=3\).</li>
+        <li><strong>Dentro ou fora?</strong> \(x^2+y^2\ge 9\iff d_{PC}\ge 3\): pontos a distância <strong>maior ou igual a 3</strong> da origem: o <strong>exterior junto com a própria circunferência</strong>.</li>
+        <li><strong>A borda entra?</strong> Sim, o sinal é \(\ge\). Borda <strong>contínua</strong>. O "buraco" do meio (\(d&lt;3\)) fica em branco.</li>
+        <li><strong>Teste rápido:</strong> \((0,0)\): \(0\ge 9\)? Não (o centro não está pintado). \((3,0)\): \(9\ge 9\ \checkmark\) (borda pintada). \((5,5)\): \(50\ge 9\ \checkmark\).
+          <canvas class="mini-reg" data-reg="p01b" width="300" height="300" aria-label="Exterior da circunferência de raio 3 com a borda"></canvas></li>
+      </ol>
+      <div class="dica">Na prova, sempre escreva: "centro \((0,0)\), raio 4, interior, borda tracejada (não incluída)". Isso mostra que você sabe o porquê do desenho.</div>
+    </div>
+    <div class="ans-box">a) interior do círculo de centro \((0,0)\) e raio 4, <strong>sem</strong> a circunferência (borda tracejada). &nbsp; b) exterior da circunferência de centro \((0,0)\) e raio 3, <strong>com</strong> a circunferência (borda contínua).</div>
+  </div>
+
+  <!-- E02 -->
+  <div class="ex" id="e02">
+    <div class="ex-header"><span class="ex-num">Proposto 02</span><span class="ex-src">Versa A42 · p. 714</span><span class="badge-pratica">classificar o ponto</span></div>
+    <p class="ex-q">Verifique se o ponto \(P(1,3)\) é interior, exterior ou pertence à circunferência \((x+1)^2+(y-2)^2=16\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> compare \(d_{PC}\) com \(R\), ou (mais rápido) substitua \(P\) no lado esquerdo e compare com \(R^2=16\).</p>
+      <ol>
+        <li><strong>Leia centro e raio da forma reduzida.</strong> \((x+1)^2=(x-(-1))^2\Rightarrow x_0=-1\). \((y-2)^2\Rightarrow y_0=2\). \(R^2=16\Rightarrow R=4\).
+          <div class="formula">\[C(-1,\ 2),\qquad R=4\]</div>
+          Cuidado: o sinal dentro do parêntese é o <strong>oposto</strong> da coordenada do centro.</li>
+        <li><strong>Substitua \(P(1,3)\) no lado esquerdo:</strong>
+          <div class="formula">\[(1+1)^2+(3-2)^2=2^2+1^2=4+1=5\]</div></li>
+        <li><strong>Compare com \(R^2=16\):</strong>
+          <div class="formula">\[5&lt;16\]</div></li>
+        <li><strong>Pela distância</strong> (mesma conclusão):
+          <div class="formula">\[d_{PC}=\sqrt{(1-(-1))^2+(3-2)^2}=\sqrt{4+1}=\sqrt5\approx 2{,}24&lt;4=R\]</div></li>
+      </ol>
+      <div class="dica">Abra o Laboratório (aba 1, botão "Prop. 02") e arraste \(P\) até a borda: o valor de \((x+1)^2+(y-2)^2\) vai chegando a 16.</div>
+    </div>
+    <div class="ans-box">\(d_{PC}=\sqrt5&lt;4=R\Rightarrow P(1,3)\) é <strong>interior</strong> à circunferência.</div>
+  </div>
+
+  <!-- E03 -->
+  <div class="ex" id="e03">
+    <div class="ex-header"><span class="ex-num">Proposto 03</span><span class="ex-src">Versa A42 · p. 714</span><span class="badge-pratica">forma geral · parâmetro</span></div>
+    <p class="ex-q">Obtenha os possíveis valores de \(m\) para os quais \(P(2,1)\) seja um ponto interior à circunferência \(x^2+y^2-6x-2y+m=0\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> duas condições ao mesmo tempo: (1) a equação precisa ser de uma circunferência de verdade (\(R^2&gt;0\)); (2) o ponto precisa ser interior (\(d_{PC}^2&lt;R^2\)).</p>
+      <ol>
+        <li><strong>Complete os quadrados</strong> para achar centro e raio:
+          <div class="formula">\[x^2-6x=(x-3)^2-9\qquad y^2-2y=(y-1)^2-1\]</div>
+          <div class="formula">\[(x-3)^2-9+(y-1)^2-1+m=0\]</div>
+          <div class="formula">\[(x-3)^2+(y-1)^2=10-m\]</div>
+          Centro \(C(3,1)\) e \(R^2=10-m\).</li>
+        <li><strong>Condição de existência</strong> (raio ao quadrado positivo):
+          <div class="formula">\[10-m&gt;0\ \Rightarrow\ m&lt;10\]</div></li>
+        <li><strong>Condição de ponto interior</strong>, substituindo \(P(2,1)\):
+          <div class="formula">\[(2-3)^2+(1-1)^2&lt;10-m\]</div>
+          <div class="formula">\[1+0&lt;10-m\ \Rightarrow\ m&lt;10-1\ \Rightarrow\ m&lt;9\]</div></li>
+        <li><strong>Junte as duas condições</strong> (as duas têm que valer): \(m&lt;10\) e \(m&lt;9\). Quem é menor que 9 já é menor que 10, então fica
+          <div class="formula">\[m&lt;9\]</div></li>
+        <li><strong>Caminho rápido</strong> (atalho da forma geral): substitua \(P\) direto no lado esquerdo e exija resultado negativo:
+          <div class="formula">\[2^2+1^2-6\cdot 2-2\cdot 1+m&lt;0\ \Rightarrow\ 4+1-12-2+m&lt;0\ \Rightarrow\ m-9&lt;0\ \Rightarrow\ m&lt;9\ \checkmark\]</div>
+          (Se \(f(P)&lt;0\), automaticamente \(R^2=10-m&gt;1&gt;0\), então a existência já vem junto.)</li>
+        <li><strong>Teste:</strong> \(m=5\): \(R^2=5\), \(R\approx2{,}24\); \(d_{PC}=1&lt;2{,}24\ \checkmark\) interior. \(m=9\): \(R=1=d_{PC}\): \(P\) pertence (não serve). \(m=9{,}5\): \(R\approx0{,}71&lt;1\): \(P\) exterior.</li>
+      </ol>
+      <div class="dica">\(P(2,1)\) está sempre a distância 1 do centro \((3,1)\). Então o raio tem que ser maior que 1: \(R^2=10-m&gt;1\). No Laboratório (aba 1, "Prop. 03") mexa no \(R\) e veja \(P\) mudar de exterior para interior quando \(R\) passa de 1.</div>
+    </div>
+    <div class="ans-box">\(m&lt;9\) &nbsp; (\(m\in\mathbb R\) com \(m&lt;9\))</div>
+  </div>
+
+  <!-- E04 -->
+  <div class="ex" id="e04">
+    <div class="ex-header"><span class="ex-num">Proposto 04</span><span class="ex-src">Versa A42 · p. 714</span><span class="badge-pratica">coroa circular</span></div>
+    <p class="ex-q">Represente no plano cartesiano a região formada pelos pontos \(P(x,y)\) que satisfazem a cada um dos sistemas de inequações: a) \(\begin{cases}x^2+y^2&gt;9\\ x^2+y^2\le 25\end{cases}\) &nbsp; b) \(\begin{cases}x^2+y^2\ge 49\\ x^2+y^2&lt;81\end{cases}\)</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> duas circunferências com o mesmo centro (concêntricas). Uma inequação diz "fora da menor", a outra diz "dentro da maior". A interseção é um <strong>anel</strong>: a coroa circular.</p>
+      <ol>
+        <li><strong>a) Primeira inequação:</strong> \(x^2+y^2&gt;9\): fora da circunferência de centro \((0,0)\) e raio \(3\), <strong>sem</strong> a borda (tracejada).</li>
+        <li><strong>a) Segunda inequação:</strong> \(x^2+y^2\le 25\): dentro da circunferência de centro \((0,0)\) e raio \(5\), <strong>com</strong> a borda (contínua).</li>
+        <li><strong>a) Interseção:</strong> pontos com \(3&lt;d\le 5\): a coroa entre os raios 3 e 5, com a borda de fora e sem a de dentro.
+          <div class="formula">\[9&lt;x^2+y^2\le 25\ \iff\ 3&lt;d_{PO}\le 5\]</div>
+          <canvas class="mini-reg" data-reg="p04a" width="300" height="300" aria-label="Coroa entre raios 3 e 5"></canvas></li>
+        <li><strong>b) Primeira inequação:</strong> \(x^2+y^2\ge 49\): fora de raio \(7\), <strong>com</strong> a borda (contínua).</li>
+        <li><strong>b) Segunda inequação:</strong> \(x^2+y^2&lt;81\): dentro de raio \(9\), <strong>sem</strong> a borda (tracejada).</li>
+        <li><strong>b) Interseção:</strong> a coroa com \(7\le d&lt;9\).
+          <div class="formula">\[49\le x^2+y^2&lt;81\ \iff\ 7\le d_{PO}&lt;9\]</div>
+          <canvas class="mini-reg" data-reg="p04b" width="300" height="300" aria-label="Coroa entre raios 7 e 9"></canvas></li>
+        <li><strong>Bônus (área das coroas):</strong> a) \(\pi(5^2-3^2)=\pi(25-9)=16\pi\); b) \(\pi(9^2-7^2)=\pi(81-49)=32\pi\). As bordas não mudam a área.</li>
+      </ol>
+    </div>
+    <div class="ans-box">a) coroa circular de centro \((0,0)\) entre os raios 3 (tracejada, excluída) e 5 (contínua, incluída). &nbsp; b) coroa entre os raios 7 (contínua, incluída) e 9 (tracejada, excluída).</div>
+  </div>
+
+  <!-- E05 -->
+  <div class="ex" id="e05">
+    <div class="ex-header"><span class="ex-num">Proposto 05</span><span class="ex-src">Versa A42 · p. 714</span><span class="badge-pratica">disco ∩ semiplano</span></div>
+    <p class="ex-q">Represente graficamente os pontos \(P(x,y)\) que satisfazem ao sistema \(\begin{cases}x^2+y^2\le 16\\ x-y\ge 0\end{cases}\).</p>
+    <div class="steps">
+      <ol>
+        <li><strong>Primeira inequação:</strong> \(x^2+y^2\le 16\): disco de centro \((0,0)\) e raio \(4\), com a borda.</li>
+        <li><strong>Segunda inequação, isole \(y\):</strong>
+          <div class="formula">\[x-y\ge 0\ \Rightarrow\ -y\ge -x\ \Rightarrow\ y\le x\]</div>
+          (multiplicar por \(-1\) inverte o sinal). A reta de borda é \(y=x\), a bissetriz dos quadrantes ímpares (passa por \((0,0)\), \((1,1)\), \((2,2)\), ...). \(y\le x\) é o semiplano <strong>abaixo</strong> (e em cima) dessa reta.</li>
+        <li><strong>Teste um ponto</strong> (a origem está na reta, então use outro): \((1,0)\): \(1-0=1\ge 0\ \checkmark\). Então o lado de \((1,0)\), que fica abaixo/à direita da reta, é o pintado.</li>
+        <li><strong>Interseção:</strong> a reta \(y=x\) passa pelo <strong>centro</strong> \((0,0)\), então corta o disco exatamente ao meio. A região é o <strong>semicírculo</strong> abaixo da reta \(y=x\), com as bordas (o arco e o diâmetro sobre a reta).
+          <canvas class="mini-reg" data-reg="p05" width="300" height="300" aria-label="Semicírculo abaixo da reta y=x"></canvas></li>
+        <li><strong>Bônus (área):</strong> \(\dfrac{\pi\cdot 4^2}{2}=8\pi\).</li>
+      </ol>
+    </div>
+    <div class="ans-box">Semicírculo de centro \((0,0)\) e raio 4 que fica abaixo (à direita) da reta \(y=x\), com as bordas incluídas. Área \(8\pi\).</div>
+  </div>
+
+  <h3>Exercícios complementares · p. 715</h3>
+
+  <!-- F01 -->
+  <div class="ex" id="f01">
+    <div class="ex-header"><span class="ex-num">Complementar 01</span><span class="ex-src">FGV SP · p. 715</span><span class="badge-pratica">pontos inteiros num disco</span></div>
+    <p class="ex-q">O número de pares ordenados \((x,y)\), com \(x\) e \(y\) inteiros, que satisfazem à desigualdade \(x^2+y^2-8x+11\le 0\) é igual a</p>
+    <ul class="opts"><li>a) 24</li><li>b) 21</li><li>c) 19</li><li>d) 18</li><li>e) 13</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Complete o quadrado em \(x\):</strong> \(x^2-8x=(x-4)^2-16\).
+          <div class="formula">\[(x-4)^2-16+y^2+11\le 0\ \Rightarrow\ (x-4)^2+y^2\le 5\]</div>
+          Disco de centro \((4,0)\) e raio \(\sqrt5\approx 2{,}24\), com a borda.</li>
+        <li><strong>Valores possíveis de \(x\):</strong> como \(y^2\ge 0\), precisa \((x-4)^2\le 5\Rightarrow |x-4|\le 2{,}24\). Inteiros: \(x-4\in\{-2,-1,0,1,2\}\Rightarrow x\in\{2,3,4,5,6\}\).</li>
+        <li><strong>Para cada \(x\), quantos \(y\) inteiros?</strong> \(y^2\le 5-(x-4)^2\):
+          <table class="mult-table"><tr><th>\(x\)</th><th>\((x-4)^2\)</th><th>\(y^2\le\)</th><th>\(y\) inteiros</th><th>qtd.</th></tr>
+          <tr><td>2</td><td>4</td><td>1</td><td>\(-1,0,1\)</td><td>3</td></tr>
+          <tr><td>3</td><td>1</td><td>4</td><td>\(-2,-1,0,1,2\)</td><td>5</td></tr>
+          <tr><td>4</td><td>0</td><td>5</td><td>\(-2,-1,0,1,2\)</td><td>5</td></tr>
+          <tr><td>5</td><td>1</td><td>4</td><td>\(-2,-1,0,1,2\)</td><td>5</td></tr>
+          <tr><td>6</td><td>4</td><td>1</td><td>\(-1,0,1\)</td><td>3</td></tr></table>
+          (Para \(y^2\le 5\): \(y=\pm 3\) daria \(9&gt;5\), então só até \(\pm2\).)</li>
+        <li><strong>Some:</strong>
+          <div class="formula">\[3+5+5+5+3=21\]</div></li>
+      </ol>
+      <div class="dica">Veja no Laboratório (aba 2, botão "C01", com "pontos inteiros" ligado): ele conta os 21 pontos.</div>
+    </div>
+    <div class="ans-box">21 pares &nbsp; <span class="badge-gab">Alternativa b</span></div>
+  </div>
+
+  <!-- F02 -->
+  <div class="ex" id="f02">
+    <div class="ex-header"><span class="ex-num">Complementar 02</span><span class="ex-src">UFRGS RS · p. 715</span><span class="badge-pratica">pontos inteiros · disco ∩ semiplano</span></div>
+    <p class="ex-q">Construídas no mesmo sistema de coordenadas cartesianas, as inequações \(x^2+y^2&lt;4\) e \(y&lt;x+1\) delimitam uma região no plano. O número de pontos que estão no interior dessa região e possuem coordenadas inteiras é</p>
+    <ul class="opts"><li>a) 5</li><li>b) 6</li><li>c) 7</li><li>d) 8</li><li>e) 9</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Pontos inteiros com \(x^2+y^2&lt;4\)</strong> (disco aberto de raio 2): \(x\) e \(y\) só podem ser \(-1,0,1\) ou \(\pm2\). Mas \((\pm2,0)\) e \((0,\pm2)\) dão \(4&lt;4\)? Não (estão na borda, que não conta). Sobram os 9 pontos com \(x,y\in\{-1,0,1\}\) (todos dão no máximo \(1+1=2&lt;4\ \checkmark\)).</li>
+        <li><strong>Condição da reta:</strong> \(y&lt;x+1\). Para inteiros, \(y&lt;x+1\iff y\le x\). Teste os 9:
+          <table class="mult-table"><tr><th>\(x\)</th><th>\(y\le x\)? (com \(y\in\{-1,0,1\}\))</th><th>pontos</th><th>qtd.</th></tr>
+          <tr><td>\(-1\)</td><td>só \(y=-1\)</td><td>\((-1,-1)\)</td><td>1</td></tr>
+          <tr><td>\(0\)</td><td>\(y=-1,\ 0\)</td><td>\((0,-1),\ (0,0)\)</td><td>2</td></tr>
+          <tr><td>\(1\)</td><td>\(y=-1,\ 0,\ 1\)</td><td>\((1,-1),\ (1,0),\ (1,1)\)</td><td>3</td></tr></table>
+          Ficam de fora: \((-1,0)\): \(0&lt;-1+1=0\)? Não (está <strong>em cima</strong> da reta). \((-1,1)\) e \((0,1)\): acima da reta.</li>
+        <li><strong>Total:</strong>
+          <div class="formula">\[1+2+3=6\]</div></li>
+      </ol>
+      <div class="dica">"No interior": nem a borda do disco nem a reta contam, por isso as desigualdades são estritas e \((-1,0)\), que fica exatamente sobre a reta, sai da conta.</div>
+    </div>
+    <div class="ans-box">6 pontos &nbsp; <span class="badge-gab">Alternativa b</span></div>
+  </div>
+
+  <!-- F03 -->
+  <div class="ex" id="f03">
+    <div class="ex-header"><span class="ex-num">Complementar 03</span><span class="ex-src">Unioeste PR · p. 715</span><span class="badge-pratica">área · reta pelo centro</span></div>
+    <p class="ex-q">A área da região do plano formada pelos pontos \((x,y)\) tais que \(x^2+y^2-4x\le 0\) e \(x-y-2\ge 0\), em unidades de área, é igual a</p>
+    <ul class="opts"><li>a) \(\pi/2\)</li><li>b) \(\pi\)</li><li>c) \(2\pi\)</li><li>d) \(3\pi\)</li><li>e) \(4\pi\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Complete o quadrado:</strong> \(x^2-4x=(x-2)^2-4\).
+          <div class="formula">\[(x-2)^2-4+y^2\le 0\ \Rightarrow\ (x-2)^2+y^2\le 4\]</div>
+          Disco de centro \(C(2,0)\) e raio \(R=2\).</li>
+        <li><strong>Semiplano:</strong> \(x-y-2\ge 0\Rightarrow y\le x-2\): abaixo da reta \(y=x-2\).</li>
+        <li><strong>A reta passa pelo centro?</strong> Substitua \(C(2,0)\): \(2-0-2=0\ \checkmark\). Sim! Então a reta é um <strong>diâmetro</strong> e corta o disco em duas metades iguais.</li>
+        <li><strong>A região é um semicírculo de raio 2:</strong>
+          <div class="formula">\[A=\frac{\pi R^2}{2}=\frac{\pi\cdot 2^2}{2}=\frac{4\pi}{2}=2\pi\]</div>
+          <canvas class="mini-reg" data-reg="c03" width="300" height="300" aria-label="Semicírculo de centro (2,0) abaixo da reta y=x-2"></canvas></li>
+      </ol>
+    </div>
+    <div class="ans-box">\(A=2\pi\) &nbsp; <span class="badge-gab">Alternativa c</span></div>
+  </div>
+
+  <!-- F04 -->
+  <div class="ex" id="f04">
+    <div class="ex-header"><span class="ex-num">Complementar 04</span><span class="ex-src">Mackenzie SP · p. 715</span><span class="badge-pratica">área · interseção de dois discos</span></div>
+    <p class="ex-q">Considere a região do plano dada pelos pontos \((x,y)\) tais que \(x^2+y^2\le 2x\) e \(x^2+y^2\le 2y\). Fazendo \(\pi=3\), a área dessa região é</p>
+    <ul class="opts"><li>a) 1</li><li>b) 0,5</li><li>c) 2</li><li>d) 1,5</li><li>e) 2,5</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Primeira inequação:</strong> \(x^2-2x+y^2\le 0\Rightarrow (x-1)^2-1+y^2\le 0\Rightarrow (x-1)^2+y^2\le 1\). Disco de centro \(C_1(1,0)\), raio 1.</li>
+        <li><strong>Segunda inequação:</strong> \(x^2+y^2-2y\le 0\Rightarrow x^2+(y-1)^2\le 1\). Disco de centro \(C_2(0,1)\), raio 1.</li>
+        <li><strong>Onde as circunferências se cortam:</strong> iguale \(x^2+y^2=2x\) e \(x^2+y^2=2y\Rightarrow 2x=2y\Rightarrow y=x\). Substituindo: \(2x^2=2x\Rightarrow x(x-1)=0\Rightarrow x=0\) ou \(x=1\). Pontos \(O(0,0)\) e \(A(1,1)\).</li>
+        <li><strong>A região é uma "lente"</strong> (a parte comum aos dois discos), dividida ao meio pela corda \(OA\) (reta \(y=x\)). Cada metade é um <strong>segmento circular</strong>.
+          <canvas class="mini-reg" data-reg="c04" width="300" height="300" aria-label="Lente entre os discos de centros (1,0) e (0,1)"></canvas></li>
+        <li><strong>Área de uma metade</strong> (no disco de centro \(C_1(1,0)\)): os raios \(C_1O\) e \(C_1A\) vão para \((-1,0)\) e \((0,1)\), que são perpendiculares, então o ângulo central é \(90^\circ\).
+          <div class="formula">\[\text{segmento}=\text{setor de }90^\circ-\text{triângulo } OC_1A=\frac{\pi\cdot1^2}{4}-\frac{1\cdot1}{2}=\frac{\pi}{4}-\frac12\]</div></li>
+        <li><strong>Área da lente</strong> (duas metades iguais):
+          <div class="formula">\[A=2\left(\frac{\pi}{4}-\frac12\right)=\frac{\pi}{2}-1\]</div></li>
+        <li><strong>Com \(\pi=3\):</strong>
+          <div class="formula">\[A=\frac32-1=0{,}5\]</div>
+          (Com \(\pi\approx3{,}14\), daria \(\approx0{,}57\).)</li>
+      </ol>
+      <div class="dica">Outra forma de ver: o quadrado de vértices \((0,0),(1,0),(1,1),(0,1)\) tem área 1. Cada quarto de disco (centro num vértice, raio 1) tem área \(\pi/4\). Lente = soma dos dois quartos − quadrado \(=\frac\pi4+\frac\pi4-1=\frac\pi2-1\).</div>
+    </div>
+    <div class="ans-box">\(A=\dfrac{\pi}{2}-1=0{,}5\) (com \(\pi=3\)) &nbsp; <span class="badge-gab">Alternativa b</span></div>
+  </div>
+
+  <!-- F05 -->
+  <div class="ex" id="f05">
+    <div class="ex-header"><span class="ex-num">Complementar 05</span><span class="ex-src">UFRGS RS · p. 715</span><span class="badge-pratica">área · duas retas perpendiculares pelo centro</span></div>
+    <p class="ex-q">A área da região determinada pela interseção das desigualdades \(y&gt;\dfrac32x-\dfrac32\), \(y&gt;-\dfrac23x+5\) e \((x-3)^2+(y-3)^2&lt;9\) é igual a:</p>
+    <ul class="opts"><li>a) \(\frac{3\pi}{4}\)</li><li>b) \(\frac{3\pi}{2}\)</li><li>c) \(\frac{9\pi}{4}\)</li><li>d) \(\frac{9\pi}{2}\)</li><li>e) \(9\pi\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>O disco:</strong> centro \(C(3,3)\), raio \(R=3\) (borda não incluída, mas isso não muda área).</li>
+        <li><strong>As retas passam pelo centro?</strong>
+          <div class="formula">\[r_1:\ y=\tfrac32x-\tfrac32\ \text{ em } x=3:\ \tfrac92-\tfrac32=\tfrac62=3\ \checkmark\]</div>
+          <div class="formula">\[r_2:\ y=-\tfrac23x+5\ \text{ em } x=3:\ -2+5=3\ \checkmark\]</div>
+          As duas passam por \(C(3,3)\).</li>
+        <li><strong>Ângulo entre elas:</strong> coeficientes angulares \(m_1=\frac32\) e \(m_2=-\frac23\).
+          <div class="formula">\[m_1\cdot m_2=\frac32\cdot\left(-\frac23\right)=-1\ \Rightarrow\ r_1\perp r_2\]</div>
+          Duas retas perpendiculares pelo centro dividem o disco em <strong>4 quartos</strong> iguais.</li>
+        <li><strong>Qual quarto?</strong> "\(y&gt;\)" nas duas: acima de \(r_1\) <strong>e</strong> acima de \(r_2\). É exatamente um dos quatro quartos (o de cima). Exemplo de ponto dentro: \((3,5)\): \(5&gt;3\ \checkmark\), \(5&gt;3\ \checkmark\), \(0+4&lt;9\ \checkmark\).
+          <canvas class="mini-reg" data-reg="c05" width="300" height="300" aria-label="Quarto de disco de centro (3,3)"></canvas></li>
+        <li><strong>Área:</strong>
+          <div class="formula">\[A=\frac{\pi R^2}{4}=\frac{\pi\cdot 9}{4}=\frac{9\pi}{4}\]</div></li>
+      </ol>
+    </div>
+    <div class="ans-box">\(A=\dfrac{9\pi}{4}\) &nbsp; <span class="badge-gab">Alternativa c</span></div>
+  </div>
+
+  <!-- F06 -->
+  <div class="ex" id="f06">
+    <div class="ex-header"><span class="ex-num">Complementar 06</span><span class="ex-src">Fuvest SP · p. 715</span><span class="badge-pratica">reconhecer região no gráfico</span></div>
+    <p class="ex-q">Das regiões hachuradas na sequência, a que melhor representa o conjunto dos pontos \((x,y)\), do plano cartesiano, satisfazendo ao conjunto de desigualdades \(x\ge 0\), \(y\ge 0\), \(x-y+1\ge 0\) e \(x^2+y^2\le 9\), é:</p>
+    <p class="note">As cinco figuras do livro (resumo): <strong>a)</strong> 1º quadrante, reta crescente cortando o eixo \(y\) acima da origem, região hachurada <strong>abaixo</strong> da reta, limitada por um arco que desce até o eixo \(x\); <strong>b)</strong> reta horizontal, região entre ela e o eixo \(x\); <strong>c)</strong> região <strong>acima</strong> da reta crescente, encostada no eixo \(y\); <strong>d)</strong> 4º quadrante, abaixo do eixo \(x\); <strong>e)</strong> parecida com a), mas com um arco bem maior em relação ao ponto onde a reta corta o eixo \(y\).</p>
+    <div class="steps">
+      <ol>
+        <li><strong>\(x\ge0\) e \(y\ge0\):</strong> só o 1º quadrante (com os eixos). Já elimina a <strong>d)</strong>, que está abaixo do eixo \(x\).</li>
+        <li><strong>\(x-y+1\ge 0\Rightarrow y\le x+1\):</strong> abaixo da reta \(y=x+1\), que é <strong>crescente</strong> (inclinação 1) e corta o eixo \(y\) em \((0,1)\). Elimina a <strong>b)</strong> (reta horizontal) e a <strong>c)</strong> (pinta acima da reta). Teste: \((0,0)\): \(0-0+1=1\ge0\ \checkmark\), então a origem está na região.</li>
+        <li><strong>\(x^2+y^2\le 9\):</strong> disco de centro na origem e raio 3. A região é limitada por um arco de raio 3 <strong>centrado na origem</strong>, que encontra o eixo \(x\) em \((3,0)\).</li>
+        <li><strong>Onde a reta encontra o arco:</strong> \(x^2+(x+1)^2=9\Rightarrow 2x^2+2x-8=0\Rightarrow x^2+x-4=0\Rightarrow x=\frac{-1+\sqrt{17}}{2}\approx1{,}56\), \(y\approx2{,}56\).</li>
+        <li><strong>Forma da região:</strong> começa na origem, sobe pelo eixo \(y\) até \((0,1)\), segue a reta até \(\approx(1{,}56;\ 2{,}56)\), desce pelo arco até \((3,0)\) e volta pelo eixo \(x\). A origem está incluída.
+          <canvas class="mini-reg" data-reg="c06" width="300" height="300" aria-label="Região do 1º quadrante abaixo de y=x+1 dentro do disco de raio 3"></canvas></li>
+        <li><strong>Comparando a) com e):</strong> na a), o raio do arco é cerca de 3 vezes a altura onde a reta corta o eixo \(y\) (\(3\) contra \(1\)) e a região encosta na origem. Na e), o arco é muito maior (umas 6 vezes a altura do corte) e a hachura parece não encostar na origem, mas \((0,0)\) satisfaz todas as desigualdades. Fica a <strong>a)</strong>.</li>
+      </ol>
+      <div class="dica">Teste a região no Laboratório (aba 2, botão "C06"). A reta é \(1x-1y+1\ge0\), e os eixos \(x\ge0\), \(y\ge0\) estão embutidos no botão.</div>
+    </div>
+    <div class="ans-box">Figura a) &nbsp; <span class="badge-gab">Alternativa a</span></div>
+    <p class="note">As figuras foram descritas a partir da foto do livro, que estava um pouco inclinada. Vale conferir com o livro na mão: a correta é a única com a região no 1º quadrante, abaixo de uma reta crescente, encostada na origem e com o arco cerca de 3 vezes a altura do corte da reta no eixo \(y\).</p>
+  </div>
+
+  <!-- F07 -->
+  <div class="ex" id="f07">
+    <div class="ex-header"><span class="ex-num">Complementar 07</span><span class="ex-src">Uncisal AL · p. 715</span><span class="badge-pratica">reta × circunferência (revisão A43)</span></div>
+    <p class="ex-q"><strong>Posição relativa entre uma reta e uma circunferência.</strong> (Figura: uma circunferência; a linha é a "circunferência" e a região de dentro é o "círculo".) Considere uma circunferência de centro \(O(x_0,y_0)\) e raio \(r\). Uma reta \(s\), de equação \(ax+by+c=0\), pode ser tangente, secante ou externa à circunferência. Se \(s\) for tangente, ela toca a circunferência em um só ponto. Se \(s\) for secante, intercepta a circunferência em dois pontos distintos e se for externa à circunferência, a reta \(s\) não possui nem um ponto em comum com a circunferência. (Disponível em: alunosonline.com.br. Acesso em: 17 nov. 2015, adaptado.)</p>
+    <p class="ex-q">Dadas as afirmativas relativas a retas e circunferências,<br>
+    I. A reta de equação \(y-x=0\) é secante à circunferência de equação \(x^2+y^2=1\).<br>
+    II. A reta de equação \(y-4=0\) é exterior à circunferência de equação \(x^2+(y-1)^2=1\).<br>
+    III. O eixo \(Oy\) é tangente à circunferência de equação \((x-1)^2+y^2=1\).<br>
+    verifica-se que está(ão) correta(s)</p>
+    <ul class="opts"><li>a) I, apenas.</li><li>b) II, apenas.</li><li>c) I e III, apenas.</li><li>d) II e III, apenas.</li><li>e) I, II e III.</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> para cada item, calcule a distância do centro à reta e compare com o raio: \(d&lt;r\) secante, \(d=r\) tangente, \(d&gt;r\) exterior.</p>
+      <ol>
+        <li><strong>I.</strong> Circunferência: centro \((0,0)\), \(r=1\). Reta \(y-x=0\), ou \(-x+y+0=0\) (\(a=-1,\ b=1,\ c=0\)).
+          <div class="formula">\[d=\frac{|-1\cdot0+1\cdot0+0|}{\sqrt{(-1)^2+1^2}}=\frac{0}{\sqrt2}=0&lt;1\]</div>
+          A reta passa pelo centro: <strong>secante</strong>. (Pontos comuns: \(\left(\pm\frac{\sqrt2}{2},\pm\frac{\sqrt2}{2}\right)\).) <strong>Verdadeira.</strong></li>
+        <li><strong>II.</strong> Circunferência: centro \((0,1)\), \(r=1\). Reta \(y=4\) (horizontal). Distância de \((0,1)\) até \(y=4\): \(|4-1|=3\).
+          <div class="formula">\[d=3&gt;1=r\ \Rightarrow\ \text{exterior}\]</div>
+          (A circunferência vai só de \(y=0\) até \(y=2\).) <strong>Verdadeira.</strong></li>
+        <li><strong>III.</strong> Eixo \(Oy\) é a reta \(x=0\). Circunferência: centro \((1,0)\), \(r=1\). Distância de \((1,0)\) até \(x=0\): \(|1-0|=1\).
+          <div class="formula">\[d=1=r\ \Rightarrow\ \text{tangente}\]</div>
+          Confirmando: \(x=0\Rightarrow(0-1)^2+y^2=1\Rightarrow y^2=0\Rightarrow y=0\): um único ponto, \((0,0)\). <strong>Verdadeira.</strong></li>
+      </ol>
+      <div class="dica">Este exercício é revisão do A43 (reta × circunferência). Os três itens são corretos.</div>
+    </div>
+    <div class="ans-box">I, II e III corretas &nbsp; <span class="badge-gab">Alternativa e</span></div>
+  </div>
+
+</div>
+
+<footer>
+  Pack didático offline · Circunferência · A42 · Posições entre ponto e circunferência · Versa
+</footer>
+
+<script>
+function fmtNum(v) { var r = Math.round(v * 1000) / 1000; return String(r).replace('.', ',').replace(/^-/, '−'); }
+var Reg = (function () {
+  // cons: {t:'c', x0, y0, R, op} => (x-x0)^2+(y-y0)^2 op R^2 ; {t:'l', a, b, c, op} => a x + b y + c op 0
+  function test(v, op) { return op === '<' ? v < -1e-9 : op === '≤' ? v <= 1e-9 : op === '>' ? v > 1e-9 : v >= -1e-9; }
+  function val(k, x, y) { return k.t === 'c' ? (x - k.x0) * (x - k.x0) + (y - k.y0) * (y - k.y0) - k.R * k.R : k.a * x + k.b * y + k.c; }
+  function inside(cons, x, y) { for (var i = 0; i < cons.length; i++) if (!test(val(cons[i], x, y), cons[i].op)) return false; return true; }
+  function draw(cv, cons, W, opt) {
+    opt = opt || {};
+    var ctx = cv.getContext('2d', { willReadFrequently: true }), w = cv.width, h = cv.height;
+    var cx = opt.cx || 0, cy = opt.cy || 0;
+    function px(x, y) { return [(x - cx + W) / (2 * W) * w, h - (y - cy + W) / (2 * W) * h]; }
+    function ux(p, q) { return [cx - W + p / w * 2 * W, cy - W + (h - q) / h * 2 * W]; }
+    ctx.fillStyle = '#0a0e14'; ctx.fillRect(0, 0, w, h);
+    // shading
+    var step = 2, img = ctx.getImageData(0, 0, w, h), d = img.data, area = 0, cell = (2 * W / w) * (2 * W / h);
+    for (var q = 0; q < h; q += step) for (var p = 0; p < w; p += step) {
+      var u = ux(p + step / 2, q + step / 2);
+      if (inside(cons, u[0], u[1])) {
+        area += cell * step * step;
+        for (var dq = 0; dq < step; dq++) for (var dp = 0; dp < step; dp++) {
+          var i = ((q + dq) * w + (p + dp)) * 4; d[i] = 46; d[i + 1] = 92; d[i + 2] = 52; d[i + 3] = 255;
+        }
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    // grid
+    ctx.strokeStyle = 'rgba(139,155,180,.13)'; ctx.lineWidth = 1;
+    var gs = W > 7 ? 2 : 1;
+    for (var g = Math.ceil(cx - W); g <= cx + W; g++) { if (g % gs) continue; var a = px(g, 0); ctx.beginPath(); ctx.moveTo(a[0], 0); ctx.lineTo(a[0], h); ctx.stroke(); }
+    for (var g2 = Math.ceil(cy - W); g2 <= cy + W; g2++) { if (g2 % gs) continue; var b = px(0, g2); ctx.beginPath(); ctx.moveTo(0, b[1]); ctx.lineTo(w, b[1]); ctx.stroke(); }
+    var o = px(0, 0);
+    ctx.strokeStyle = '#5a6a82'; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(0, o[1]); ctx.lineTo(w, o[1]); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(o[0], 0); ctx.lineTo(o[0], h); ctx.stroke();
+    ctx.fillStyle = '#8b9bb4'; ctx.font = (w < 400 ? 10 : 11) + 'px Segoe UI, sans-serif';
+    var ls = W > 7 ? 2 : (W > 4 ? 1 : 1);
+    for (var t = Math.ceil(cx - W) + 1; t < cx + W; t++) { if (!t || t % ls) continue; var tp = px(t, 0); ctx.fillText(String(t), tp[0] - 4, o[1] + 12); }
+    for (var t2 = Math.ceil(cy - W) + 1; t2 < cy + W; t2++) { if (!t2 || t2 % ls) continue; var tq = px(0, t2); ctx.fillText(String(t2), o[0] + 4, tq[1] + 4); }
+    // borders
+    cons.forEach(function (k, idx) {
+      if (k.hide) return;
+      ctx.setLineDash(k.op === '<' || k.op === '>' ? [7, 6] : []);
+      ctx.lineWidth = 2.2; ctx.strokeStyle = k.col || (k.t === 'c' ? (idx ? '#ce93d8' : '#4fc3f7') : '#ffb74d');
+      ctx.beginPath();
+      if (k.t === 'c') { var c = px(k.x0, k.y0); ctx.arc(c[0], c[1], k.R / (2 * W) * w, 0, Math.PI * 2); }
+      else if (Math.abs(k.b) > 1e-9) { var A = px(cx - W, -(k.a * (cx - W) + k.c) / k.b), B = px(cx + W, -(k.a * (cx + W) + k.c) / k.b); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); }
+      else if (Math.abs(k.a) > 1e-9) { var A2 = px(-k.c / k.a, cy - W), B2 = px(-k.c / k.a, cy + W); ctx.moveTo(A2[0], A2[1]); ctx.lineTo(B2[0], B2[1]); }
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    var count = 0;
+    if (opt.ints) {
+      for (var ix = Math.ceil(cx - W); ix <= cx + W; ix++) for (var iy = Math.ceil(cy - W); iy <= cy + W; iy++) {
+        var pp = px(ix, iy), inn = inside(cons, ix, iy);
+        if (inn) count++;
+        ctx.fillStyle = inn ? '#ffeb3b' : 'rgba(139,155,180,.35)';
+        ctx.beginPath(); ctx.arc(pp[0], pp[1], inn ? 4 : 2, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    return { area: area, count: count };
+  }
+  return { draw: draw, inside: inside, val: val };
+})();
+
+var MINI = {
+  p01a: { W: 6, cons: [{ t: 'c', x0: 0, y0: 0, R: 4, op: '<' }] },
+  p01b: { W: 6, cons: [{ t: 'c', x0: 0, y0: 0, R: 3, op: '≥' }] },
+  p04a: { W: 6, cons: [{ t: 'c', x0: 0, y0: 0, R: 3, op: '>' }, { t: 'c', x0: 0, y0: 0, R: 5, op: '≤', col: '#4fc3f7' }] },
+  p04b: { W: 10, cons: [{ t: 'c', x0: 0, y0: 0, R: 7, op: '≥' }, { t: 'c', x0: 0, y0: 0, R: 9, op: '<', col: '#4fc3f7' }] },
+  p05: { W: 6, cons: [{ t: 'c', x0: 0, y0: 0, R: 4, op: '≤' }, { t: 'l', a: 1, b: -1, c: 0, op: '≥' }] },
+  c01: { W: 4, cx: 4, cy: 0, cons: [{ t: 'c', x0: 4, y0: 0, R: Math.sqrt(5), op: '≤' }], ints: true },
+  c02: { W: 3, cons: [{ t: 'c', x0: 0, y0: 0, R: 2, op: '<' }, { t: 'l', a: -1, b: 1, c: -1, op: '<' }], ints: true },
+  c03: { W: 4, cx: 2, cy: 0, cons: [{ t: 'c', x0: 2, y0: 0, R: 2, op: '≤' }, { t: 'l', a: 1, b: -1, c: -2, op: '≥' }] },
+  c04: { W: 2.2, cx: 0.5, cy: 0.5, cons: [{ t: 'c', x0: 1, y0: 0, R: 1, op: '≤' }, { t: 'c', x0: 0, y0: 1, R: 1, op: '≤' }] },
+  c05: { W: 5, cx: 3, cy: 3, cons: [{ t: 'c', x0: 3, y0: 3, R: 3, op: '<' }, { t: 'l', a: -1.5, b: 1, c: 1.5, op: '>' }, { t: 'l', a: 2 / 3, b: 1, c: -5, op: '>' }] },
+  c06: { W: 4, cons: [{ t: 'c', x0: 0, y0: 0, R: 3, op: '≤' }, { t: 'l', a: 1, b: -1, c: 1, op: '≥' }, { t: 'l', a: 1, b: 0, c: 0, op: '≥', hide: true }, { t: 'l', a: 0, b: 1, c: 0, op: '≥', hide: true }] }
+};
+
+(function () {
+  function el(id) { return document.getElementById(id); }
+  // ---------- Lab 1: ponto x circunferência ----------
+  var W1 = 8;
+  function rd() { return { x0: +el('ptX0').value, y0: +el('ptY0').value, R: +el('ptR').value, px: +el('ptPx').value, py: +el('ptPy').value }; }
+  function draw1() {
+    var s = rd(), cv = el('cvPonto'), ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+    el('ptX0L').textContent = fmtNum(s.x0); el('ptY0L').textContent = fmtNum(s.y0); el('ptRL').textContent = fmtNum(s.R);
+    el('ptPxL').textContent = fmtNum(s.px); el('ptPyL').textContent = fmtNum(s.py);
+    var d2 = (s.px - s.x0) * (s.px - s.x0) + (s.py - s.y0) * (s.py - s.y0), d = Math.sqrt(d2), R2 = s.R * s.R;
+    var kind = Math.abs(d2 - R2) < 1e-9 ? 'pertence' : (d2 < R2 ? 'interior' : 'exterior');
+    // background region shading: interior lightly
+    Reg.draw(cv, [{ t: 'c', x0: s.x0, y0: s.y0, R: s.R, op: '<', hide: true }], W1);
+    function px(x, y) { return [(x + W1) / (2 * W1) * w, h - (y + W1) / (2 * W1) * h]; }
+    var c = px(s.x0, s.y0), p = px(s.px, s.py), rr = s.R / (2 * W1) * w;
+    ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(c[0], c[1], rr, 0, Math.PI * 2); ctx.stroke();
+    // radius towards the right-up
+    ctx.strokeStyle = '#ce93d8'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+    var ang = Math.atan2(-(p[1] - c[1]), p[0] - c[0]) + Math.PI * 0.75;
+    ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(c[0] + rr * Math.cos(ang), c[1] - rr * Math.sin(ang)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#ce93d8'; ctx.font = '13px Segoe UI, sans-serif';
+    ctx.fillText('R', c[0] + rr * 0.55 * Math.cos(ang) + 6, c[1] - rr * 0.55 * Math.sin(ang));
+    ctx.strokeStyle = '#ffb74d'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(p[0], p[1]); ctx.stroke();
+    ctx.fillStyle = '#e8eef7'; ctx.beginPath(); ctx.arc(c[0], c[1], 4.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillText('C', c[0] - 14, c[1] + 16);
+    ctx.fillStyle = '#ffb74d'; ctx.beginPath(); ctx.arc(p[0], p[1], 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillText('P', p[0] + 9, p[1] - 8);
+    ctx.fillText('d', (c[0] + p[0]) / 2 + 6, (c[1] + p[1]) / 2 - 6);
+    var col = kind === 'interior' ? 'status-tangente' : kind === 'pertence' ? 'status-secante' : 'status-exterior';
+    var sg = kind === 'interior' ? '&lt;' : kind === 'pertence' ? '=' : '&gt;';
+    function par(v) { return v < 0 ? '(' + fmtNum(v) + ')' : fmtNum(v); }
+    function sub(a, b) { return b === 0 ? par(a) : par(a) + (b < 0 ? '+' + fmtNum(-b) : '-' + fmtNum(b)); }
+    var h1 = '<div><span class="status-pill ' + col + '">P é ' + kind.toUpperCase() + '</span></div>';
+    h1 += '<div>\\(d_{PC}^2=(' + sub(s.px, s.x0) + ')^2+(' + sub(s.py, s.y0) + ')^2=' + fmtNum(d2) + '\\)</div>';
+    h1 += '<div>\\(R^2=' + fmtNum(R2) + '\\) &nbsp; ⇒ &nbsp; \\(d_{PC}^2' + sg + 'R^2\\)</div>';
+    h1 += '<div>\\(d_{PC}\\approx ' + fmtNum(d) + '\\ ' + sg + '\\ R=' + fmtNum(s.R) + '\\)</div>';
+    h1 += '<div class="note" style="font-style:normal">Atalho: \\(f(P)=d_{PC}^2-R^2=' + fmtNum(d2 - R2) + '\\) ' + (kind === 'interior' ? '(negativo ⇒ interior)' : kind === 'pertence' ? '(zero ⇒ pertence)' : '(positivo ⇒ exterior)') + '</div>';
+    var box = el('ptVals'); box.innerHTML = h1; if (window.renderKatex) window.renderKatex(box);
+  }
+  var ptPre = { p02: [-1, 2, 4, 1, 3], circo: [0, 0, 6, 4, 5], borda: [0, 0, 5, 3, 4], p03: [3, 1, Math.sqrt(5), 2, 1] };
+  function snapR(v) { var e = el('ptR'); e.step = 'any'; e.value = v; }
+  // drag
+  function setupDrag() {
+    var cv = el('cvPonto'), dragging = false;
+    function toU(ev) {
+      var r = cv.getBoundingClientRect(), t = ev.touches ? ev.touches[0] : ev;
+      var x = (t.clientX - r.left) / r.width * 2 * W1 - W1, y = W1 - (t.clientY - r.top) / r.height * 2 * W1;
+      return [Math.round(x * 2) / 2, Math.round(y * 2) / 2];
+    }
+    function mv(ev) { if (!dragging) return; ev.preventDefault(); var u = toU(ev); el('ptPx').value = u[0]; el('ptPy').value = u[1]; draw1(); }
+    cv.addEventListener('mousedown', function (e) { dragging = true; mv(e); });
+    cv.addEventListener('touchstart', function (e) { dragging = true; mv(e); }, { passive: false });
+    window.addEventListener('mousemove', mv); cv.addEventListener('touchmove', mv, { passive: false });
+    window.addEventListener('mouseup', function () { dragging = false; }); window.addEventListener('touchend', function () { dragging = false; });
+  }
+
+  // ---------- Lab 2: regiões ----------
+  var extra = [];
+  function read2() {
+    var cons = [{ t: 'c', x0: +el('rgX1').value, y0: +el('rgY1').value, R: +el('rgR1').value, op: el('rgOp1').value }];
+    if (el('rgOn2').checked) cons.push({ t: 'c', x0: +el('rgX2').value, y0: +el('rgY2').value, R: +el('rgR2').value, op: el('rgOp2').value });
+    if (el('rgOnL').checked) cons.push({ t: 'l', a: +el('rgA').value || 0, b: +el('rgB').value || 0, c: +el('rgC').value || 0, op: el('rgOpL').value });
+    return cons.concat(extra);
+  }
+  function cTex(k) {
+    function p(v, n) { return v === 0 ? n + '^2' : '(' + n + (v < 0 ? '+' + fmtNum(-v) : '-' + fmtNum(v)) + ')^2'; }
+    if (k.t === 'c') return p(k.x0, 'x') + '+' + p(k.y0, 'y') + k.op.replace('≤', '\\le ').replace('≥', '\\ge ') + fmtNum(Math.round(k.R * k.R * 1000) / 1000);
+    var s = '';
+    [[k.a, 'x'], [k.b, 'y'], [k.c, '']].forEach(function (q) { if (!q[0]) return; var v = q[0]; s += (v < 0 ? '-' : (s ? '+' : '')) + (Math.abs(v) === 1 && q[1] ? '' : fmtNum(Math.abs(v))) + q[1]; });
+    return (s || '0') + k.op.replace('≤', '\\le ').replace('≥', '\\ge ') + '0';
+  }
+  function draw2() {
+    ['rgX1', 'rgY1', 'rgR1', 'rgX2', 'rgY2', 'rgR2'].forEach(function (id) { el(id + 'L').textContent = fmtNum(+el(id).value); });
+    var W = +el('rgW').value; el('rgWL').textContent = W;
+    var cons = read2(), res = Reg.draw(el('cvReg'), cons, W, { ints: el('rgInt').checked });
+    var h = '<div>Sistema:</div><div>\\(\\begin{cases}' + cons.map(cTex).join('\\\\') + '\\end{cases}\\)</div>';
+    h += '<div class="hl2">Área pintada (estimada pelos pixels) \\(\\approx ' + fmtNum(Math.round(res.area * 100) / 100) + '\\) u.a.' + (res.area > 0.5 * (2 * W) * (2 * W) * 0.95 ? ' (vai além da janela)' : '') + '</div>';
+    h += '<div class="note" style="font-style:normal">Compare: \\(\\pi\\approx3{,}14\\), \\(2\\pi\\approx6{,}28\\), \\(\\tfrac{9\\pi}{4}\\approx7{,}07\\), \\(\\tfrac\\pi2-1\\approx0{,}57\\).</div>';
+    if (el('rgInt').checked) h += '<div class="hl3">Pontos de coordenadas inteiras na região: <strong>' + res.count + '</strong></div>';
+    var box = el('rgVals'); box.innerHTML = h; if (window.renderKatex) window.renderKatex(box);
+  }
+  var rgPre = {
+    p01a: { c1: [0, 0, 4, '<'], W: 6 }, p01b: { c1: [0, 0, 3, '≥'], W: 6 },
+    p04a: { c1: [0, 0, 5, '≤'], c2: [0, 0, 3, '>'], W: 6 }, p04b: { c1: [0, 0, 9, '<'], c2: [0, 0, 7, '≥'], W: 10 },
+    p05: { c1: [0, 0, 4, '≤'], l: [1, -1, 0, '≥'], W: 6 },
+    c01: { c1: [4, 0, Math.sqrt(5), '≤'], W: 7, ints: true },
+    c02: { c1: [0, 0, 2, '<'], l: [-1, 1, -1, '<'], W: 3, ints: true },
+    c03: { c1: [2, 0, 2, '≤'], l: [1, -1, -2, '≥'], W: 5 },
+    c04: { c1: [1, 0, 1, '≤'], c2: [0, 1, 1, '≤'], W: 3 },
+    c05: { c1: [3, 3, 3, '<'], l: [-1.5, 1, 1.5, '>'], extra: [{ t: 'l', a: 2 / 3, b: 1, c: -5, op: '>', col: '#ffb74d' }], W: 7 },
+    c06: { c1: [0, 0, 3, '≤'], l: [1, -1, 1, '≥'], extra: [{ t: 'l', a: 1, b: 0, c: 0, op: '≥', col: '#81c784' }, { t: 'l', a: 0, b: 1, c: 0, op: '≥', col: '#81c784' }], W: 4 }
+  };
+  function setR(id, v) { var e = el(id); e.step = (Math.abs(v * 2 - Math.round(v * 2)) > 1e-9) ? 'any' : '0.5'; e.value = v; }
+  function apply2(p) {
+    setR('rgX1', p.c1[0]); setR('rgY1', p.c1[1]); setR('rgR1', p.c1[2]); el('rgOp1').value = p.c1[3];
+    el('rgOn2').checked = !!p.c2; if (p.c2) { setR('rgX2', p.c2[0]); setR('rgY2', p.c2[1]); setR('rgR2', p.c2[2]); el('rgOp2').value = p.c2[3]; }
+    el('rgOnL').checked = !!p.l; if (p.l) { el('rgA').value = p.l[0]; el('rgB').value = p.l[1]; el('rgC').value = p.l[2]; el('rgOpL').value = p.l[3]; }
+    extra = p.extra || []; el('rgW').value = p.W; el('rgInt').checked = !!p.ints; draw2();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    ['ptX0', 'ptY0', 'ptR', 'ptPx', 'ptPy'].forEach(function (id) { el(id).addEventListener('input', function () { if (id === 'ptR') el('ptR').step = '0.5'; draw1(); }); });
+    document.querySelectorAll('[data-pt]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var v = ptPre[b.dataset.pt]; el('ptX0').value = v[0]; el('ptY0').value = v[1]; snapR(v[2]); el('ptPx').value = v[3]; el('ptPy').value = v[4]; draw1();
+      });
+    });
+    setupDrag();
+    el('ptX0').value = -1; el('ptY0').value = 2; el('ptR').value = 4; el('ptPx').value = 1; el('ptPy').value = 3;
+    draw1();
+    ['rgX1', 'rgY1', 'rgR1', 'rgX2', 'rgY2', 'rgR2', 'rgW', 'rgA', 'rgB', 'rgC'].forEach(function (id) { el(id).addEventListener('input', draw2); });
+    ['rgOp1', 'rgOp2', 'rgOpL', 'rgOn2', 'rgOnL', 'rgInt'].forEach(function (id) { el(id).addEventListener('change', draw2); });
+    document.querySelectorAll('[data-rg]').forEach(function (b) { b.addEventListener('click', function () { apply2(rgPre[b.dataset.rg]); }); });
+    apply2(rgPre.p04a);
+    function tab(n) {
+      [1, 2].forEach(function (k) { el('lab' + k).style.display = k === n ? '' : 'none'; el('tabLab' + k).classList.toggle('on', k === n); });
+      if (n === 1) draw1(); else draw2();
+    }
+    [1, 2].forEach(function (k) { el('tabLab' + k).addEventListener('click', function () { tab(k); }); });
+    el('btnPrintForm').addEventListener('click', function () {
+      document.body.classList.add('print-form'); window.print();
+      setTimeout(function () { document.body.classList.remove('print-form'); }, 500);
+    });
+    document.querySelectorAll('canvas.mini-reg').forEach(function (cv) {
+      var m = MINI[cv.dataset.reg]; if (m) Reg.draw(cv, m.cons, m.W, { cx: m.cx, cy: m.cy, ints: m.ints });
+    });
+  });
+})();
+
+(function () {
+var Q = [
+  { q: 'Centro \\(C(0,0)\\), raio 5. O ponto \\(P(3,4)\\) é', o: ['interior', 'pertence à circunferência', 'exterior', 'o centro'], a: 1,
+    e: '\\(d=\\sqrt{9+16}=\\sqrt{25}=5=R\\): pertence.' },
+  { q: 'Em \\((x-2)^2+(y+1)^2=9\\), o centro e o raio são', o: ['\\((2,-1)\\) e 3', '\\((-2,1)\\) e 3', '\\((2,-1)\\) e 9', '\\((2,1)\\) e 3'], a: 0,
+    e: 'O sinal dentro do parêntese é o oposto da coordenada: \\(x_0=2\\), \\(y_0=-1\\). \\(R=\\sqrt9=3\\).' },
+  { q: 'Substituindo \\(P\\) em \\(x^2+y^2-6x+4y-3\\) deu \\(-7\\). Então \\(P\\) é', o: ['exterior', 'interior', 'pertence', 'não dá para saber'], a: 1,
+    e: 'Resultado negativo \\(\\Rightarrow d^2-R^2&lt;0\\Rightarrow\\) interior.' },
+  { q: 'A região \\(x^2+y^2&gt;4\\) é desenhada', o: ['dentro, borda contínua', 'fora, borda tracejada', 'fora, borda contínua', 'dentro, borda tracejada'], a: 1,
+    e: '\\(&gt;\\): fora da circunferência de raio 2; estrito \\(\\Rightarrow\\) borda tracejada (não incluída).' },
+  { q: 'O sistema \\(4\\le x^2+y^2\\le 16\\) representa', o: ['um disco de raio 4', 'uma coroa circular entre os raios 2 e 4', 'uma coroa entre os raios 4 e 16', 'só duas circunferências'], a: 1,
+    e: '\\(2\\le d\\le 4\\): um anel (coroa). Área \\(\\pi(16-4)=12\\pi\\).' },
+  { q: '\\(x^2+y^2\\le 9\\) e \\(y\\ge 0\\): a área é', o: ['\\(9\\pi\\)', '\\(\\tfrac{9\\pi}{2}\\)', '\\(\\tfrac{9\\pi}{4}\\)', '\\(3\\pi\\)'], a: 1,
+    e: 'O eixo \\(x\\) (\\(y=0\\)) passa pelo centro: metade do disco, \\(\\tfrac{\\pi\\cdot 9}{2}\\).' },
+  { q: '\\(y\\le x+2\\) é o semiplano', o: ['acima da reta \\(y=x+2\\)', 'abaixo da reta \\(y=x+2\\) (com a reta)', 'à esquerda do eixo \\(y\\)', 'abaixo, sem a reta'], a: 1,
+    e: 'Com \\(y\\) isolado: \\(\\le\\) é abaixo, e o "igual" inclui a reta.' },
+  { q: 'Para \\(x^2+y^2-2x+m=0\\) ser circunferência é preciso', o: ['\\(m&gt;1\\)', '\\(m&lt;1\\)', '\\(m=1\\)', 'qualquer \\(m\\)'], a: 1,
+    e: '\\((x-1)^2+y^2=1-m\\). \\(R^2=1-m&gt;0\\Rightarrow m&lt;1\\).' }
+];
+
+
+  var right = 0, answered = 0;
+  function score() { document.getElementById('quizScore').textContent = right + ' / ' + answered + ' (de ' + Q.length + ')'; }
+  function render() {
+    right = 0; answered = 0;
+    var box = document.getElementById('quizBox'), h = '';
+    Q.forEach(function (it, i) {
+      h += '<div class="quiz-q" data-i="' + i + '"><div class="qt"><strong>' + (i + 1) + '.</strong> ' + it.q + '</div><div class="quiz-opts">';
+      it.o.forEach(function (op, j) { h += '<button type="button" data-j="' + j + '">' + op + '</button>'; });
+      h += '</div><div class="quiz-fb"></div></div>';
+    });
+    box.innerHTML = h;
+    box.querySelectorAll('.quiz-q').forEach(function (qq) {
+      var it = Q[+qq.dataset.i];
+      qq.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (qq.classList.contains('done')) return;
+          qq.classList.add('done'); answered++;
+          var j = +b.dataset.j, ok = j === it.a;
+          if (ok) right++;
+          b.classList.add(ok ? 'ok' : 'bad');
+          qq.querySelectorAll('button')[it.a].classList.add('ok');
+          var fb = qq.querySelector('.quiz-fb');
+          fb.innerHTML = (ok ? '<strong style="color:var(--accent2)">Certo!</strong> ' : '<strong style="color:var(--danger)">Ainda não.</strong> ') + it.e;
+          if (window.renderKatex) window.renderKatex(fb);
+          score();
+        });
+      });
+    });
+    if (window.renderKatex) window.renderKatex(box);
+    score();
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    render();
+    document.getElementById('quizReset').addEventListener('click', render);
+  });
+
+})();
+(function () {
+  var KEY = 'a42-circ-treino';
+  function loadPref() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v === null) return true;
+      return v === 'true';
+    } catch (e) { return true; }
+  }
+  function savePref(on) {
+    try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {}
+  }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal');
+    var btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) {
+    ex.classList.remove('collapsed');
+    ex.dataset.userRevealed = '1';
+    syncButtons(ex);
+  }
+  function hide(ex) {
+    ex.classList.add('collapsed');
+    delete ex.dataset.userRevealed;
+    syncButtons(ex);
+  }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner');
+    var chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) {
+        if (!ex.dataset.userRevealed) ex.classList.add('collapsed');
+      } else {
+        ex.classList.remove('collapsed');
+      }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var steps = ex.querySelector('.steps');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (steps) {
+          steps.parentNode.insertBefore(box, steps);
+          steps.parentNode.insertBefore(row, steps);
+        } else {
+          ex.appendChild(box);
+          ex.appendChild(row);
+        }
+      }
+      var br = ex.querySelector('.btn-reveal');
+      var bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) {
+      chk.checked = on;
+      chk.addEventListener('change', function () { setMode(chk.checked); });
+    }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) {
+          if (all.checked) reveal(ex); else hide(ex);
+        });
+      });
+    }
+    setMode(on);
+  });
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polinômios — Relações de Girard | B47</title>
+<style>
+:root {
+  --bg: #0f1419; --surface: #1a2332; --surface2: #243044; --border: #2d3a4f;
+  --text: #e8eef7; --muted: #8b9bb4; --accent: #4fc3f7; --accent2: #81c784;
+  --accent3: #ffb74d; --accent4: #ce93d8; --danger: #ef5350; --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+nav {
+  background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+nav .brand { font-weight: 700; color: var(--accent); margin-right: 1rem; }
+nav a { color: var(--muted); text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.9rem; }
+nav a:hover, nav a.active { background: var(--surface2); color: var(--accent); }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+h1 { font-size: 1.75rem; margin-bottom: 0.35rem; color: var(--accent); }
+.subtitle { color: var(--muted); margin-bottom: 1.75rem; }
+h2 { font-size: 1.25rem; color: var(--accent); margin: 2rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.05rem; color: var(--accent3); margin: 1.25rem 0 0.6rem; }
+.section-label {
+  display: inline-block; background: var(--surface2); color: var(--accent); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 6px; margin-bottom: 0.75rem;
+}
+.playground {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+}
+.play-grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; }
+@media (max-width: 860px) { .play-grid { grid-template-columns: 1fr; } }
+canvas {
+  width: 100%; max-width: 560px; aspect-ratio: 1; background: #0a0e14;
+  border: 1px solid var(--border); border-radius: 10px; display: block; margin: 0 auto;
+  touch-action: none;
+}
+.controls { display: flex; flex-direction: column; gap: 0.7rem; }
+.ctrl-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+label { font-size: 0.85rem; color: var(--muted); }
+input[type="number"], input[type="range"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.5rem; border-radius: 8px;
+}
+input[type="range"] { width: 100%; accent-color: var(--accent); padding: 0; }
+button {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.45rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.live-vals {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.85rem; font-size: 0.92rem;
+}
+.live-vals div { margin: 0.25rem 0; }
+.hl { color: var(--accent); } .hl2 { color: var(--accent2); } .hl3 { color: var(--accent3); } .hl4 { color: var(--accent4); }
+.status-pill {
+  display: inline-block; padding: 0.2rem 0.65rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+}
+.status-secante { background: rgba(79,195,247,.2); color: var(--accent); }
+.status-tangente { background: rgba(129,199,132,.2); color: var(--accent2); }
+.status-exterior { background: rgba(255,183,77,.2); color: var(--accent3); }
+.theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+.theory-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.15rem; box-shadow: var(--shadow); overflow: hidden;
+}
+.theory-card h3 { margin-top: 0; color: var(--accent); font-size: 1rem; }
+.theory-card p, .theory-card li { color: var(--muted); font-size: 0.9rem; }
+.theory-card ul { padding-left: 1.2rem; margin-top: 0.4rem; }
+.formula {
+  background: var(--bg); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem;
+  margin: 0.6rem 0; border-radius: 0 8px 8px 0; font-size: 1.05rem;
+  overflow-x: auto; max-width: 100%;
+}
+.explain {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 0 0 1.5rem; box-shadow: var(--shadow);
+}
+.explain p { color: var(--muted); font-size: 0.95rem; margin: 0.65rem 0; }
+.explain p:first-child { margin-top: 0; }
+.explain p:last-child { margin-bottom: 0; }
+.explain strong { color: var(--text); }
+.explain .lead { color: var(--text); font-size: 1.02rem; }
+.ex {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem 1.4rem; margin: 1.25rem 0; box-shadow: var(--shadow);
+}
+.ex-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; }
+.ex-num { background: var(--accent); color: #0a0e14; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.85rem; }
+.ex-src { color: var(--muted); font-size: 0.8rem; }
+.steps { background: var(--bg); border-radius: 10px; padding: 1rem 1.15rem; margin-top: 0.75rem; }
+.steps ol { padding-left: 1.35rem; }
+.steps li { margin: 0.7rem 0; color: var(--muted); }
+.steps li strong { color: var(--accent); }
+.step-intro { color: var(--text); margin-bottom: 0.75rem; }
+.dica { margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: var(--surface2); border-radius: 8px; color: var(--accent3); font-size: 0.9rem; }
+.steps .formula { margin: 0.45rem 0; }
+.ans-box {
+  margin-top: 0.85rem; padding: 0.75rem 1rem; background: rgba(129,199,132,.12);
+  border: 1px solid rgba(129,199,132,.35); border-radius: 8px; color: var(--accent2); font-weight: 600;
+}
+.note { font-size: 0.85rem; color: var(--muted); font-style: italic; margin-top: 0.5rem; }
+footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+.badge-pratica {
+  display: inline-block; background: rgba(79,195,247,.15); color: var(--accent);
+  border: 1px solid rgba(79,195,247,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+.treino-banner {
+  position: sticky; top: 52px; z-index: 90;
+  background: #1e2d42; border-bottom: 1px solid var(--border);
+  padding: 0.45rem 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+  align-items: center; font-size: 0.88rem; box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.treino-banner .tb-label { color: var(--accent); font-weight: 700; }
+.treino-banner.treino-off-banner .tb-label { color: var(--muted); }
+.treino-banner label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text); }
+.treino-banner input { accent-color: var(--accent); width: 16px; height: 16px; }
+.treino-section-bar {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin: 0.5rem 0 1rem; padding: 0.55rem 0.85rem;
+  background: var(--surface2); border-radius: 8px; border: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.treino-section-bar label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--muted); }
+.treino-prompt {
+  display: none; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;
+  background: rgba(79,195,247,.07); border: 1px dashed #3a5070;
+  border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.65rem 0;
+  color: var(--muted); font-size: 0.9rem;
+}
+.ex.collapsed .treino-prompt { display: flex; }
+.ex.collapsed .steps, .ex.collapsed .ans-box { display: none !important; }
+body:not(.treino-ativo) .treino-prompt { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .steps,
+body:not(.treino-ativo) .ex.collapsed .ans-box { display: block !important; }
+body:not(.treino-ativo) .treino-section-bar { display: none; }
+.btn-reveal, .btn-hide {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  padding: 0.35rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+}
+.btn-reveal { background: #1565c0; border-color: var(--accent); color: #fff; }
+.btn-reveal:hover { background: #1976d2; }
+.btn-hide:hover { border-color: var(--accent); }
+.ex-reveal-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+.ex:not(.collapsed) .ex-reveal-row .btn-reveal { display: none; }
+.ex.collapsed .ex-reveal-row .btn-hide { display: none; }
+body:not(.treino-ativo) .ex-reveal-row { display: none !important; }
+.katex { color: inherit; }
+.formula .katex { color: inherit; }
+.formula .katex-display { margin: 0.35em 0; max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.theory-card .formula { font-size: 0.95rem; }
+.live-vals .katex { color: inherit; }
+.ans-box .katex, .ex-q .katex, .dica .katex, .step-intro .katex { color: inherit; }
+/* ---- B44 extras ---- */
+canvas#cvPoly { aspect-ratio: 4 / 3; max-width: 640px; }
+.formulario {
+  background: linear-gradient(160deg, #22301f 0%, #1a2332 55%);
+  border: 2px solid var(--accent3); border-radius: var(--radius);
+  padding: 1.25rem 1.3rem 1.4rem; margin: 0 0 1.75rem; box-shadow: 0 6px 28px rgba(255,183,77,.12);
+}
+.formulario-head { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 0.9rem; }
+.formulario-head h2 { margin: 0; border: none; padding: 0; color: var(--accent3); font-size: 1.35rem; letter-spacing: .02em; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 0.9rem; }
+.form-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 0.95rem; }
+.form-item h4 { color: var(--accent3); font-size: 0.92rem; margin-bottom: 0.25rem; }
+.form-item h4 .n { display: inline-block; min-width: 1.6rem; color: var(--bg); background: var(--accent3); border-radius: 5px; text-align: center; margin-right: 0.4rem; font-size: 0.8rem; }
+.form-item p { color: var(--muted); font-size: 0.86rem; margin-top: 0.3rem; }
+.form-item .formula { border-left-color: var(--accent3); font-size: 0.98rem; }
+.fix {
+  margin: 0.75rem 0; padding: 0.65rem 0.9rem; border-radius: 8px;
+  background: rgba(239,83,80,.10); border: 1px solid rgba(239,83,80,.4); color: #ffab9f; font-size: 0.9rem;
+}
+.fix strong { color: #ffcdd2; }
+.fix .katex { color: inherit; }
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.lab-tabs button.on { background: #0d47a1; border-color: var(--accent); color: #fff; }
+.coef-row { display: grid; grid-template-columns: 4.2rem 1fr 3.4rem; gap: 0.5rem; align-items: center; }
+.coef-row .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--text); font-size: 0.88rem; }
+.coef-row.dom label { color: var(--accent3); font-weight: 700; }
+.coef-row.zero label { opacity: .55; }
+.ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .ops-grid { grid-template-columns: 1fr; } }
+.poly-in { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; font-size: 0.9rem; color: var(--muted); }
+.poly-in input { width: 58px; }
+.mult-table { border-collapse: collapse; margin: 0.6rem 0; font-size: 0.92rem; }
+.mult-table th, .mult-table td { border: 1px solid var(--border); padding: 0.4rem 0.65rem; text-align: center; }
+.mult-table th { background: var(--surface2); color: var(--accent); }
+.mult-table td { background: var(--bg); }
+.work { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; margin-top: 0.8rem; overflow-x: auto; }
+.work div { margin: 0.3rem 0; color: var(--muted); }
+.deg-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(255,183,77,.18); color: var(--accent3); }
+.deg-tag.nulo { background: rgba(239,83,80,.18); color: var(--danger); }
+.root-tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; background: rgba(129,199,132,.2); color: var(--accent2); }
+.quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin: 0.9rem 0; }
+.quiz-q .qt { margin-bottom: 0.6rem; }
+.quiz-opts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.quiz-opts button.ok { background: rgba(129,199,132,.25); border-color: var(--accent2); color: var(--accent2); }
+.quiz-opts button.bad { background: rgba(239,83,80,.18); border-color: var(--danger); color: #ffab9f; }
+.quiz-fb { margin-top: 0.55rem; font-size: 0.9rem; color: var(--muted); display: none; }
+.quiz-q.done .quiz-fb { display: block; }
+.score { display: inline-block; font-weight: 800; color: var(--accent2); font-size: 1.05rem; }
+.sys { display: inline-block; }
+/* ---- B45/B46 extras ---- */
+canvas.cv-wide { aspect-ratio: 4 / 3; max-width: 640px; }
+.badge-prova {
+  display: inline-block; background: rgba(239,83,80,.18); color: #ff8a80; border: 1px solid rgba(239,83,80,.6);
+  padding: 0.15rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; letter-spacing: .03em;
+}
+.badge-prova.max { background: #c62828; color: #fff; border-color: #ff8a80; box-shadow: 0 0 12px rgba(239,83,80,.45); }
+.ex.prova { border-left: 4px solid #ef5350; }
+.ex.prova-max { border: 2px solid #ef5350; box-shadow: 0 0 24px rgba(239,83,80,.18); }
+.badge-gab { display: inline-block; background: rgba(129,199,132,.15); color: var(--accent2); border: 1px solid rgba(129,199,132,.4); padding: 0.15rem 0.55rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+.caderno {
+  margin-top: 0.85rem; padding: 0.7rem 0.95rem; border-radius: 8px; font-size: 0.9rem;
+  background: rgba(79,195,247,.08); border: 1px dashed rgba(79,195,247,.55); color: #b3e5fc;
+}
+.caderno strong { color: #e1f5fe; }
+.caderno.quase { background: rgba(255,183,77,.08); border-color: rgba(255,183,77,.6); color: #ffe0b2; }
+.caderno.quase strong { color: #fff3e0; }
+.caderno .katex { color: inherit; }
+.opts { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem 1.2rem; margin: 0.35rem 0 0.2rem; color: var(--muted); font-size: 0.93rem; }
+.prova-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.6rem; margin-top: 0.6rem; }
+.prova-list a { display: block; background: var(--bg); border: 1px solid rgba(239,83,80,.45); border-radius: 8px; padding: 0.5rem 0.7rem; color: var(--text); text-decoration: none; font-size: 0.88rem; }
+.prova-list a:hover { border-color: #ef5350; }
+.prova-list a .k { color: #ff8a80; font-weight: 800; margin-right: 0.35rem; }
+/* tabela de Briot-Ruffini */
+.briot { border-collapse: collapse; margin: 0.6rem auto; font-size: 1rem; font-variant-numeric: tabular-nums; }
+.briot td { padding: 0.35rem 0.7rem; text-align: center; min-width: 2.6rem; color: var(--text); }
+.briot td.root { border-right: 2px solid var(--accent3); color: var(--accent3); font-weight: 700; }
+.briot tr.top td { border-bottom: 2px solid var(--accent3); }
+.briot td.rest { border-left: 2px solid var(--accent3); }
+.briot tr.bot td.rest { color: var(--accent2); font-weight: 800; }
+.briot td.hi { background: rgba(79,195,247,.22); border-radius: 6px; outline: 1px solid var(--accent); }
+.briot td.src { background: rgba(255,183,77,.16); border-radius: 6px; }
+.briot td.ghost { color: transparent; }
+.briot caption { caption-side: bottom; color: var(--muted); font-size: 0.8rem; padding-top: 0.3rem; }
+.steps .briot { margin-left: 0; }
+.step-msg { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.85rem; margin-top: 0.6rem; color: var(--muted); min-height: 2.6rem; }
+.step-msg strong { color: var(--accent); }
+.inp-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.35rem 0; }
+.inp-row input[type="text"], .inp-row input[type="number"] {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.35rem 0.55rem; border-radius: 8px; font-size: 0.92rem;
+}
+.inp-row input[type="text"] { min-width: 210px; flex: 1; }
+.inp-row input[type="number"] { width: 70px; }
+.inp-row select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 0.3rem 0.4rem; border-radius: 8px; }
+.err { color: #ff8a80; font-size: 0.85rem; }
+.chave { font-size: 0.98rem; }
+.chave .katex-display { margin: 0.15em 0; text-align: left; }
+.root-ctl { display: grid; grid-template-columns: 2.2rem 1fr 3rem 4.6rem; gap: 0.45rem; align-items: center; }
+.root-ctl .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.88rem; }
+.mult-pill { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin: 0.1rem 0.15rem; }
+.mult-pill.cruza { background: rgba(79,195,247,.18); color: var(--accent); }
+.mult-pill.toca { background: rgba(255,183,77,.2); color: var(--accent3); }
+.mult-pill.inflex { background: rgba(206,147,216,.2); color: var(--accent4); }
+.graph-fig { display: block; margin: 0.6rem auto; max-width: 100%; }
+.ex.collapsed .caderno { display: none !important; }
+body:not(.treino-ativo) .ex.collapsed .caderno { display: block !important; }
+
+.formula { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.formula .katex-display { position: relative; }
+.briot-wrap { max-width: 100%; overflow-x: auto; }
+@media (max-width: 520px) { .briot td { padding: 0.3rem 0.45rem; } }
+@media print {
+  body.print-form nav, body.print-form .treino-banner, body.print-form .wrap > *:not(.formulario), body.print-form footer, body.print-form .no-print { display: none !important; }
+  body.print-form { background: #fff; color: #000; }
+  body.print-form .formulario { border-color: #999; background: #fff; box-shadow: none; }
+  body.print-form .form-item { background: #fff; border-color: #bbb; break-inside: avoid; }
+  body.print-form .form-item h4, body.print-form .formulario-head h2 { color: #000; }
+  body.print-form .form-item p { color: #333; }
+}
+
+
+canvas.mini-reg { display: block; width: 100%; max-width: 300px; height: auto; aspect-ratio: 1; margin: 0.6rem auto; }
+</style>
+</style>
+<link rel="stylesheet" href="katex/katex.min.css">
+<script defer src="katex/katex.min.js"></script>
+<script defer src="katex/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof renderMathInElement === "undefined") return;
+  function renderAll(root) {
+    renderMathInElement(root || document.body, {
+      delimiters: [
+        {left: "\\[", right: "\\]", display: true},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false,
+      ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code", "option"]
+    });
+  }
+  window.renderKatex = renderAll;
+  renderAll(document.body);
+});
+</script>
+
+</head>
+<body class="treino-ativo">
+<nav>
+  <span class="brand">Polinômios · B47</span>
+  <a href="index.html">Index</a>
+  <a href="b44-introducao.html">B44</a>
+  <a href="b45-divisao-teorema-resto.html">B45 Divisão</a>
+  <a href="b46-equacoes-algebricas.html">B46 Equações</a>
+  <a href="b47-relacoes-girard.html" class="active">B47 Girard</a>
+  <a href="#formulario">Formulário</a>
+  <a href="#laboratorio">Laboratório</a>
+  <a href="#teste">Teste</a>
+  <a href="#exercicios">Exercícios</a>
+</nav>
+
+<div class="treino-banner" id="treinoBanner">
+  <label>
+    <input type="checkbox" id="chkModoTreino" checked>
+    <span class="tb-label" id="treinoBannerLabel">Modo treino ativo</span>
+  </label>
+  <span style="color:var(--muted);font-size:0.82rem">Desligue para ver todas as resoluções (revisão).</span>
+</div>
+
+<div class="wrap">
+  <h1>Relações de Girard</h1>
+  <p class="subtitle">B47 · Relações entre os coeficientes e as raízes de uma equação algébrica · 2º, 3º, 4º grau e caso geral · Soma dos quadrados · Soma dos inversos · Raízes em PA · Versa</p>
+
+  <span class="section-label">(A) De onde vem: as esferas do Atomium</span>
+  <div class="explain">
+    <p class="lead">O <em>Atomium</em>, em Bruxelas, foi construído para a Expo '58 e representa um cristal de ferro ampliado 165 bilhões de vezes. Um professor propôs aos alunos:</p>
+    <p><em>"Sabendo-se que o número de esferas que compõem o monumento Atomium é igual à soma das raízes da equação algébrica \(x^3-9x^2+26x-24=0\), calcule esse número."</em></p>
+    <p>O livro avisa: <strong>não é necessário resolver a equação</strong>. Basta relacionar a soma das raízes com os coeficientes:</p>
+    <div class="formula">\[a=1,\ b=-9\ \Rightarrow\ x_1+x_2+x_3=-\frac{b}{a}=-\frac{-9}{1}=9\]</div>
+    <p>O Atomium tem <strong>9 esferas</strong> (8 nos vértices de um cubo e 1 no centro). Conferindo: as raízes são \(2,\ 3\) e \(4\), e \(2+3+4=9\ \checkmark\). Esse "atalho" é a <strong>relação de Girard</strong> da soma. Teste no Laboratório (botão "Atomium").</p>
+  </div>
+
+  <span class="section-label">(B) Conceitos, passo a passo</span>
+  <div class="explain">
+    <h3 style="margin-top:0">1. A ideia</h3>
+    <p>Também chamadas de <strong>relações de Girard</strong>, em homenagem ao matemático francês Albert Girard (1590–1633), essas expressões relacionam as <strong>raízes</strong> e os <strong>coeficientes</strong> de equações algébricas de grau \(n&gt;1\). Elas saem do <strong>teorema da decomposição</strong> do B46: \(P(x)=a_n(x-x_1)(x-x_2)\cdots(x-x_n)\). Multiplicando os fatores e comparando com os coeficientes, aparecem somas e produtos das raízes.</p>
+
+    <h3>2. Equação do 2º grau</h3>
+    <p>Dada \(ax^2+bx+c=0\), com \(a\neq0\), cujas raízes são \(x_1\) e \(x_2\):</p>
+    <div class="formula">\[x_1+x_2=-\frac{b}{a}\quad(\text{soma})\qquad x_1\cdot x_2=\frac{c}{a}\quad(\text{produto})\]</div>
+    <p><strong>Demonstração.</strong> Pelo teorema da decomposição, \(ax^2+bx+c=a(x-x_1)(x-x_2)\). Dividindo tudo por \(a\):</p>
+    <div class="formula">\[x^2+\frac bax+\frac ca=(x-x_1)(x-x_2)=x^2-x_2x-x_1x+x_1x_2=x^2-(x_1+x_2)x+x_1x_2\]</div>
+    <p>Igualando os coeficientes (polinômios idênticos, B44): \(\frac ba=-(x_1+x_2)\) e \(\frac ca=x_1x_2\).</p>
+
+    <h3>3. Equação do 3º grau</h3>
+    <p>Dada \(ax^3+bx^2+cx+d=0\), com \(a\neq0\), cujas raízes são \(x_1,\ x_2,\ x_3\):</p>
+    <div class="formula">\[x_1+x_2+x_3=-\frac{b}{a}\quad(\text{soma das três raízes})\]</div>
+    <div class="formula">\[x_1x_2+x_1x_3+x_2x_3=\frac{c}{a}\quad(\text{soma dos produtos duas a duas})\]</div>
+    <div class="formula">\[x_1x_2x_3=-\frac{d}{a}\quad(\text{produto das três raízes})\]</div>
+    <p><strong>Demonstração.</strong> \(ax^3+bx^2+cx+d=a(x-x_1)(x-x_2)(x-x_3)\). Dividindo por \(a\):</p>
+    <div class="formula">\[x^3+\frac bax^2+\frac cax+\frac da=(x-x_1)(x-x_2)(x-x_3)\]</div>
+    <p>Desenvolvendo o 2º membro: primeiro \((x-x_2)(x-x_3)=x^2-x_3x-x_2x+x_2x_3\); depois, multiplicando por \((x-x_1)\):</p>
+    <div class="formula">\[x^3-x_3x^2-x_2x^2+x_2x_3x-x_1x^2+x_1x_3x+x_1x_2x-x_1x_2x_3\]</div>
+    <div class="formula">\[=x^3-(x_1+x_2+x_3)x^2+(x_1x_2+x_1x_3+x_2x_3)x-x_1x_2x_3\]</div>
+    <p>Igualando os coeficientes de \(x^2\), \(x\) e o termo independente, saem as três relações.</p>
+    <div class="fix"><strong>Correção do livro (p. 729).</strong> Na demonstração do 3º grau, o livro escreve duas vezes o 1º membro como "\(x^2+\frac bax+\frac ca\)". O certo é \(x^3+\frac bax^2+\frac cax+\frac da\) (é o mesmo polinômio da linha anterior, dividido por \(a\)). Na linha "Assim, temos", o livro também imprime "\((x_1+x_2x^2+x_3)x^2\)": o certo é \((x_1+x_2+x_3)x^2\). As relações finais do quadro estão certas.</div>
+
+    <h3>4. Equação do 4º grau</h3>
+    <p>Dada \(ax^4+bx^3+cx^2+dx+e=0\), \(a\neq0\), com raízes \(x_1,x_2,x_3,x_4\):</p>
+    <div class="formula">\[x_1+x_2+x_3+x_4=-\frac ba\]</div>
+    <div class="formula">\[x_1x_2+x_1x_3+x_1x_4+x_2x_3+x_2x_4+x_3x_4=\frac ca\quad(\text{duas a duas: 6 produtos})\]</div>
+    <div class="formula">\[x_1x_2x_3+x_1x_2x_4+x_1x_3x_4+x_2x_3x_4=-\frac da\quad(\text{três a três: 4 produtos})\]</div>
+    <div class="formula">\[x_1x_2x_3x_4=\frac ea\quad(\text{produto das quatro})\]</div>
+
+    <h3>5. Caso geral (grau \(n\))</h3>
+    <p>Para \(a_nx^n+a_{n-1}x^{n-1}+a_{n-2}x^{n-2}+\dots+a_1x+a_0=0\), com raízes \(x_1,\dots,x_n\):</p>
+    <div class="formula">\[x_1+x_2+\dots+x_n=-\frac{a_{n-1}}{a_n}\qquad \sum x_ix_j=\frac{a_{n-2}}{a_n}\qquad \sum x_ix_jx_k=-\frac{a_{n-3}}{a_n}\qquad\cdots\qquad x_1x_2\cdots x_n=\frac{(-1)^n\,a_0}{a_n}\]</div>
+    <p><strong>Como lembrar:</strong> sempre divida pelo coeficiente dominante \(a_n\), e os sinais <strong>alternam</strong> começando pelo menos: \(-,\ +,\ -,\ +,\dots\). O produto de todas as raízes tem sinal \(+\) se \(n\) é par e \(-\) se \(n\) é ímpar.</p>
+    <table class="mult-table"><tr><th>grau</th><th>soma</th><th>duas a duas</th><th>três a três</th><th>produto de todas</th></tr>
+      <tr><td>2</td><td>\(-\frac ba\)</td><td colspan="2" style="color:var(--muted)">(o produto é a própria "duas a duas")</td><td>\(+\frac ca\)</td></tr>
+      <tr><td>3</td><td>\(-\frac ba\)</td><td>\(+\frac ca\)</td><td colspan="1" style="color:var(--muted)">—</td><td>\(-\frac da\)</td></tr>
+      <tr><td>4</td><td>\(-\frac ba\)</td><td>\(+\frac ca\)</td><td>\(-\frac da\)</td><td>\(+\frac ea\)</td></tr></table>
+
+    <h3>6. Cuidados que derrubam na prova</h3>
+    <ul style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li><strong>Coeficiente que falta vale 0.</strong> Em \(x^3-7x+6=0\), \(b=0\) e a soma das raízes é 0.</li>
+      <li><strong>Escreva \(a,b,c,d\) com o sinal</strong> antes de substituir. Em \(2x^3-6x^2-10x-5\): \(a=2,\ b=-6,\ c=-10,\ d=-5\).</li>
+      <li><strong>As relações contam todas as raízes</strong>, inclusive as complexas e as repetidas (multiplicidade). Por isso uma "soma dos quadrados" pode dar negativa (Proposto 02).</li>
+      <li><strong>Antes de usar Girard, a equação tem que estar na forma \(P(x)=0\)</strong> com tudo desenvolvido (Complementar 09).</li>
+    </ul>
+
+    <h3>7. Expressões que se escrevem com as relações</h3>
+    <p><strong>Soma dos quadrados</strong> (Proposto 02). Elevando a soma ao quadrado:</p>
+    <div class="formula">\[(x_1+x_2+x_3)^2=x_1^2+x_2^2+x_3^2+2(x_1x_2+x_1x_3+x_2x_3)\]</div>
+    <div class="formula">\[\Rightarrow\ x_1^2+x_2^2+x_3^2=(x_1+x_2+x_3)^2-2(x_1x_2+x_1x_3+x_2x_3)\]</div>
+    <p><strong>Soma dos inversos</strong> (Proposto 03). Tirando o MMC:</p>
+    <div class="formula">\[\frac1{x_1}+\frac1{x_2}+\frac1{x_3}=\frac{x_2x_3+x_1x_3+x_1x_2}{x_1x_2x_3}\]</div>
+
+    <h3>8. Usando uma informação extra</h3>
+    <p>Muitas questões dão uma pista sobre as raízes. A estratégia é sempre: <strong>escreva as raízes com poucas letras usando a pista, aplique uma relação de Girard, ache uma raiz e baixe o grau</strong> (Briot, B45/B46).</p>
+    <ul style="color:var(--muted);padding-left:1.3rem;font-size:0.95rem">
+      <li><strong>Raízes em PA:</strong> chame de \(\alpha-r,\ \alpha,\ \alpha+r\). A soma fica \(3\alpha\) (o \(r\) cancela) e já dá a raiz do meio (Proposto 04, Complementares 06 e 11).</li>
+      <li><strong>Produto de duas raízes dado:</strong> \(x_1x_2=k\). O produto das três dá a terceira: \(k\cdot x_3=-\frac da\) (Complementares 02, 05 e 08).</li>
+      <li><strong>Uma raiz é soma das outras duas:</strong> \(x_1=x_2+x_3\Rightarrow\) soma \(=2x_1\) (Complementar 07).</li>
+      <li><strong>Raízes proporcionais a números dados:</strong> \(3k,\ 2k,\ -4k\) (Complementar 01).</li>
+    </ul>
+  </div>
+
+  <section class="formulario" id="formulario">
+    <div class="formulario-head">
+      <h2>(C) FORMULÁRIO · B47 Relações de Girard</h2>
+      <button type="button" class="primary no-print" id="btnPrintForm">Imprimir só o formulário</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-item">
+        <h4><span class="n">1</span>2º grau: \(ax^2+bx+c=0\)</h4>
+        <div class="formula">\[x_1+x_2=-\frac ba\qquad x_1x_2=\frac ca\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">2</span>3º grau: \(ax^3+bx^2+cx+d=0\)</h4>
+        <div class="formula">\[x_1+x_2+x_3=-\frac ba\]</div>
+        <div class="formula">\[x_1x_2+x_1x_3+x_2x_3=\frac ca\]</div>
+        <div class="formula">\[x_1x_2x_3=-\frac da\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">3</span>4º grau: \(ax^4+bx^3+cx^2+dx+e=0\)</h4>
+        <div class="formula">\[\textstyle\sum x_i=-\frac ba\qquad \sum x_ix_j=\frac ca\]</div>
+        <div class="formula">\[\textstyle\sum x_ix_jx_k=-\frac da\qquad x_1x_2x_3x_4=\frac ea\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">4</span>Grau \(n\) (geral)</h4>
+        <div class="formula">\[x_1+\dots+x_n=-\frac{a_{n-1}}{a_n}\qquad x_1x_2\cdots x_n=\frac{(-1)^n a_0}{a_n}\]</div>
+        <p>Sinais alternam: \(-,+,-,+,\dots\). Sempre divida por \(a_n\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">5</span>Soma dos quadrados</h4>
+        <div class="formula">\[x_1^2+x_2^2+x_3^2=(\textstyle\sum x_i)^2-2\textstyle\sum x_ix_j\]</div>
+        <p>Vem de \((x_1+x_2+x_3)^2\). Pode dar negativa se houver raízes complexas.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">6</span>Soma dos inversos</h4>
+        <div class="formula">\[\frac1{x_1}+\frac1{x_2}+\frac1{x_3}=\frac{x_1x_2+x_1x_3+x_2x_3}{x_1x_2x_3}=\frac{c/a}{-d/a}=-\frac cd\]</div>
+        <p>2º grau: \(\frac1{x_1}+\frac1{x_2}=\frac{x_1+x_2}{x_1x_2}=-\frac bc\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">7</span>Raízes em PA</h4>
+        <div class="formula">\[\alpha-r,\ \ \alpha,\ \ \alpha+r\ \Rightarrow\ \text{soma}=3\alpha=-\frac ba\]</div>
+        <p>A raiz do meio é \(\alpha=-\frac{b}{3a}\). Depois, Briot com \(\alpha\) ou produto para achar \(r\).</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">8</span>Produto de duas raízes dado</h4>
+        <div class="formula">\[x_1x_2=k\ \Rightarrow\ k\cdot x_3=-\frac da\ \Rightarrow\ x_3=-\frac{d}{ak}\]</div>
+        <p>Depois: \(P(x_3)=0\) para achar o coeficiente desconhecido.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">9</span>Uma raiz = soma das outras</h4>
+        <div class="formula">\[x_1=x_2+x_3\ \Rightarrow\ 2x_1=-\frac ba\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">10</span>Paralelepípedo (arestas = raízes)</h4>
+        <div class="formula">\[V=x_1x_2x_3\qquad A_T=2(x_1x_2+x_1x_3+x_2x_3)\]</div>
+        <div class="formula">\[\text{soma das 12 arestas}=4(x_1+x_2+x_3)\]</div>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">11</span>Coeficiente que falta</h4>
+        <div class="formula">\[x^3-7x+6=0\ \Rightarrow\ b=0\Rightarrow x_1+x_2+x_3=0\]</div>
+        <p>Escreva sempre \(a,b,c,d\) com o sinal antes de substituir.</p>
+      </div>
+      <div class="form-item">
+        <h4><span class="n">12</span>Ligações com B44–B46</h4>
+        <div class="formula">\[P(x)=a_n(x-x_1)\cdots(x-x_n)\qquad P(1)=\text{soma dos coef.}\]</div>
+        <p>Raiz conhecida \(\Rightarrow\) Briot (resto 0) \(\Rightarrow\) grau cai 1 \(\Rightarrow\) Bhaskara.</p>
+      </div>
+    </div>
+  </section>
+
+  <span class="section-label" id="laboratorio">(D) Laboratório interativo</span>
+  <div class="lab-tabs">
+    <button type="button" class="on" id="tabLab1">1 · Escolha as raízes e veja os coeficientes</button>
+    <button type="button" id="tabLab2">2 · Dos coeficientes às relações</button>
+  </div>
+
+  <div class="playground" id="lab1">
+    <div class="play-grid">
+      <div>
+        <canvas id="cvGir" class="cv-wide" width="640" height="480" aria-label="Gráfico de P(x) montado pelas raízes"></canvas>
+        <p class="note" style="text-align:center;margin-top:0.5rem;font-style:normal"><span class="hl">azul = \(y=P(x)\)</span> &nbsp;|&nbsp; <span class="hl3">● raízes reais</span> &nbsp;|&nbsp; raízes complexas não aparecem no gráfico</p>
+        <div class="live-vals" id="girVals" aria-live="polite" style="margin-top:0.8rem"></div>
+      </div>
+      <div class="controls">
+        <label for="girN">Grau \(n=\) <span id="girNL" class="hl3">3</span></label>
+        <input type="range" id="girN" min="2" max="4" step="1" value="3">
+        <label for="girA">Coeficiente dominante \(a=\) <span id="girAL" class="hl3">1</span></label>
+        <input type="range" id="girA" min="-3" max="3" step="0.5" value="1">
+        <div id="girRows"></div>
+        <label><input type="checkbox" id="girCx"> as duas últimas raízes são complexas: \(p\pm qi\) (o slider de \(x_{n-1}\) vira \(p\) e o de \(x_n\) vira \(q\))</label>
+        <label for="girY">Escala vertical \(Y=\) <span id="girYL" class="hl">20</span></label>
+        <input type="range" id="girY" min="0" max="6" step="1" value="2">
+        <div class="ctrl-row">
+          <button type="button" class="primary" data-gir="atom">Atomium</button>
+          <button type="button" data-gir="p04">Prop. 04</button>
+          <button type="button" data-gir="p05">Prop. 05</button>
+          <button type="button" data-gir="c01">Compl. 01</button>
+          <button type="button" data-gir="c02">Compl. 02/05</button>
+          <button type="button" data-gir="c03">Compl. 03</button>
+          <button type="button" data-gir="c07">Compl. 07</button>
+          <button type="button" data-gir="c10">Compl. 10</button>
+          <button type="button" data-gir="c11">Compl. 11</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="playground" id="lab2" style="display:none">
+    <div class="inp-row"><label for="gcP">Coeficientes de \(P(x)=0\), do maior grau para o termo independente (aceita frações como 3/2):</label><input type="text" id="gcP" value="2 -6 -10 -5"></div>
+    <div class="ctrl-row" style="margin:0.5rem 0">
+      <button type="button" data-gc="p01">Prop. 01</button>
+      <button type="button" data-gc="p02">Prop. 02</button>
+      <button type="button" data-gc="p03">Prop. 03</button>
+      <button type="button" data-gc="p05">Prop. 05</button>
+      <button type="button" data-gc="c03">Compl. 03</button>
+      <button type="button" data-gc="c04">Compl. 04</button>
+      <button type="button" data-gc="c08">Compl. 08 (\(m=7\))</button>
+      <button type="button" data-gc="c10">Compl. 10</button>
+    </div>
+    <div class="work" id="gcOut" aria-live="polite"></div>
+  </div>
+
+  <span class="section-label" id="teste">(E) Teste rápido</span>
+  <div class="explain">
+    <p>Clique na alternativa. A explicação aparece logo depois. Acertos: <span class="score" id="quizScore">0 / 0</span> &nbsp; <button type="button" id="quizReset">Recomeçar</button></p>
+    <div id="quizBox"></div>
+  </div>
+
+  <h2 id="exercicios">(F) Exercícios</h2>
+  <div class="explain">
+    <p class="lead"><span class="badge-prova">★ Cai na prova</span> &nbsp;marca os exercícios que a Gica circulou no livro (p. 731: Propostos 01, 02 e 03). Os complementares (p. 732) vieram sem marcação, mas estão todos resolvidos.</p>
+    <div class="prova-list">
+      <a href="#e01"><span class="k">★</span>Proposto 01 · soma, duas a duas, produto</a>
+      <a href="#e02"><span class="k">★</span>Proposto 02 · soma dos quadrados</a>
+      <a href="#e03"><span class="k">★</span>Proposto 03 · soma dos inversos</a>
+    </div>
+    <div class="fix" style="margin-top:0.9rem"><strong>Atenção: Complementares 02 e 05 são o mesmo exercício.</strong> O 02 (FGV SP) e o 05 (Fuvest SP) têm o mesmo polinômio \(2x^3-x^2+kx+4\) e a mesma condição (produto de duas raízes igual a 1). A resposta é a mesma, \(k=-8\), mas as alternativas estão em ordem diferente: no 02 é a <strong>c</strong>, no 05 é a <strong>a</strong>. Não é erro de impressão; o livro só repetiu a questão de dois vestibulares.</div>
+  </div>
+
+  <div class="treino-section-bar" id="treinoSectionBar">
+    <label><input type="checkbox" id="chkRevelarTodas"> Revelar todas / Esconder todas</label>
+    <span style="color:var(--muted);font-size:0.82rem">Marque para revelar todas · desmarque para esconder</span>
+  </div>
+
+  <h3>Exercícios propostos · p. 731</h3>
+
+  <!-- E01 -->
+  <div class="ex prova" id="e01">
+    <div class="ex-header"><span class="ex-num">Proposto 01</span><span class="ex-src">Versa B47 · p. 731</span><span class="badge-pratica">3º grau · as três relações</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Sendo \(x_1\), \(x_2\) e \(x_3\) as raízes da equação algébrica \(2x^3-6x^2-10x-5=0\), calcule: a) \(x_1+x_2+x_3\); b) \(x_1x_2+x_1x_3+x_2x_3\); c) \(x_1x_2x_3\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> são exatamente as três relações de Girard do 3º grau. Não precisa (nem dá fácil para) achar as raízes.</p>
+      <ol>
+        <li><strong>Identifique os coeficientes, com sinal:</strong>
+          <div class="formula">\[2x^3-6x^2-10x-5=0\ \Rightarrow\ a=2,\quad b=-6,\quad c=-10,\quad d=-5\]</div></li>
+        <li><strong>a) Soma das raízes:</strong>
+          <div class="formula">\[x_1+x_2+x_3=-\frac ba=-\frac{-6}{2}=\frac62=3\]</div></li>
+        <li><strong>b) Soma dos produtos duas a duas:</strong>
+          <div class="formula">\[x_1x_2+x_1x_3+x_2x_3=\frac ca=\frac{-10}{2}=-5\]</div></li>
+        <li><strong>c) Produto das raízes:</strong>
+          <div class="formula">\[x_1x_2x_3=-\frac da=-\frac{-5}{2}=\frac52\]</div></li>
+        <li><strong>Lembrete dos sinais</strong> no 3º grau: \(-\frac ba\), \(+\frac ca\), \(-\frac da\) (alternando, começando pelo menos).</li>
+      </ol>
+      <div class="dica">Esta equação tem 1 raiz real (\(\approx 4{,}30\)) e 2 complexas (\(\approx -0{,}65\pm0{,}40i\)). Girard funciona igual: confira no Laboratório (aba 2, "Prop. 01"), que mostra as raízes numéricas e as somas batendo.</div>
+    </div>
+    <div class="ans-box">a) \(3\) &nbsp;&nbsp; b) \(-5\) &nbsp;&nbsp; c) \(\dfrac52\)</div>
+  </div>
+
+  <!-- E02 -->
+  <div class="ex prova" id="e02">
+    <div class="ex-header"><span class="ex-num">Proposto 02</span><span class="ex-src">Versa B47 · p. 731</span><span class="badge-pratica">soma dos quadrados</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Calcule a soma dos quadrados das raízes da equação \(x^3-2x^2+5x+3=0\).</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> \(x_1^2+x_2^2+x_3^2\) não é uma relação de Girard pronta, mas aparece quando elevamos a soma ao quadrado.</p>
+      <ol>
+        <li><strong>Coeficientes:</strong> \(a=1,\ b=-2,\ c=5,\ d=3\).</li>
+        <li><strong>Relações de Girard que vamos usar:</strong>
+          <div class="formula">\[S=x_1+x_2+x_3=-\frac ba=-\frac{-2}{1}=2\]</div>
+          <div class="formula">\[S_2=x_1x_2+x_1x_3+x_2x_3=\frac ca=\frac51=5\]</div></li>
+        <li><strong>Eleve a soma ao quadrado</strong> (quadrado de um trinômio):
+          <div class="formula">\[(x_1+x_2+x_3)^2=x_1^2+x_2^2+x_3^2+2x_1x_2+2x_1x_3+2x_2x_3\]</div>
+          <div class="formula">\[(x_1+x_2+x_3)^2=(x_1^2+x_2^2+x_3^2)+2(x_1x_2+x_1x_3+x_2x_3)\]</div></li>
+        <li><strong>Isole a soma dos quadrados:</strong>
+          <div class="formula">\[x_1^2+x_2^2+x_3^2=(x_1+x_2+x_3)^2-2(x_1x_2+x_1x_3+x_2x_3)=S^2-2S_2\]</div></li>
+        <li><strong>Substitua:</strong>
+          <div class="formula">\[x_1^2+x_2^2+x_3^2=2^2-2\cdot5=4-10=-6\]</div></li>
+        <li><strong>Deu negativo?!</strong> Sim, e está certo. Se as três raízes fossem reais, cada quadrado seria \(\ge0\) e a soma não poderia ser negativa. Então a equação tem raízes <strong>complexas</strong>: uma real (\(\approx-0{,}48\)) e duas complexas conjugadas (\(\approx1{,}24\pm2{,}16i\)). O quadrado de um complexo pode ser negativo (lembre: \(i^2=-1\)).</li>
+      </ol>
+      <div class="dica">O \(d=3\) não foi usado: só precisamos da soma e da soma duas a duas. Confira no Laboratório (aba 2, "Prop. 02").</div>
+    </div>
+    <div class="ans-box">\(x_1^2+x_2^2+x_3^2=-6\)</div>
+  </div>
+
+  <!-- E03 -->
+  <div class="ex prova" id="e03">
+    <div class="ex-header"><span class="ex-num">Proposto 03</span><span class="ex-src">Versa B47 · p. 731</span><span class="badge-pratica">soma dos inversos</span><span class="badge-prova">★ Cai na prova</span></div>
+    <p class="ex-q">Calcule a soma dos inversos das raízes da equação \(x^3-4x^2+5x+9=0\).</p>
+    <div class="steps">
+      <ol>
+        <li><strong>O que é pedido:</strong> \(\dfrac1{x_1}+\dfrac1{x_2}+\dfrac1{x_3}\). (Nenhuma raiz é zero, porque \(P(0)=9\neq0\).)</li>
+        <li><strong>Some as frações com o MMC</strong> \(x_1x_2x_3\):
+          <div class="formula">\[\frac1{x_1}+\frac1{x_2}+\frac1{x_3}=\frac{x_2x_3}{x_1x_2x_3}+\frac{x_1x_3}{x_1x_2x_3}+\frac{x_1x_2}{x_1x_2x_3}=\frac{x_1x_2+x_1x_3+x_2x_3}{x_1x_2x_3}\]</div>
+          Numerador: soma duas a duas. Denominador: produto.</li>
+        <li><strong>Coeficientes:</strong> \(a=1,\ b=-4,\ c=5,\ d=9\).</li>
+        <li><strong>Girard:</strong>
+          <div class="formula">\[x_1x_2+x_1x_3+x_2x_3=\frac ca=\frac51=5\qquad x_1x_2x_3=-\frac da=-\frac91=-9\]</div></li>
+        <li><strong>Substitua:</strong>
+          <div class="formula">\[\frac1{x_1}+\frac1{x_2}+\frac1{x_3}=\frac{5}{-9}=-\frac59\]</div></li>
+      </ol>
+      <div class="dica">Atalho do formulário: no 3º grau, soma dos inversos \(=\dfrac{c/a}{-d/a}=-\dfrac cd=-\dfrac59\). Mas na prova dissertativa, mostre o MMC.</div>
+    </div>
+    <div class="ans-box">\(\dfrac1{x_1}+\dfrac1{x_2}+\dfrac1{x_3}=-\dfrac59\)</div>
+  </div>
+
+  <!-- E04 -->
+  <div class="ex" id="e04">
+    <div class="ex-header"><span class="ex-num">Proposto 04</span><span class="ex-src">Versa B47 · p. 731</span><span class="badge-pratica">raízes em PA</span></div>
+    <p class="ex-q">Obtenha o conjunto solução da equação \(x^3-9x^2+23x-15=0\), sabendo-se que suas raízes são termos consecutivos de uma progressão aritmética.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> três termos consecutivos de uma PA podem ser escritos como \(\alpha-r,\ \alpha,\ \alpha+r\). Assim, na soma, o \(r\) some.</p>
+      <ol>
+        <li><strong>Coeficientes:</strong> \(a=1,\ b=-9,\ c=23,\ d=-15\).</li>
+        <li><strong>Soma das raízes:</strong>
+          <div class="formula">\[(\alpha-r)+\alpha+(\alpha+r)=-\frac ba=9\ \Rightarrow\ 3\alpha=9\ \Rightarrow\ \alpha=3\]</div>
+          Então \(3\) é raiz (a do meio).</li>
+        <li><strong>Produto das raízes</strong> para achar \(r\):
+          <div class="formula">\[(3-r)\cdot3\cdot(3+r)=-\frac da=15\]</div>
+          <div class="formula">\[3(9-r^2)=15\ \Rightarrow\ 9-r^2=5\ \Rightarrow\ r^2=4\ \Rightarrow\ r=\pm2\]</div>
+          Com \(r=2\) ou \(r=-2\), as raízes são as mesmas, só em ordem diferente: \(1,\ 3,\ 5\).</li>
+        <li><strong>Confira com a relação que sobrou</strong> (duas a duas):
+          <div class="formula">\[1\cdot3+1\cdot5+3\cdot5=3+5+15=23=\frac ca\ \checkmark\]</div></li>
+        <li><strong>Outro caminho: Briot com a raiz 3</strong>:
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(3\)</td><td>\(1\)</td><td>\(-9\)</td><td>\(23\)</td><td class="rest">\(-15\)</td></tr><tr class="bot"><td class="root"></td><td>\(1\)</td><td>\(-6\)</td><td>\(5\)</td><td class="rest">\(0\)</td></tr></table></div>
+          <ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o primeiro coeficiente: \(1\).</li><li>\(1\cdot3+(-9)=3-9=-6\)</li><li>\((-6)\cdot3+23=-18+23=5\)</li><li>\(5\cdot3+(-15)=15-15=0\)</li></ul>
+          \(x^2-6x+5=0\Rightarrow\Delta=36-20=16\Rightarrow x=\frac{6\pm4}2\Rightarrow x=5\) ou \(x=1\ \checkmark\)</li>
+      </ol>
+      <div class="dica">PA de razão 2: \(1,\ 3,\ 5\ \checkmark\). Veja no Laboratório (aba 1, "Prop. 04").</div>
+    </div>
+    <div class="ans-box">\(S=\{1,\ 3,\ 5\}\)</div>
+  </div>
+
+  <!-- E05 -->
+  <div class="ex" id="e05">
+    <div class="ex-header"><span class="ex-num">Proposto 05</span><span class="ex-src">Versa B47 · p. 731</span><span class="badge-pratica">aplicação: paralelepípedo</span></div>
+    <p class="ex-q">As medidas, em metros, das três arestas de um paralelepípedo retângulo concorrentes em um mesmo vértice são as raízes do polinômio \(P(x)=x^3-14x^2+56x-64\). Nessas condições, calcule a) o volume do paralelepípedo; b) a área total do paralelepípedo.</p>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> chame as arestas de \(x_1,x_2,x_3\) (comprimento, largura e altura). Volume é o produto; área total é a soma das 6 faces, que vêm em pares iguais.</p>
+      <ol>
+        <li><strong>Coeficientes:</strong> \(a=1,\ b=-14,\ c=56,\ d=-64\).</li>
+        <li><strong>a) Volume</strong> \(=\) produto das três arestas:
+          <div class="formula">\[V=x_1x_2x_3=-\frac da=-\frac{-64}{1}=64\ \text{m}^3\]</div></li>
+        <li><strong>b) Área total.</strong> O paralelepípedo tem 6 faces retangulares: duas de área \(x_1x_2\), duas de \(x_1x_3\) e duas de \(x_2x_3\):
+          <div class="formula">\[A_T=2x_1x_2+2x_1x_3+2x_2x_3=2(x_1x_2+x_1x_3+x_2x_3)\]</div>
+          <div class="formula">\[x_1x_2+x_1x_3+x_2x_3=\frac ca=\frac{56}{1}=56\]</div>
+          <div class="formula">\[A_T=2\cdot56=112\ \text{m}^2\]</div></li>
+        <li><strong>Conferência:</strong> as raízes são \(2,\ 4\) e \(8\) (teste: \(P(2)=8-56+112-64=0\ \checkmark\)). \(V=2\cdot4\cdot8=64\ \checkmark\); \(A_T=2(8+16+32)=2\cdot56=112\ \checkmark\). Soma das arestas \(2+4+8=14=-\frac ba\ \checkmark\).</li>
+      </ol>
+      <div class="dica">Curiosidade: \(2,\ 4,\ 8\) formam uma PG de razão 2.</div>
+    </div>
+    <div class="ans-box">a) \(V=64\ \text{m}^3\) &nbsp;&nbsp; b) \(A_T=112\ \text{m}^2\)</div>
+  </div>
+
+  <h3>Exercícios complementares · p. 732</h3>
+
+  <!-- F01 -->
+  <div class="ex" id="f01">
+    <div class="ex-header"><span class="ex-num">Complementar 01</span><span class="ex-src">UFAL · p. 732</span><span class="badge-pratica">raízes proporcionais</span></div>
+    <p class="ex-q">Sabe-se que as raízes da equação \(2x^3+x^2-7x-6=0\) são diretamente proporcionais aos números \(3\), \(2\) e \(-4\). Nessas condições, a menor das raízes é</p>
+    <ul class="opts"><li>a) \(-3\)</li><li>b) \(-2\)</li><li>c) \(-3/2\)</li><li>d) \(-1\)</li><li>e) \(-1/2\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>"Diretamente proporcionais a 3, 2 e \(-4\)":</strong> existe uma constante \(k\) com
+          <div class="formula">\[x_1=3k,\qquad x_2=2k,\qquad x_3=-4k\]</div></li>
+        <li><strong>Soma das raízes</strong> (\(a=2,\ b=1\)):
+          <div class="formula">\[3k+2k-4k=-\frac ba=-\frac12\ \Rightarrow\ k=-\frac12\]</div></li>
+        <li><strong>As raízes:</strong>
+          <div class="formula">\[x_1=3\cdot\left(-\tfrac12\right)=-\tfrac32,\qquad x_2=2\cdot\left(-\tfrac12\right)=-1,\qquad x_3=-4\cdot\left(-\tfrac12\right)=2\]</div></li>
+        <li><strong>Confira com as outras relações</strong> (\(c=-7,\ d=-6\)):
+          <div class="formula">\[x_1x_2x_3=\left(-\tfrac32\right)(-1)(2)=3=-\frac da=-\frac{-6}{2}=3\ \checkmark\]</div>
+          <div class="formula">\[x_1x_2+x_1x_3+x_2x_3=\tfrac32-3-2=-\tfrac72=\frac ca\ \checkmark\]</div></li>
+        <li><strong>A menor:</strong> entre \(-\frac32=-1{,}5\), \(-1\) e \(2\), a menor é \(-\frac32\).</li>
+      </ol>
+    </div>
+    <div class="ans-box">Menor raiz \(=-\dfrac32\) &nbsp; <span class="badge-gab">Alternativa c</span></div>
+  </div>
+
+  <!-- F02 -->
+  <div class="ex" id="f02">
+    <div class="ex-header"><span class="ex-num">Complementar 02</span><span class="ex-src">FGV SP · p. 732</span><span class="badge-pratica">produto de duas raízes</span></div>
+    <p class="ex-q">Sabe-se que o produto de duas das raízes do polinômio \(P(x)=2x^3-x^2+kx+4\) é igual a 1. O valor do coeficiente \(k\) é</p>
+    <ul class="opts"><li>a) \(-12\)</li><li>b) \(-10\)</li><li>c) \(-8\)</li><li>d) \(-4\)</li><li>e) \(-2\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> o produto das três raízes não depende de \(k\). Sabendo o produto de duas, descobrimos a terceira; como ela é raiz, \(P\) nela dá zero, e isso dá \(k\).</p>
+      <ol>
+        <li><strong>Coeficientes:</strong> \(a=2,\ b=-1,\ c=k,\ d=4\).</li>
+        <li><strong>Produto das três raízes:</strong>
+          <div class="formula">\[x_1x_2x_3=-\frac da=-\frac42=-2\]</div></li>
+        <li><strong>Use \(x_1x_2=1\):</strong>
+          <div class="formula">\[1\cdot x_3=-2\ \Rightarrow\ x_3=-2\]</div></li>
+        <li><strong>\(-2\) é raiz \(\Rightarrow P(-2)=0\):</strong>
+          <div class="formula">\[2(-2)^3-(-2)^2+k(-2)+4=0\]</div>
+          <div class="formula">\[2(-8)-4-2k+4=0\ \Rightarrow\ -16-2k=0\ \Rightarrow\ k=-8\]</div></li>
+        <li><strong>Conferência:</strong> \(P(x)=2x^3-x^2-8x+4\). Briot com \(-2\):
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(-2\)</td><td>\(2\)</td><td>\(-1\)</td><td>\(-8\)</td><td class="rest">\(4\)</td></tr><tr class="bot"><td class="root"></td><td>\(2\)</td><td>\(-5\)</td><td>\(2\)</td><td class="rest">\(0\)</td></tr></table></div>
+          \(2x^2-5x+2=0\Rightarrow\Delta=25-16=9\Rightarrow x=\frac{5\pm3}4\Rightarrow x=2\) ou \(x=\frac12\). Produto \(2\cdot\frac12=1\ \checkmark\)</li>
+      </ol>
+      <div class="dica">É exatamente o mesmo exercício do Complementar 05 (veja o aviso no topo da seção).</div>
+    </div>
+    <div class="ans-box">\(k=-8\) &nbsp; <span class="badge-gab">Alternativa c</span></div>
+  </div>
+
+  <!-- F03 -->
+  <div class="ex" id="f03">
+    <div class="ex-header"><span class="ex-num">Complementar 03</span><span class="ex-src">FMP RJ · p. 732</span><span class="badge-pratica">4º grau</span></div>
+    <p class="ex-q">Seja o polinômio \(F(x)=x^4-x^3-16x^2+4x+48\). A soma e o produto de suas raízes são, respectivamente,</p>
+    <ul class="opts"><li>a) 1 e 48</li><li>b) 1 e 16</li><li>c) 1 e 4</li><li>d) \(-1\) e 48</li><li>e) \(-1\) e \(-16\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Coeficientes</strong> (grau 4): \(a=1,\ b=-1,\ c=-16,\ d=4,\ e=48\).</li>
+        <li><strong>Soma:</strong>
+          <div class="formula">\[x_1+x_2+x_3+x_4=-\frac ba=-\frac{-1}{1}=1\]</div></li>
+        <li><strong>Produto</strong> (grau par \(\Rightarrow\) sinal \(+\)):
+          <div class="formula">\[x_1x_2x_3x_4=\frac{(-1)^4\cdot e}{a}=\frac{48}{1}=48\]</div></li>
+        <li><strong>Conferência:</strong> as raízes são \(-3,\ -2,\ 2,\ 4\): soma \(-3-2+2+4=1\ \checkmark\); produto \((-3)(-2)(2)(4)=48\ \checkmark\).</li>
+      </ol>
+      <div class="dica">Pegadinha: no 3º grau o produto é \(-\frac da\), mas no 4º grau é \(+\frac ea\). Quem decorou "produto = \(-\)termo/a" marca a e) ou a d) errado.</div>
+    </div>
+    <div class="ans-box">Soma \(1\), produto \(48\) &nbsp; <span class="badge-gab">Alternativa a</span></div>
+  </div>
+
+  <!-- F04 -->
+  <div class="ex" id="f04">
+    <div class="ex-header"><span class="ex-num">Complementar 04</span><span class="ex-src">UECE · p. 732</span><span class="badge-pratica">soma ÷ produto</span></div>
+    <p class="ex-q">Se \(m\), \(p\) e \(q\) são raízes da equação \(6x^3-11x^2+6x-1=0\), então o resultado da divisão da soma \(m+p+q\) pelo produto \(m\cdot p\cdot q\) é</p>
+    <ul class="opts"><li>a) 13</li><li>b) 11</li><li>c) 17</li><li>d) 15</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Coeficientes:</strong> \(a=6,\ b=-11,\ c=6,\ d=-1\).</li>
+        <li><strong>Soma:</strong>
+          <div class="formula">\[m+p+q=-\frac ba=-\frac{-11}{6}=\frac{11}6\]</div></li>
+        <li><strong>Produto:</strong>
+          <div class="formula">\[m\cdot p\cdot q=-\frac da=-\frac{-1}{6}=\frac16\]</div></li>
+        <li><strong>Divisão:</strong>
+          <div class="formula">\[\frac{m+p+q}{mpq}=\frac{11/6}{1/6}=\frac{11}{6}\cdot\frac61=11\]</div></li>
+        <li><strong>Conferência:</strong> as raízes são \(1,\ \frac12,\ \frac13\): soma \(\frac{6+3+2}6=\frac{11}6\), produto \(\frac16\ \checkmark\).</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(11\) &nbsp; <span class="badge-gab">Alternativa b</span></div>
+  </div>
+
+  <!-- F05 -->
+  <div class="ex" id="f05">
+    <div class="ex-header"><span class="ex-num">Complementar 05</span><span class="ex-src">Fuvest SP · p. 732</span><span class="badge-pratica">produto de duas raízes</span></div>
+    <p class="ex-q">Sabe-se que o produto de duas raízes da equação algébrica \(2x^3-x^2+kx+4=0\) é igual a 1. Então o valor de \(k\) é</p>
+    <ul class="opts"><li>a) \(-8\)</li><li>b) \(-4\)</li><li>c) \(0\)</li><li>d) \(4\)</li><li>e) \(8\)</li></ul>
+    <div class="fix"><strong>Repetido no livro.</strong> Este enunciado é idêntico ao do Complementar 02 (mesma equação \(2x^3-x^2+kx+4=0\), mesmo produto 1). Só mudam a banca e a ordem das alternativas. A resolução é a mesma; aqui ela vem resumida.</div>
+    <div class="steps">
+      <ol>
+        <li><strong>Produto das três raízes:</strong> \(x_1x_2x_3=-\frac da=-\frac42=-2\).</li>
+        <li><strong>Com \(x_1x_2=1\):</strong> \(x_3=-2\).</li>
+        <li><strong>\(P(-2)=0\):</strong>
+          <div class="formula">\[2(-8)-4-2k+4=0\ \Rightarrow\ -16-2k=0\ \Rightarrow\ k=-8\]</div></li>
+        <li><strong>Raízes:</strong> \(-2,\ \frac12,\ 2\) (produto de \(\frac12\) e \(2\) é \(1\ \checkmark\)).</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(k=-8\) &nbsp; <span class="badge-gab">Alternativa a</span></div>
+  </div>
+
+  <!-- F06 -->
+  <div class="ex" id="f06">
+    <div class="ex-header"><span class="ex-num">Complementar 06</span><span class="ex-src">FGV SP · p. 732</span><span class="badge-pratica">raízes em PA</span></div>
+    <p class="ex-q">Considere a equação \(x^3-6x^2+mx+10=0\) de incógnita \(x\) e sendo \(m\) um coeficiente real. Sabendo que as raízes da equação formam uma progressão aritmética, o valor de \(m\) é</p>
+    <ul class="opts"><li>a) \(-5\)</li><li>b) \(-3\)</li><li>c) \(3\)</li><li>d) \(4\)</li><li>e) \(5\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Raízes em PA:</strong> \(\alpha-r,\ \alpha,\ \alpha+r\).</li>
+        <li><strong>Soma</strong> (\(a=1,\ b=-6\)):
+          <div class="formula">\[3\alpha=-\frac{-6}{1}=6\ \Rightarrow\ \alpha=2\]</div></li>
+        <li><strong>\(2\) é raiz \(\Rightarrow P(2)=0\):</strong>
+          <div class="formula">\[2^3-6\cdot2^2+m\cdot2+10=0\ \Rightarrow\ 8-24+2m+10=0\ \Rightarrow\ 2m-6=0\ \Rightarrow\ m=3\]</div></li>
+        <li><strong>Conferência:</strong> \(x^3-6x^2+3x+10\), Briot com 2:
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(2\)</td><td>\(1\)</td><td>\(-6\)</td><td>\(3\)</td><td class="rest">\(10\)</td></tr><tr class="bot"><td class="root"></td><td>\(1\)</td><td>\(-4\)</td><td>\(-5\)</td><td class="rest">\(0\)</td></tr></table></div>
+          \(x^2-4x-5=0\Rightarrow x=5\) ou \(x=-1\). Raízes \(-1,\ 2,\ 5\): PA de razão 3 \(\checkmark\)</li>
+      </ol>
+    </div>
+    <div class="ans-box">\(m=3\) &nbsp; <span class="badge-gab">Alternativa c</span></div>
+  </div>
+
+  <!-- F07 -->
+  <div class="ex" id="f07">
+    <div class="ex-header"><span class="ex-num">Complementar 07</span><span class="ex-src">Unesp SP · p. 732</span><span class="badge-pratica">raiz = soma das outras</span></div>
+    <p class="ex-q">Sabe-se que, na equação \(x^3+4x^2+x-6=0\), uma das raízes é igual à soma das outras duas. O conjunto solução (S) desta equação é</p>
+    <ul class="opts"><li>a) \(S=\{-3,-2,-1\}\)</li><li>b) \(S=\{-3,-2,1\}\)</li><li>c) \(S=\{1,2,3\}\)</li><li>d) \(S=\{-1,2,3\}\)</li><li>e) \(S=\{-2,1,3\}\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>Traduza:</strong> \(x_1=x_2+x_3\).</li>
+        <li><strong>Soma das raízes</strong> (\(a=1,\ b=4\)):
+          <div class="formula">\[x_1+\underbrace{x_2+x_3}_{=\,x_1}=-4\ \Rightarrow\ 2x_1=-4\ \Rightarrow\ x_1=-2\]</div></li>
+        <li><strong>Baixe o grau com Briot</strong> (raiz \(-2\)):
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(-2\)</td><td>\(1\)</td><td>\(4\)</td><td>\(1\)</td><td class="rest">\(-6\)</td></tr><tr class="bot"><td class="root"></td><td>\(1\)</td><td>\(2\)</td><td>\(-3\)</td><td class="rest">\(0\)</td></tr></table></div>
+          <ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o \(1\).</li><li>\(1\cdot(-2)+4=2\)</li><li>\(2\cdot(-2)+1=-3\)</li><li>\((-3)\cdot(-2)+(-6)=6-6=0\)</li></ul></li>
+        <li><strong>Resolva \(x^2+2x-3=0\):</strong> \(\Delta=4+12=16\Rightarrow x=\frac{-2\pm4}2\Rightarrow x=1\) ou \(x=-3\).</li>
+        <li><strong>Confira a condição:</strong> \(-2=1+(-3)\ \checkmark\)</li>
+      </ol>
+      <div class="dica">Atalho por eliminação: em todas as alternativas, só na b) uma raiz é a soma das outras e a soma total é \(-4\).</div>
+    </div>
+    <div class="ans-box">\(S=\{-3,\ -2,\ 1\}\) &nbsp; <span class="badge-gab">Alternativa b</span></div>
+  </div>
+
+  <!-- F08 -->
+  <div class="ex" id="f08">
+    <div class="ex-header"><span class="ex-num">Complementar 08</span><span class="ex-src">Fuvest SP · p. 732</span><span class="badge-pratica">dissertativo · produto de duas raízes</span></div>
+    <p class="ex-q">O produto de duas das raízes do polinômio \(p(x)=2x^3-mx^2+4x+3\) é igual a \(-1\). Determinar a) o valor de \(m\); b) as raízes de \(p\).</p>
+    <div class="steps">
+      <p class="step-intro">Este é dissertativo, como na prova: escreva cada passo.</p>
+      <ol>
+        <li><strong>Coeficientes:</strong> \(a=2,\ b=-m,\ c=4,\ d=3\).</li>
+        <li><strong>Produto das três raízes:</strong>
+          <div class="formula">\[x_1x_2x_3=-\frac da=-\frac32\]</div></li>
+        <li><strong>Use \(x_1x_2=-1\):</strong>
+          <div class="formula">\[(-1)\cdot x_3=-\frac32\ \Rightarrow\ x_3=\frac32\]</div></li>
+        <li><strong>a) \(\frac32\) é raiz \(\Rightarrow p\left(\frac32\right)=0\):</strong>
+          <div class="formula">\[2\left(\tfrac32\right)^3-m\left(\tfrac32\right)^2+4\cdot\tfrac32+3=0\]</div>
+          <div class="formula">\[2\cdot\tfrac{27}8-m\cdot\tfrac94+6+3=0\ \Rightarrow\ \tfrac{27}4-\tfrac{9m}4+9=0\]</div>
+          Multiplicando tudo por 4:
+          <div class="formula">\[27-9m+36=0\ \Rightarrow\ 9m=63\ \Rightarrow\ m=7\]</div></li>
+        <li><strong>b) Baixe o grau:</strong> \(p(x)=2x^3-7x^2+4x+3\), Briot com \(\frac32\):
+          <div class="briot-wrap"><table class="briot"><tr class="top"><td class="root">\(\tfrac32\)</td><td>\(2\)</td><td>\(-7\)</td><td>\(4\)</td><td class="rest">\(3\)</td></tr><tr class="bot"><td class="root"></td><td>\(2\)</td><td>\(-4\)</td><td>\(-2\)</td><td class="rest">\(0\)</td></tr></table></div>
+          <ul class="briot-ops" style="color:var(--muted);font-size:0.9rem;padding-left:1.2rem;margin:0.3rem 0 0.5rem"><li>Desce o \(2\).</li><li>\(2\cdot\frac32+(-7)=3-7=-4\)</li><li>\((-4)\cdot\frac32+4=-6+4=-2\)</li><li>\((-2)\cdot\frac32+3=-3+3=0\)</li></ul></li>
+        <li><strong>Resolva \(2x^2-4x-2=0\)</strong> (divida por 2: \(x^2-2x-1=0\)):
+          <div class="formula">\[\Delta=(-2)^2-4\cdot1\cdot(-1)=4+4=8\qquad x=\frac{2\pm\sqrt8}{2}=\frac{2\pm2\sqrt2}{2}=1\pm\sqrt2\]</div></li>
+        <li><strong>Confira o produto:</strong> \((1+\sqrt2)(1-\sqrt2)=1-2=-1\ \checkmark\)</li>
+        <li><strong>Caminho alternativo para \(m\)</strong> (só com Girard): duas a duas \(=\frac ca=2\): \(x_1x_2+x_3(x_1+x_2)=2\Rightarrow-1+\frac32(x_1+x_2)=2\Rightarrow x_1+x_2=2\). Soma: \(x_1+x_2+x_3=2+\frac32=\frac72=-\frac ba=\frac m2\Rightarrow m=7\ \checkmark\)</li>
+      </ol>
+    </div>
+    <div class="ans-box">a) \(m=7\) &nbsp;&nbsp; b) raízes \(\dfrac32,\ 1+\sqrt2,\ 1-\sqrt2\)</div>
+  </div>
+
+  <!-- F09 -->
+  <div class="ex" id="f09">
+    <div class="ex-header"><span class="ex-num">Complementar 09</span><span class="ex-src">IFSC · p. 732</span><span class="badge-pratica">arrumar a equação antes</span></div>
+    <p class="ex-q">Dada a equação \(-(3x-2)(x-6)=x(6-x)+8\), podemos afirmar que o quadrado da terça parte da soma das raízes da equação é:</p>
+    <ul class="opts"><li>a) \(\frac{49}{16}\)</li><li>b) \(\frac{14}{9}\)</li><li>c) \(\frac{14}{3}\)</li><li>d) \(\frac73\)</li><li>e) \(\frac{49}{9}\)</li></ul>
+    <div class="steps">
+      <p class="step-intro"><strong>Ideia:</strong> antes de usar Girard, passe tudo para a forma \(P(x)=0\).</p>
+      <ol>
+        <li><strong>Desenvolva o 1º membro:</strong>
+          <div class="formula">\[(3x-2)(x-6)=3x^2-18x-2x+12=3x^2-20x+12\]</div>
+          <div class="formula">\[-(3x-2)(x-6)=-3x^2+20x-12\]</div></li>
+        <li><strong>Desenvolva o 2º membro:</strong>
+          <div class="formula">\[x(6-x)+8=6x-x^2+8\]</div></li>
+        <li><strong>Passe tudo para a esquerda:</strong>
+          <div class="formula">\[-3x^2+20x-12-6x+x^2-8=0\ \Rightarrow\ -2x^2+14x-20=0\]</div>
+          Dividindo por \(-2\): \(x^2-7x+10=0\). É do 2º grau!</li>
+        <li><strong>Soma das raízes:</strong>
+          <div class="formula">\[x_1+x_2=-\frac ba=-\frac{-7}{1}=7\]</div>
+          (Raízes: \(2\) e \(5\).)</li>
+        <li><strong>"O quadrado da terça parte da soma":</strong> primeiro a terça parte, depois ao quadrado:
+          <div class="formula">\[\left(\frac73\right)^2=\frac{49}9\]</div></li>
+      </ol>
+      <div class="dica">Pegadinha: a d) \(\frac73\) é só a terça parte, sem elevar ao quadrado. Se você usasse Girard direto em \(-2x^2+14x-20\) também daria \(-\frac{14}{-2}=7\), ok; o erro comum é esquecer de passar o 2º membro.</div>
+    </div>
+    <div class="ans-box">\(\dfrac{49}{9}\) &nbsp; <span class="badge-gab">Alternativa e</span></div>
+  </div>
+
+  <!-- F10 -->
+  <div class="ex" id="f10">
+    <div class="ex-header"><span class="ex-num">Complementar 10</span><span class="ex-src">UEG GO · p. 732</span><span class="badge-pratica">informação que distrai</span></div>
+    <p class="ex-q">Sabendo-se que \(2i\) é raiz do polinômio \(p(x)=x^4-x^3+2x^2-4x-8\), onde \(i\) é a unidade imaginária, a soma das raízes desse polinômio é</p>
+    <ul class="opts"><li>a) 0</li><li>b) 1</li><li>c) \(i\)</li><li>d) \(-1\)</li><li>e) \(-i\)</li></ul>
+    <div class="steps">
+      <ol>
+        <li><strong>A soma das raízes só depende de \(a\) e \(b\):</strong> \(a=1,\ b=-1\).
+          <div class="formula">\[x_1+x_2+x_3+x_4=-\frac ba=-\frac{-1}{1}=1\]</div></li>
+        <li><strong>A informação "\(2i\) é raiz" nem é necessária.</strong> Só para conferir: \(p(2i)=16-(-8i)+2(-4)-8i-8=16+8i-8-8i-8=0\ \checkmark\) (usando \((2i)^2=-4\), \((2i)^3=-8i\), \((2i)^4=16\)).</li>
+        <li><strong>Conferência completa:</strong> coeficientes reais \(\Rightarrow -2i\) também é raiz. \((x-2i)(x+2i)=x^2+4\), e \(p(x)=(x^2+4)(x^2-x-2)=(x^2+4)(x-2)(x+1)\). Raízes: \(2i,\ -2i,\ 2,\ -1\). Soma: \(2i-2i+2-1=1\ \checkmark\)</li>
+      </ol>
+      <div class="dica">As raízes complexas conjugadas sempre se cancelam na soma da parte imaginária: a soma de um polinômio com coeficientes reais é sempre real. Por isso c) e e) já estão descartadas.</div>
+    </div>
+    <div class="ans-box">Soma \(=1\) &nbsp; <span class="badge-gab">Alternativa b</span></div>
+  </div>
+
+  <!-- F11 -->
+  <div class="ex" id="f11">
+    <div class="ex-header"><span class="ex-num">Complementar 11</span><span class="ex-src">UEPG PR · p. 732</span><span class="badge-pratica">PA · somatório</span></div>
+    <p class="ex-q">Um polinômio \(P(x)\) do terceiro grau possui três raízes reais, de tal forma que, se forem colocadas em ordem crescente formam uma progressão aritmética em que a soma de seus termos é 12. A diferença entre o quadrado da maior raiz e o quadrado da menor é 160. Sabendo que o coeficiente do termo de maior grau de \(P(x)\) é 2, assinale o que for correto.</p>
+    <p class="ex-q">01. Todas as raízes do polinômio são números inteiros relativos.<br>02. A divisão do polinômio \(P(x)\) por \(Q(x)=x-6\) é exata.<br>04. A soma dos coeficientes do polinômio é um número maior que 500.<br>08. A soma das raízes do polinômio é solução da equação \(x^2+14x+24=0\).<br>16. O coeficiente do termo independente de \(x\) de \(P(x)\) é maior que \(25^2\).</p>
+    <div class="steps">
+      <ol>
+        <li><strong>Raízes em PA crescente:</strong> \(\alpha-r,\ \alpha,\ \alpha+r\), com \(r&gt;0\).</li>
+        <li><strong>Soma 12:</strong> \(3\alpha=12\Rightarrow\alpha=4\).</li>
+        <li><strong>Diferença dos quadrados:</strong>
+          <div class="formula">\[(4+r)^2-(4-r)^2=160\]</div>
+          <div class="formula">\[(16+8r+r^2)-(16-8r+r^2)=16r=160\ \Rightarrow\ r=10\]</div>
+          Raízes: \(4-10=-6\), \(4\), \(4+10=14\).</li>
+        <li><strong>Monte \(P\)</strong> (decomposição, \(a=2\)):
+          <div class="formula">\[P(x)=2(x+6)(x-4)(x-14)\]</div>
+          \((x+6)(x-4)=x^2+2x-24\); \((x^2+2x-24)(x-14)=x^3-14x^2+2x^2-28x-24x+336=x^3-12x^2-52x+336\).
+          <div class="formula">\[P(x)=2x^3-24x^2-104x+672\]</div>
+          Girard confere: soma \(=-\frac{-24}{2}=12\ \checkmark\); produto \(=-\frac{672}2=-336=(-6)(4)(14)\ \checkmark\).</li>
+        <li><strong>01.</strong> \(-6,\ 4,\ 14\) são inteiros. <strong>Correta.</strong></li>
+        <li><strong>02.</strong> Divisão por \(x-6\) é exata \(\iff P(6)=0\) (D'Alembert). Mas 6 não é raiz: \(P(6)=2\cdot12\cdot2\cdot(-8)=-384\neq0\). <strong>Incorreta.</strong></li>
+        <li><strong>04.</strong> Soma dos coeficientes \(=P(1)=2(1+6)(1-4)(1-14)=2\cdot7\cdot(-3)\cdot(-13)=546&gt;500\). (Ou \(2-24-104+672=546\).) <strong>Correta.</strong></li>
+        <li><strong>08.</strong> Soma das raízes \(=12\). Em \(x^2+14x+24\): \(144+168+24=336\neq0\) (as raízes dessa equação são \(-2\) e \(-12\)). <strong>Incorreta.</strong></li>
+        <li><strong>16.</strong> Termo independente \(=P(0)=672\); \(25^2=625\); \(672&gt;625\). <strong>Correta.</strong></li>
+        <li><strong>Somatório:</strong> \(01+04+16=21\).</li>
+      </ol>
+    </div>
+    <div class="ans-box">Corretas: 01, 04 e 16 &nbsp; ⇒ &nbsp; soma \(=21\)</div>
+  </div>
+
+</div>
+
+<footer>
+  Pack didático offline · Polinômios · B47 · Relações de Girard · Versa
+</footer>
+
+<script>
+var Fr = (function () {
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { var t = a % b; a = b; b = t; } return a || 1; }
+  function mk(n, d) {
+    if (d === undefined) d = 1;
+    if (d < 0) { n = -n; d = -d; }
+    var g = gcd(n, d); return { n: n / g, d: d / g };
+  }
+  function parse(s) {
+    s = String(s).trim().replace('−', '-');
+    if (s === '' || s === '+' || s === '-') return null;
+    if (s.indexOf('/') >= 0) {
+      var p = s.split('/'); var a = parse(p[0]), b = parse(p[1]);
+      if (!a || !b || b.n === 0) return null; return div(a, b);
+    }
+    if (!/^[-+]?\d*\.?\d+$/.test(s)) return null;
+    var dec = s.indexOf('.') >= 0 ? s.split('.')[1].length : 0;
+    var den = Math.pow(10, dec);
+    return mk(Math.round(parseFloat(s) * den), den);
+  }
+  function add(a, b) { return mk(a.n * b.d + b.n * a.d, a.d * b.d); }
+  function sub(a, b) { return mk(a.n * b.d - b.n * a.d, a.d * b.d); }
+  function mul(a, b) { return mk(a.n * b.n, a.d * b.d); }
+  function div(a, b) { return mk(a.n * b.d, a.d * b.n); }
+  function neg(a) { return mk(-a.n, a.d); }
+  function isZero(a) { return a.n === 0; }
+  function val(a) { return a.n / a.d; }
+  function tex(a) { if (a.d === 1) return String(a.n); return (a.n < 0 ? '-' : '') + '\\tfrac{' + Math.abs(a.n) + '}{' + a.d + '}'; }
+  function par(a) { return a.n < 0 ? '(' + tex(a) + ')' : tex(a); }
+  function txt(a) { return a.d === 1 ? String(a.n) : a.n + '/' + a.d; }
+  // polinômio (lista decrescente de frações) em TeX
+  function poly(cs, v) {
+    v = v || 'x'; var n = cs.length - 1, out = '', first = true;
+    for (var i = 0; i < cs.length; i++) {
+      var c = cs[i], k = n - i; if (isZero(c)) continue;
+      var a = mk(Math.abs(c.n), c.d), neg_ = c.n < 0;
+      var cs_ = (a.n === 1 && a.d === 1 && k > 0) ? '' : tex(a);
+      var xp = k === 0 ? '' : (k === 1 ? v : v + '^{' + k + '}');
+      out += (first ? (neg_ ? '-' : '') : (neg_ ? ' - ' : ' + ')) + cs_ + xp; first = false;
+    }
+    return first ? '0' : out;
+  }
+  return { mk: mk, parse: parse, add: add, sub: sub, mul: mul, div: div, neg: neg, isZero: isZero, val: val, tex: tex, par: par, txt: txt, poly: poly };
+})();
+function parseList(s) {
+  var parts = String(s).replace(/,/g, ' ').split(/[\s;]+/).filter(function (t) { return t.trim() !== ''; });
+  var out = [];
+  for (var i = 0; i < parts.length; i++) { var f = Fr.parse(parts[i]); if (!f) return null; out.push(f); }
+  return out.length ? out : null;
+}
+function fmtNum(v) { var r = Math.round(v * 1000) / 1000; if (Object.is(r, -0)) r = 0; return String(r).replace('.', ','); }
+// ---------- complexos mínimos ----------
+var Cx = {
+  mk: function (re, im) { return { re: re, im: im || 0 }; },
+  add: function (a, b) { return { re: a.re + b.re, im: a.im + b.im }; },
+  sub: function (a, b) { return { re: a.re - b.re, im: a.im - b.im }; },
+  mul: function (a, b) { return { re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re }; },
+  div: function (a, b) { var d = b.re * b.re + b.im * b.im; return { re: (a.re * b.re + a.im * b.im) / d, im: (a.im * b.re - a.re * b.im) / d }; },
+  abs: function (a) { return Math.hypot(a.re, a.im); },
+  tex: function (a) {
+    var re = Math.abs(a.re) < 5e-7 ? 0 : a.re, im = Math.abs(a.im) < 5e-7 ? 0 : a.im;
+    if (im === 0) return fmtNum(re);
+    var s = (re !== 0 ? fmtNum(re) + (im > 0 ? '+' : '-') : (im < 0 ? '-' : ''));
+    var m = Math.abs(im); return s + (Math.abs(m - 1) < 1e-9 ? '' : fmtNum(m)) + 'i';
+  }
+};
+// σ_k das raízes (complexas), k = 0..n
+function elemSym(roots) {
+  var e = [Cx.mk(1)];
+  roots.forEach(function (r) {
+    var ne = [Cx.mk(1)];
+    for (var k = 1; k <= e.length; k++) ne.push(Cx.add(e[k] || Cx.mk(0), Cx.mul(e[k - 1], r)));
+    e = ne;
+  });
+  return e;
+}
+// Durand-Kerner: raízes numéricas de coeficientes reais (decrescentes)
+function numRoots(c) {
+  var n = c.length - 1, a0 = c[0], m = c.map(function (v) { return v / a0; });
+  var z = []; for (var i = 0; i < n; i++) z.push(Cx.mul(Cx.mk(Math.pow(0.4, i)), Cx.mk(Math.cos(0.9 * i + 0.4), Math.sin(0.9 * i + 0.4))));
+  var R = 1; for (var k = 1; k <= n; k++) R = Math.max(R, Math.abs(m[k]) + 1);
+  z = z.map(function (q) { return Cx.mul(q, Cx.mk(R)); });
+  function ev(x) { var s = Cx.mk(1); for (var k = 1; k <= n; k++) s = Cx.add(Cx.mul(s, x), Cx.mk(m[k])); return s; }
+  for (var it = 0; it < 800; it++) {
+    var mx = 0;
+    for (var i2 = 0; i2 < n; i2++) {
+      var den = Cx.mk(1);
+      for (var j = 0; j < n; j++) if (j !== i2) den = Cx.mul(den, Cx.sub(z[i2], z[j]));
+      var d = Cx.div(ev(z[i2]), den); z[i2] = Cx.sub(z[i2], d); mx = Math.max(mx, Cx.abs(d));
+    }
+    if (mx < 1e-13) break;
+  }
+  z.forEach(function (q) { if (Math.abs(q.im) < 1e-7) q.im = 0; });
+  z.sort(function (p, q) { return p.re - q.re || p.im - q.im; });
+  return z;
+}
+function frOf(v) { var f = Fr.parse(String(Math.round(v * 1e6) / 1e6)); return f || Fr.mk(0); }
+var LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+var SIGLBL = ['', 'soma das raízes', 'soma dos produtos 2 a 2', 'soma dos produtos 3 a 3', 'produto 4 a 4'];
+
+// ---------- LAB 1 ----------
+(function () {
+  function el(id) { return document.getElementById(id); }
+  var cv = el('cvGir'); if (!cv) return;
+  var ctx = cv.getContext('2d'), W = cv.width, H = cv.height;
+  var YS = [5, 10, 20, 50, 100, 300, 1000, 3000];
+  var vals = [2, 3, 4, 1];
+  function buildRows() {
+    var n = +el('girN').value, cx = el('girCx').checked, h = '';
+    for (var i = 0; i < n; i++) {
+      var lbl = 'x_{' + (i + 1) + '}', mn = -15, mxv = 15;
+      if (cx && i === n - 2) lbl = 'p\\ (\\text{parte real})';
+      if (cx && i === n - 1) { lbl = 'q\\ (\\text{parte imag.})'; mn = 0.5; mxv = 6; }
+      h += '<label for="girR' + i + '">\\(' + lbl + '=\\) <span id="girRL' + i + '" class="hl3"></span></label>' +
+        '<input type="range" id="girR' + i + '" min="' + mn + '" max="' + mxv + '" step="0.5" value="' + Math.min(mxv, Math.max(mn, vals[i])) + '">';
+    }
+    el('girRows').innerHTML = h;
+    for (var k = 0; k < n; k++) el('girR' + k).addEventListener('input', function () { for (var t = 0; t < 4; t++) if (el('girR' + t)) vals[t] = +el('girR' + t).value; update(); });
+    if (window.renderKatex) window.renderKatex(el('girRows'));
+  }
+  function read() {
+    var n = +el('girN').value, a = +el('girA').value, cx = el('girCx').checked;
+    if (a === 0) { a = 0.5; el('girA').value = 0.5; }
+    var rs = [];
+    for (var i = 0; i < n; i++) { var v = +el('girR' + i).value; el('girRL' + i).textContent = fmtNum(v); rs.push(v); }
+    var roots = [];
+    if (cx) { for (var j = 0; j < n - 2; j++) roots.push(Cx.mk(rs[j])); roots.push(Cx.mk(rs[n - 2], rs[n - 1])); roots.push(Cx.mk(rs[n - 2], -rs[n - 1])); }
+    else rs.forEach(function (v) { roots.push(Cx.mk(v)); });
+    return { n: n, a: a, roots: roots, cx: cx };
+  }
+  function update() {
+    var S = read(), n = S.n, a = S.a, roots = S.roots;
+    el('girNL').textContent = n; el('girAL').textContent = fmtNum(a);
+    var Ym = YS[+el('girY').value]; el('girYL').textContent = Ym;
+    var e = elemSym(roots);
+    // coeficientes reais: a * (-1)^k e_k
+    var coefs = []; for (var k = 0; k <= n; k++) coefs.push(a * (k % 2 ? -1 : 1) * e[k].re);
+    // gráfico
+    var maxR = 4; roots.forEach(function (r) { if (r.im === 0) maxR = Math.max(maxR, Math.abs(r.re) + 2); });
+    var XM = Math.ceil(maxR);
+    function px(x, y) { return [(x + XM) / (2 * XM) * W, H / 2 - y / Ym * (H / 2)]; }
+    function P(x) { var s = 0; for (var k2 = 0; k2 <= n; k2++) s = s * x + coefs[k2]; return s; }
+    ctx.fillStyle = '#0f1419'; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#26303d'; ctx.lineWidth = 1; var stp = XM > 10 ? 2 : 1;
+    for (var gx = -XM; gx <= XM; gx += stp) { var p = px(gx, 0); ctx.beginPath(); ctx.moveTo(p[0], 0); ctx.lineTo(p[0], H); ctx.stroke(); }
+    ctx.strokeStyle = '#8b98a5'; ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+    var o = px(0, 0); ctx.beginPath(); ctx.moveTo(o[0], 0); ctx.lineTo(o[0], H); ctx.stroke();
+    ctx.fillStyle = '#8b98a5'; ctx.font = '12px sans-serif';
+    for (var tx = -XM; tx <= XM; tx += (XM > 10 ? 4 : 1)) { if (tx === 0) continue; var q = px(tx, 0); ctx.fillText(tx, q[0] - 4, H / 2 + 14); }
+    ctx.fillText('+' + Ym, o[0] + 4, 12); ctx.fillText('-' + Ym, o[0] + 4, H - 4);
+    ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2.5; ctx.beginPath(); var started = false;
+    for (var i = 0; i <= W; i++) { var x = -XM + 2 * XM * i / W, y = P(x), yy = Math.max(-3 * Ym, Math.min(3 * Ym, y)), pp = px(x, yy); if (!started) { ctx.moveTo(pp[0], pp[1]); started = true; } else ctx.lineTo(pp[0], pp[1]); }
+    ctx.stroke();
+    roots.forEach(function (r) { if (r.im !== 0) return; var pr = px(r.re, 0); ctx.fillStyle = '#ffb74d'; ctx.beginPath(); ctx.arc(pr[0], pr[1], 6, 0, 2 * Math.PI); ctx.fill(); });
+    // texto
+    var cF = coefs.map(frOf), h = '';
+    var fac = roots.map(function (r) {
+      if (r.im !== 0) return '(x-(' + Cx.tex(r) + '))';
+      return r.re === 0 ? 'x' : '(x' + (r.re < 0 ? '+' : '-') + fmtNum(Math.abs(r.re)) + ')';
+    }).join('');
+    var aT = a === 1 ? '' : (a === -1 ? '-' : fmtNum(a));
+    h += '<div>\\(P(x)=' + aT + fac + '\\)</div>';
+    h += '<div>\\(P(x)=' + Fr.poly(cF) + '\\)</div>';
+    h += '<div>Coeficientes: ' + cF.map(function (f, k) { return '\\(' + LETTERS[k] + '=' + Fr.tex(f) + '\\)'; }).join(', ') + '</div>';
+    h += '<table class="mult-table"><tr><th>relação</th><th>pelas raízes</th><th>pelos coeficientes (Girard)</th></tr>';
+    for (var k3 = 1; k3 <= n; k3++) {
+      var byR = e[k3];
+      var lbl = k3 === n ? 'produto de todas' : SIGLBL[k3];
+      var expr = '';
+      if (k3 === 1) expr = roots.map(function (r) { return '(' + Cx.tex(r) + ')'; }).join('+') + '=';
+      if (k3 === n) expr = roots.map(function (r) { return '(' + Cx.tex(r) + ')'; }).join('\\cdot ') + '=';
+      var sg = k3 % 2 ? '-' : '+';
+      var byC = Fr.div(cF[k3], cF[0]); if (k3 % 2) byC = Fr.neg(byC);
+      h += '<tr><td>' + lbl + '</td><td>\\(' + expr + Cx.tex(byR) + '\\)</td><td>\\(' + sg + '\\frac{' + LETTERS[k3] + '}{a}=' + sg + '\\frac{' + Fr.tex(cF[k3]) + '}{' + Fr.tex(cF[0]) + '}=' + Fr.tex(byC) + '\\)</td></tr>';
+    }
+    h += '</table>';
+    var s1 = e[1].re, s2 = e[2].re;
+    h += '<div>Soma dos quadrados: \\(\\sigma_1^2-2\\sigma_2=' + fmtNum(s1) + '^2-2\\cdot(' + fmtNum(s2) + ')=' + fmtNum(s1 * s1 - 2 * s2) + '\\)</div>';
+    if (Math.abs(e[n].re) > 1e-9) h += '<div>Soma dos inversos: \\(\\dfrac{\\sigma_{' + (n - 1) + '}}{\\sigma_{' + n + '}}=' + fmtNum(e[n - 1].re / e[n].re) + '\\)</div>';
+    else h += '<div>Soma dos inversos: não existe (0 é raiz).</div>';
+    if (S.cx) h += '<div class="hl3">Repare: \\(p+qi\\) e \\(p-qi\\) somadas dão \\(2p\\) e multiplicadas dão \\(p^2+q^2\\), então tudo continua real.</div>';
+    el('girVals').innerHTML = h;
+    if (window.renderKatex) window.renderKatex(el('girVals'));
+  }
+  var PRE = {
+    atom: { n: 3, a: 1, r: [2, 3, 4], cx: false }, p04: { n: 3, a: 1, r: [1, 3, 5], cx: false },
+    p05: { n: 3, a: 1, r: [2, 4, 8], cx: false, y: 5 }, c01: { n: 3, a: 2, r: [-1.5, -1, 2], cx: false },
+    c02: { n: 3, a: 2, r: [-2, 0.5, 2], cx: false }, c03: { n: 4, a: 1, r: [-3, -2, 2, 4], cx: false, y: 4 },
+    c07: { n: 3, a: 1, r: [-3, -2, 1], cx: false }, c10: { n: 4, a: 1, r: [-1, 2, 0, 2], cx: true, y: 4 },
+    c11: { n: 3, a: 2, r: [-6, 4, 14], cx: false, y: 7 }
+  };
+  document.querySelectorAll('[data-gir]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var p = PRE[b.getAttribute('data-gir')];
+      el('girN').value = p.n; el('girA').value = p.a; el('girCx').checked = p.cx; el('girY').value = p.y !== undefined ? p.y : 2;
+      vals = p.r.slice(); while (vals.length < 4) vals.push(1);
+      buildRows(); update();
+    });
+  });
+  el('girN').addEventListener('input', function () { buildRows(); update(); });
+  el('girCx').addEventListener('change', function () { if (el('girCx').checked && vals[+el('girN').value - 1] <= 0) vals[+el('girN').value - 1] = 1; buildRows(); update(); });
+  el('girA').addEventListener('input', update); el('girY').addEventListener('input', update);
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(function () { buildRows(); update(); }, 60); });
+})();
+
+// ---------- LAB 2 ----------
+(function () {
+  function el(id) { return document.getElementById(id); }
+  var inp = el('gcP'); if (!inp) return;
+  function run() {
+    var cs = parseList(inp.value), out = el('gcOut'), h = '';
+    if (!cs || cs.length < 3 || cs.length > 7 || Fr.isZero(cs[0])) { out.innerHTML = '<div>Digite de 3 a 7 coeficientes (grau 2 a 6), o primeiro diferente de 0.</div>'; return; }
+    var n = cs.length - 1, a = cs[0];
+    h += '<div>\\(P(x)=' + Fr.poly(cs) + '=0\\) &nbsp;(grau \\(' + n + '\\))</div>';
+    h += '<div>Coeficientes, com sinal: ' + cs.map(function (f, k) { return '\\(' + LETTERS[k] + '=' + Fr.tex(f) + '\\)'; }).join(', ') + '</div>';
+    var sig = [Fr.mk(1)];
+    for (var k = 1; k <= n; k++) {
+      var v = Fr.div(cs[k], a); if (k % 2) v = Fr.neg(v); sig.push(v);
+      var sg = k % 2 ? '-' : '';
+      var lbl = k === n ? 'produto de todas as raízes' : SIGLBL[k] || ('produtos ' + k + ' a ' + k);
+      h += '<div>\\(\\sigma_' + k + '\\) (' + lbl + ') \\(=' + sg + '\\dfrac{' + LETTERS[k] + '}{a}=' + sg + '\\dfrac{' + Fr.tex(cs[k]) + '}{' + Fr.tex(a) + '}=' + Fr.tex(v) + '\\)</div>';
+    }
+    var sq = Fr.sub(Fr.mul(sig[1], sig[1]), Fr.mul(Fr.mk(2), sig[2]));
+    h += '<div><strong>Soma dos quadrados</strong> \\(=\\sigma_1^2-2\\sigma_2=' + Fr.par(sig[1]) + '^2-2\\cdot' + Fr.par(sig[2]) + '=' + Fr.tex(sq) + '\\)</div>';
+    if (!Fr.isZero(sig[n])) {
+      var inv = Fr.div(sig[n - 1], sig[n]);
+      h += '<div><strong>Soma dos inversos</strong> \\(=\\dfrac{\\sigma_' + (n - 1) + '}{\\sigma_' + n + '}=\\dfrac{' + Fr.tex(sig[n - 1]) + '}{' + Fr.tex(sig[n]) + '}=' + Fr.tex(inv) + '\\)</div>';
+    } else h += '<div><strong>Soma dos inversos:</strong> não existe, porque 0 é raiz (\\(\\sigma_' + n + '=0\\)).</div>';
+    var rts = numRoots(cs.map(Fr.val)), e = elemSym(rts);
+    h += '<div style="margin-top:0.6rem"><strong>Conferência numérica</strong> (raízes aproximadas): \\(' + rts.map(Cx.tex).join(';\\ \\ ') + '\\)</div>';
+    h += '<div>Soma numérica \\(\\approx' + Cx.tex(e[1]) + '\\) · produto numérico \\(\\approx' + Cx.tex(e[n]) + '\\)';
+    var sq2 = Cx.mk(0); rts.forEach(function (r) { sq2 = Cx.add(sq2, Cx.mul(r, r)); });
+    h += ' · soma dos quadrados \\(\\approx' + Cx.tex(sq2) + '\\)</div>';
+    if (rts.some(function (r) { return r.im !== 0; })) h += '<div class="hl3">Há raízes complexas: Girard conta todas elas.</div>';
+    out.innerHTML = h;
+    if (window.renderKatex) window.renderKatex(out);
+  }
+  var PRE = { p01: '2 -6 -10 -5', p02: '1 -2 5 3', p03: '1 -4 5 9', p05: '1 -14 56 -64', c03: '1 -1 -16 4 48', c04: '6 -11 6 -1', c08: '2 -7 4 3', c10: '1 -1 2 -4 -8' };
+  document.querySelectorAll('[data-gc]').forEach(function (b) { b.addEventListener('click', function () { inp.value = PRE[b.getAttribute('data-gc')]; run(); }); });
+  inp.addEventListener('input', run);
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(run, 60); });
+})();
+
+// ---------- abas + imprimir ----------
+(function () {
+  var t1 = document.getElementById('tabLab1'), t2 = document.getElementById('tabLab2');
+  function show(k) { document.getElementById('lab1').style.display = k === 1 ? '' : 'none'; document.getElementById('lab2').style.display = k === 2 ? '' : 'none'; t1.classList.toggle('on', k === 1); t2.classList.toggle('on', k === 2); }
+  t1.addEventListener('click', function () { show(1); }); t2.addEventListener('click', function () { show(2); });
+  var bp = document.getElementById('btnPrintForm');
+  if (bp) bp.addEventListener('click', function () { document.body.classList.add('print-form'); window.print(); setTimeout(function () { document.body.classList.remove('print-form'); }, 500); });
+})();
+
+(function () {
+var Q = [
+  { q: 'Na equação \\(x^3-9x^2+26x-24=0\\), a soma das raízes é', o: ['\\(-9\\)', '\\(9\\)', '\\(26\\)', '\\(24\\)'], a: 1,
+    e: '\\(x_1+x_2+x_3=-\\frac ba=-\\frac{-9}{1}=9\\). É o número de esferas do Atomium.' },
+  { q: 'Em \\(ax^3+bx^2+cx+d=0\\), o produto das três raízes é', o: ['\\(\\frac da\\)', '\\(-\\frac da\\)', '\\(\\frac ca\\)', '\\(-\\frac ba\\)'], a: 1,
+    e: 'Sinais alternam: \\(-\\frac ba,\\ +\\frac ca,\\ -\\frac da\\). Grau ímpar: produto com sinal \\(-\\).' },
+  { q: 'Em \\(x^4-x^3-16x^2+4x+48=0\\), o produto das raízes é', o: ['\\(-48\\)', '\\(48\\)', '\\(4\\)', '\\(-4\\)'], a: 1,
+    e: 'Grau 4 (par): produto \\(=+\\frac ea=48\\).' },
+  { q: 'Em \\(2x^2-6x+4=0\\), a soma e o produto das raízes são', o: ['\\(3\\) e \\(2\\)', '\\(-3\\) e \\(2\\)', '\\(6\\) e \\(4\\)', '\\(3\\) e \\(-2\\)'], a: 0,
+    e: 'Soma \\(=-\\frac{-6}{2}=3\\); produto \\(=\\frac42=2\\). (Raízes 1 e 2.)' },
+  { q: 'Se \\(\\sigma_1=x_1+x_2+x_3=4\\) e \\(\\sigma_2=x_1x_2+x_1x_3+x_2x_3=5\\), então \\(x_1^2+x_2^2+x_3^2\\) vale', o: ['\\(6\\)', '\\(11\\)', '\\(16\\)', '\\(26\\)'], a: 0,
+    e: '\\(\\sigma_1^2-2\\sigma_2=16-10=6\\).' },
+  { q: 'Em \\(x^3-6x^2+11x-6=0\\), a soma dos inversos das raízes é', o: ['\\(\\frac{11}{6}\\)', '\\(-\\frac{11}{6}\\)', '\\(1\\)', '\\(\\frac{6}{11}\\)'], a: 0,
+    e: '\\(\\frac{\\sigma_2}{\\sigma_3}=\\frac{11}{6}\\). (Raízes 1, 2, 3: \\(1+\\frac12+\\frac13=\\frac{11}6\\).)' },
+  { q: 'As raízes de \\(x^3-12x^2+\\dots=0\\) estão em PA. Então uma das raízes é', o: ['\\(3\\)', '\\(4\\)', '\\(6\\)', '\\(12\\)'], a: 1,
+    e: 'Raízes \\(\\alpha-r,\\alpha,\\alpha+r\\): soma \\(3\\alpha=12\\Rightarrow\\alpha=4\\).' },
+  { q: 'Em \\(x^3-7x+6=0\\), a soma das raízes é', o: ['\\(7\\)', '\\(-7\\)', '\\(0\\)', '\\(6\\)'], a: 2,
+    e: 'Não há termo em \\(x^2\\): \\(b=0\\), soma \\(=-\\frac0 1=0\\). (Raízes 1, 2, \\(-3\\).)' }
+];
+
+
+  var right = 0, answered = 0;
+  function score() { document.getElementById('quizScore').textContent = right + ' / ' + answered + ' (de ' + Q.length + ')'; }
+  function render() {
+    right = 0; answered = 0;
+    var box = document.getElementById('quizBox'), h = '';
+    Q.forEach(function (it, i) {
+      h += '<div class="quiz-q" data-i="' + i + '"><div class="qt"><strong>' + (i + 1) + '.</strong> ' + it.q + '</div><div class="quiz-opts">';
+      it.o.forEach(function (op, j) { h += '<button type="button" data-j="' + j + '">' + op + '</button>'; });
+      h += '</div><div class="quiz-fb"></div></div>';
+    });
+    box.innerHTML = h;
+    box.querySelectorAll('.quiz-q').forEach(function (qq) {
+      var it = Q[+qq.dataset.i];
+      qq.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          if (qq.classList.contains('done')) return;
+          qq.classList.add('done'); answered++;
+          var j = +b.dataset.j, ok = j === it.a;
+          if (ok) right++;
+          b.classList.add(ok ? 'ok' : 'bad');
+          qq.querySelectorAll('button')[it.a].classList.add('ok');
+          var fb = qq.querySelector('.quiz-fb');
+          fb.innerHTML = (ok ? '<strong style="color:var(--accent2)">Certo!</strong> ' : '<strong style="color:var(--danger)">Ainda não.</strong> ') + it.e;
+          if (window.renderKatex) window.renderKatex(fb);
+          score();
+        });
+      });
+    });
+    if (window.renderKatex) window.renderKatex(box);
+    score();
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    render();
+    document.getElementById('quizReset').addEventListener('click', render);
+  });
+
+})();
+(function () {
+  var KEY = 'b47-poli-treino';
+  function loadPref() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v === null) return true;
+      return v === 'true';
+    } catch (e) { return true; }
+  }
+  function savePref(on) {
+    try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (e) {}
+  }
+  function syncButtons(ex) {
+    var collapsed = ex.classList.contains('collapsed');
+    var btnR = ex.querySelector('.btn-reveal');
+    var btnH = ex.querySelector('.btn-hide');
+    if (btnR) btnR.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    if (btnH) btnH.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  }
+  function reveal(ex) {
+    ex.classList.remove('collapsed');
+    ex.dataset.userRevealed = '1';
+    syncButtons(ex);
+  }
+  function hide(ex) {
+    ex.classList.add('collapsed');
+    delete ex.dataset.userRevealed;
+    syncButtons(ex);
+  }
+  function setMode(on) {
+    document.body.classList.toggle('treino-ativo', on);
+    var banner = document.getElementById('treinoBanner');
+    var chk = document.getElementById('chkModoTreino');
+    if (banner) banner.classList.toggle('treino-off-banner', !on);
+    if (chk) chk.checked = on;
+    var label = document.getElementById('treinoBannerLabel');
+    if (label) label.textContent = on ? 'Modo treino ativo' : 'Modo treino desligado (resoluções visíveis)';
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (on) {
+        if (!ex.dataset.userRevealed) ex.classList.add('collapsed');
+      } else {
+        ex.classList.remove('collapsed');
+      }
+      syncButtons(ex);
+    });
+    var all = document.getElementById('chkRevelarTodas');
+    if (all && on) all.checked = false;
+    savePref(on);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var on = loadPref();
+    document.querySelectorAll('.ex').forEach(function (ex) {
+      if (!ex.querySelector('.treino-prompt')) {
+        var steps = ex.querySelector('.steps');
+        var box = document.createElement('div');
+        box.className = 'treino-prompt';
+        box.innerHTML = '<span>Modo treino — tente no caderno antes de revelar.</span>';
+        var row = document.createElement('div');
+        row.className = 'ex-reveal-row';
+        row.innerHTML = '<button type="button" class="btn-reveal" aria-expanded="false">Revelar resolução</button>' +
+          '<button type="button" class="btn-hide" aria-expanded="true">Esconder de novo</button>';
+        if (steps) {
+          steps.parentNode.insertBefore(box, steps);
+          steps.parentNode.insertBefore(row, steps);
+        } else {
+          ex.appendChild(box);
+          ex.appendChild(row);
+        }
+      }
+      var br = ex.querySelector('.btn-reveal');
+      var bh = ex.querySelector('.btn-hide');
+      if (br) br.addEventListener('click', function () { reveal(ex); });
+      if (bh) bh.addEventListener('click', function () { hide(ex); });
+      if (on) ex.classList.add('collapsed');
+      syncButtons(ex);
+    });
+    var chk = document.getElementById('chkModoTreino');
+    if (chk) {
+      chk.checked = on;
+      chk.addEventListener('change', function () { setMode(chk.checked); });
+    }
+    var all = document.getElementById('chkRevelarTodas');
+    if (all) {
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.ex').forEach(function (ex) {
+          if (all.checked) reveal(ex); else hide(ex);
+        });
+      });
+    }
+    setMode(on);
+  });
+})();
+
+</script>
+</body>
+</html>
